@@ -1,0 +1,4 @@
+/Users/wxy/Desktop/CS4234/programs/DP/knapsack/build/CMakeFiles/knapsack_lib.dir
+/Users/wxy/Desktop/CS4234/programs/DP/knapsack/build/CMakeFiles/knapsack.dir
+/Users/wxy/Desktop/CS4234/programs/DP/knapsack/build/CMakeFiles/edit_cache.dir
+/Users/wxy/Desktop/CS4234/programs/DP/knapsack/build/CMakeFiles/rebuild_cache.dir

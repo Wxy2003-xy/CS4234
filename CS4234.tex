@@ -1,0 +1,969 @@
+\documentclass[10pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{array,booktabs}
+\usepackage[table]{xcolor}
+\usepackage{enumitem}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{algpseudocode}
+\usepackage[ruled, vlined, algoruled]{algorithm2e} % Options for styling
+\usepackage{tikz}
+\geometry{top=0.65in,bottom=0.65in,left=0.7in,right=0.7in}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!60!black,
+  urlcolor=cyan!50!black,
+  linktoc=all
+}
+\setlist{nosep,leftmargin=*}
+\renewcommand{\arraystretch}{1.2}
+\newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{theorem}[definition]{Theorem}
+\newtheorem{lemma}[definition]{Lemma}
+\newtheorem{remark}[definition]{Remark}
+
+\newcommand{\OPT}{\operatorname{OPT}}
+\newcommand{\ALG}{\operatorname{ALG}}
+\newcommand{\poly}{\operatorname{poly}}
+\newcommand{\YES}{\textsc{Yes}}
+\newcommand{\NO}{\textsc{No}}
+\newcommand{\NP}{\mathsf{NP}}
+\newcommand{\coNP}{\mathsf{coNP}}
+\newcommand{\PTIME}{\mathsf{P}}
+\newcommand{\NPC}{\mathsf{NP\text{-}complete}}
+
+% Colours used to separate the three layers of approximation proofs.
+\definecolor{algblue}{RGB}{0,82,155}
+\definecolor{optred}{RGB}{180,45,45}
+\definecolor{bridgepurple}{RGB}{105,55,145}
+
+\title{CS4234: Optimization Algorithms}
+\author{@Wxy2003-xy}
+\date{}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\section*{Introduction and Prerequisites}
+\subsection{Prerequisite map}
+
+\begin{center}
+\begin{tabular}{>{\bfseries}P{0.16\textwidth}P{0.34\textwidth}P{0.40\textwidth}}
+\toprule
+Source & Reusable idea & Role in CS4234 \\
+\midrule
+CS3230
+& Asymptotic analysis, recurrences, and input encoding
+& State running times in the true input length and distinguish polynomial
+  from pseudo-polynomial algorithms. \\
+CS3230
+& Loop invariants, induction, exchange arguments, and optimal substructure
+& Prove feasibility, optimality, approximation ratios, and termination. \\
+CS3230
+& Greedy algorithms, dynamic programming, graph algorithms, and randomization
+& Supply exact subroutines and recurring algorithm-design patterns. \\
+CS3230/CS4269
+& Polynomial-time reductions and NP-completeness
+& Explain why an exact polynomial-time algorithm may be unlikely and motivate
+  relaxations, approximation, or restricted cases. \\
+CS4269
+& Propositional semantics, satisfiability, and formula encodings
+& Turn combinatorial choices into Boolean or $0$--$1$ variables with explicit
+  constraints. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Topics such as compactness, Hilbert systems, first-order logic, and
+computability remain useful background, but they are not part of this compact
+optimization prerequisite.
+
+\subsection{The optimization viewpoint}
+
+An optimization problem separates the description of legal solutions from the
+criterion used to rank them.
+
+\begin{definition}[Optimization problem]
+For an instance $I$, let $F(I)$ be its feasible set and let
+$c_I\colon F(I)\to\mathbb{R}$ be its objective.  A minimization problem asks
+for
+\[
+  \OPT(I)=\min_{x\in F(I)}c_I(x),
+\]
+while a maximization problem replaces $\min$ by $\max$.  A complete answer may
+include both an optimal value and a witness $x^*$ attaining that value.
+\end{definition}
+
+The same problem often appears in three forms:
+\begin{itemize}
+  \item \textbf{decision:} is there a feasible solution of value at most $B$
+        (minimization), or at least $B$ (maximization)?
+  \item \textbf{search:} find any feasible solution, possibly satisfying a
+        threshold;
+  \item \textbf{optimization:} find the best feasible solution.
+\end{itemize}
+For an integer-valued objective known to lie in $[L,U]$, an optimization value
+can often be recovered using $O(\log(U-L+1))$ calls to the decision problem.
+This is a polynomial-time reduction when the endpoints have polynomial bit
+length; the bound and encoding must be stated rather than silently assumed.
+
+\paragraph{A standard model.}
+Many problems can be written as
+\[
+  \min\{c^{\mathsf T}x:x\in F\},
+\]
+where $x$ records choices, $F$ records constraints, and $c$ records costs.
+The domain of $x$ matters: $x\in\{0,1\}^n$ is discrete, whereas
+$x\in[0,1]^n$ is a continuous relaxation.  Enlarging $F$ can make a problem
+easier to solve, but may produce a solution that is not feasible for the
+original problem.
+
+\subsection{Asymptotics, input size, and cost models}
+
+For eventually non-negative functions,
+\begin{align*}
+f\in O(g)
+&\iff \exists C>0,\exists n_0,\forall n\ge n_0:\ f(n)\le Cg(n),\\
+f\in \Omega(g)
+&\iff \exists c>0,\exists n_0,\forall n\ge n_0:\ f(n)\ge cg(n),\\
+f\in \Theta(g)
+&\iff f\in O(g)\cap\Omega(g).
+\end{align*}
+Useful limit tests are
+\[
+\lim_{n\to\infty}\frac{f(n)}{g(n)}=0\Rightarrow f\in o(g),\qquad
+0<\lim_{n\to\infty}\frac{f(n)}{g(n)}<\infty\Rightarrow f\in\Theta(g).
+\]
+The robust versions use $\limsup$ and $\liminf$ when the ratio oscillates.
+
+\paragraph{Bit complexity.}
+Running time is measured against the length of the encoded input, not merely
+the numerical value of its parameters.  An integer $W$ requires
+$\Theta(\log(W+1))$ bits in binary.  Consequently, a running time such as
+$O(nW)$ is polynomial in the \emph{value} $W$ but can be exponential in its
+bit length.  Such an algorithm is \textbf{pseudo-polynomial}.  This distinction
+is central for knapsack-style dynamic programs and many weakly NP-hard
+optimization problems.
+
+\paragraph{Cost accounting.}
+For every claimed bound, identify:
+\begin{enumerate}
+  \item the input-size parameters and their encodings;
+  \item the number of iterations, states, or recursive calls;
+  \item the cost of each operation or oracle call; and
+  \item any hidden dependence on numerical precision.
+\end{enumerate}
+A recurrence such as $T(n)=aT(n/b)+f(n)$ is appropriate for recursive
+decomposition.  Iterative optimization algorithms are often clearer as
+\[
+  \text{preprocessing cost}
+  + (\text{number of iterations})(\text{cost per iteration}).
+\]
+
+\subsection{Proof obligations for algorithms}
+
+The loop-invariant template from CS3230 remains the default proof pattern:
+\emph{initialization}, \emph{maintenance}, and \emph{termination}.  For a
+recursive algorithm, replace the invariant by induction on the instance size.
+For optimization, separate the claims that are easy to accidentally conflate.
+
+\begin{enumerate}
+  \item \textbf{Feasibility:} the returned solution lies in $F(I)$.
+  \item \textbf{Value guarantee:} its objective satisfies the promised bound.
+  \item \textbf{Optimality or approximation:} compare it with every feasible
+        solution, a lower/upper bound, or an optimal witness.
+  \item \textbf{Termination and complexity:} the procedure finishes within the
+        claimed resources under the stated computational model.
+\end{enumerate}
+
+For a non-negative objective and an $\alpha$-approximation with $\alpha\ge1$,
+the usual conventions are
+\[
+\begin{array}{ll}
+\text{minimization:} & \OPT(I)\le\ALG(I)\le\alpha\OPT(I),\\[2pt]
+\text{maximization:} & \OPT(I)/\alpha\le\ALG(I)\le\OPT(I).
+\end{array}
+\]
+Feasibility gives one side of each inequality; the real proof is the other
+side.  A common strategy is to compare the algorithm against a certificate
+bound $L(I)\le\OPT(I)$ for minimization or $U(I)\ge\OPT(I)$ for maximization.
+
+\paragraph{Reusable proof patterns.}
+\begin{itemize}
+  \item \textbf{Exchange argument:} transform an optimum so that it agrees
+        with the greedy choice without worsening its value.
+  \item \textbf{Optimal substructure:} after fixing a decision, the remainder
+        is an optimal solution to a well-defined subproblem.
+  \item \textbf{Charging argument:} charge the cost of the computed solution
+        to parts of an optimum, with bounded charge per part.
+  \item \textbf{Relaxation bound:} compare an integral solution with the value
+        of a relaxation whose feasible region contains all integral solutions.
+\end{itemize}
+
+\subsection{Algorithm-design tools retained from CS3230}
+
+\paragraph{Dynamic programming.}
+A DP proof should state the subproblem, recurrence, base cases, evaluation
+order, and recovery of a witness.  If $D[s]$ denotes the best value for state
+$s$, the key equality is justified by partitioning all feasible solutions by
+their last decision:
+\[
+  D[s]=\operatorname*{opt}_{a\in A(s)}
+       \{\operatorname{cost}(s,a)+D[\operatorname{next}(s,a)]\}.
+\]
+The running time is the number of reachable states times the transition cost.
+State coordinates that range up to a numeric value such as a capacity $W$ are
+where pseudo-polynomial behaviour usually enters.
+
+\paragraph{Greedy algorithms.}
+A locally best choice is not a proof.  Correctness normally requires an
+exchange argument, a stays-ahead invariant, or a structural property such as
+a cut property.  When no such proof exists, the same greedy rule may still be
+useful as a heuristic or approximation algorithm, but its guarantee must be
+analysed separately.
+
+\paragraph{Graph subroutines.}
+Shortest paths, minimum spanning trees, maximum flow, matching, and
+connectivity recur as exact subroutines and as sources of relaxations.  Always
+record their preconditions: for example, Dijkstra's algorithm requires
+non-negative edge weights, whereas Bellman--Ford permits negative edges but
+must detect reachable negative cycles.
+
+\subsection{Probability toolkit for randomized optimization}
+
+Let $X_1,\ldots,X_n$ be random variables and let
+$X=\sum_i X_i$.  The most reusable facts from CS3230 are
+\begin{align*}
+\mathbb{E}[X]&=\sum_i\mathbb{E}[X_i]
+&&\text{(no independence required)},\\
+\Pr\!\left[\bigcup_i A_i\right]&\le\sum_i\Pr[A_i]
+&&\text{(union bound)},\\
+\Pr[X\ge t]&\le\frac{\mathbb{E}[X]}{t}
+&&\text{for $X\ge0$ (Markov)}.
+\end{align*}
+Indicator variables $X_i=\mathbf{1}[A_i]$ turn counting questions into
+expectations because $\mathbb{E}[X_i]=\Pr[A_i]$.
+
+For independent Bernoulli variables with $\mu=\mathbb{E}[X]$ and
+$0<\delta<1$, useful Chernoff forms are
+\[
+  \Pr[X\le(1-\delta)\mu]\le e^{-\delta^2\mu/2},\qquad
+  \Pr[X\ge(1+\delta)\mu]\le e^{-\delta^2\mu/(2+\delta)}.
+\]
+These concentration inequalities require stronger assumptions than linearity
+of expectation; independence must be checked rather than silently assumed.
+
+If one independent run fails with probability at most $q<1$, then $t$ runs
+all fail with probability at most $q^t$.  This is the amplification principle
+seen in Freivalds' algorithm.  In optimization it also supports randomized
+rounding: solve a fractional relaxation, interpret fractional coordinates as
+selection probabilities, and prove objective and feasibility bounds using
+expectation plus concentration.
+
+\subsection{Logic and constraint modelling from CS4269}
+
+A propositional formula has \emph{syntax}; a valuation gives it
+\emph{semantics}.  For a valuation $v$,
+\begin{itemize}
+  \item $v\models\phi$ means that $v$ satisfies $\phi$;
+  \item $\phi$ is satisfiable if some $v$ satisfies it;
+  \item $\phi$ is valid if every $v$ satisfies it;
+  \item $\Gamma\models\phi$ means every model of $\Gamma$ is a model of
+        $\phi$; and
+  \item $\phi\equiv\psi$ means the two formulas have the same models.
+\end{itemize}
+The distinction between satisfiability and validity matters: a feasible
+solution corresponds to \emph{one} satisfying assignment, not to a formula
+that is true under all assignments.
+
+\paragraph{Constraint-encoding recipe.}
+The graph-colouring, Hamiltonian-path, clique, exact-cover, and scheduling
+encodings in CS4269 share one pattern:
+\begin{enumerate}
+  \item introduce a variable for each atomic choice;
+  \item write separate constraints for existence, uniqueness, compatibility,
+        and global requirements;
+  \item conjoin the constraints into one formula;
+  \item prove a two-way correspondence between models and feasible solutions;
+  \item prove that the encoding has polynomial size and is computable in
+        polynomial time.
+\end{enumerate}
+For variables $p_1,\ldots,p_k$, ``exactly one'' is
+\[
+  \left(\bigvee_{i=1}^k p_i\right)
+  \land
+  \left(\bigwedge_{1\le i<j\le k}(\neg p_i\lor\neg p_j)\right).
+\]
+The first part gives existence; the pairwise clauses give uniqueness.
+
+\subsection{From Boolean constraints to binary optimization}
+
+Set $x_i=1$ when proposition $p_i$ is true and $x_i=0$ otherwise.  Common
+logical constraints then become linear inequalities:
+
+\begin{center}
+\begin{tabular}{P{0.36\textwidth}P{0.43\textwidth}}
+\toprule
+Boolean constraint & $0$--$1$ linear form \\
+\midrule
+$p_1\lor\cdots\lor p_k$
+  & $x_1+\cdots+x_k\ge1$ \\
+$p\rightarrow q$
+  & $x_p\le x_q$ \\
+exactly one of $p_1,\ldots,p_k$
+  & $x_1+\cdots+x_k=1$ \\
+$z\leftrightarrow(p\land q)$
+  & $z\le x_p$, $z\le x_q$, and $z\ge x_p+x_q-1$ \\
+clause $\ell_1\lor\cdots\lor\ell_k$
+  & $\sum_{\ell_i=p_j}x_j+\sum_{\ell_i=\neg p_j}(1-x_j)\ge1$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph{Example: minimum vertex cover.}
+For a graph $G=(V,E)$, let $x_v$ indicate whether vertex $v$ is selected:
+\[
+  \min\sum_{v\in V}x_v
+  \quad\text{subject to}\quad
+  x_u+x_v\ge1\quad\forall\{u,v\}\in E,
+  \qquad x_v\in\{0,1\}.
+\]
+Each edge constraint is the clause $p_u\lor p_v$.  Replacing
+$x_v\in\{0,1\}$ by $0\le x_v\le1$ gives a linear relaxation.  Its feasible
+region is larger, so for this minimization problem its optimum is a lower
+bound on the integral optimum.
+
+\subsection{Complexity classes and reductions}
+
+\begin{definition}[Core classes]
+$\PTIME$ is the class of decision problems solvable in polynomial time.
+$\NP$ is the class whose \YES{} instances have polynomial-size certificates
+verifiable in polynomial time.  A problem $B$ is NP-hard if every problem in
+$\NP$ polynomial-time reduces to $B$; it is NP-complete if, in addition,
+$B\in\NP$.
+\end{definition}
+
+A polynomial-time many-one reduction $A\le_p B$ is a polynomial-time
+computable map $f$ such that
+\[
+  x\in A\iff f(x)\in B.
+\]
+The direction has an operational meaning: an algorithm for $B$ would yield an
+algorithm for $A$.  To prove that $B$ is hard, reduce a known hard problem
+\emph{to} $B$, not the other way around.
+
+Every reduction proof has three obligations:
+\begin{enumerate}
+  \item \textbf{construction:} define $f(x)$ completely;
+  \item \textbf{correctness:} prove both directions of
+        $x\in A\iff f(x)\in B$; and
+  \item \textbf{complexity:} prove that $f$ runs in polynomial time and its
+        output has polynomial encoded size.
+\end{enumerate}
+The SAT encodings from CS4269 are reductions when they satisfy exactly these
+obligations.  Cook--Levin supplies the central starting point: SAT is
+NP-complete.
+
+\paragraph{Decision versus optimization hardness.}
+NP-completeness formally applies to decision problems.  To discuss an
+optimization problem, define its threshold version.  For example, the
+decision version of minimum vertex cover asks whether a cover of size at most
+$k$ exists.  If an exact optimizer ran in polynomial time, evaluating whether
+its returned value is at most $k$ would solve this decision problem in
+polynomial time.  Thus NP-hardness of the threshold problem implies NP-hardness
+of exact optimization.
+
+\subsection{A checklist for the rest of CS4234}
+
+For each new problem or algorithm, record the following before doing algebra:
+\begin{enumerate}
+  \item What is the instance, and what is its encoded length?
+  \item What are the variables, feasible solutions, and objective direction?
+  \item Is the task decision, search, or optimization?
+  \item What invariant, exchange, induction, charging, or relaxation argument
+        proves the guarantee?
+  \item Is the guarantee exact, approximate, expected, or with high
+        probability?
+  \item Does the runtime depend polynomially on the bit length, or only on a
+        numerical value?
+  \item For a reduction, is the direction correct, is the equivalence proved
+        both ways, and is the construction polynomial in encoded size?
+\end{enumerate}
+
+\bigskip
+
+
+
+
+\section{Lecture 1: Approximation Algorithm}
+
+\subsection{Definiton}
+$p-$Approximation: 
+\begin{itemize}
+  \item Minimization: 
+  \[ALG \leq p \cdot OPT \implies \frac{ALG}{OPT} \leq p\]
+  \item Maximization:
+  \[\frac{OPT}{p} \leq ALG \implies \frac{OPT}{ALG} \leq p\]
+\end{itemize}
+\subsection{General Approach}
+\begin{enumerate}
+  \item Relax
+  \item Decompose
+  \item Compare 
+  \item Conclude
+\end{enumerate}
+
+\subsection{Example: Greedy algorithms on 0/1 knapsack}
+We can relax 0/1 knapsack to fractional knapsack, for which prioritizing items by highest value density is optimal. Applying the same ordering to whole items is a natural first greedy approach, but it can be arbitrarily bad for 0/1 knapsack.
+
+\subsubsection*{Value-density-first greedy}
+\begin{algorithm}[H]
+  \caption{Value-density-first greedy for 0/1 knapsack}
+  \KwIn{
+    Values $v_1,\ldots,v_n$, weights $w_1,\ldots,w_n$, capacity $W$
+  }
+  \KwOut{
+    A feasible item set $S_D$ and its total value $V_D$
+  }
+  $F \gets \{i \in \{1,\ldots,n\}:w_i\leq W\}$\;
+  Sort the items in $F$ by non-increasing density $v_i/w_i$\;
+  $S_D \gets \varnothing$, $W_D \gets 0$, $V_D \gets 0$\;
+  \ForEach{$i \in F$ in density order}{
+    \If{$W_D+w_i>W$}{
+      \textbf{break}\;
+    }
+    $S_D \gets S_D\cup\{i\}$\;
+    $W_D \gets W_D+w_i$\;
+    $V_D \gets V_D+v_i$\;
+  }
+  \Return $(S_D,V_D)$\;
+\end{algorithm}
+
+\subsubsection*{Counter example}
+Consider 
+\begin{align*}
+  v &= \{2, W\}\\
+  w &= \{1, W\}
+\end{align*}
+The value-density-first algorithm takes only the first item and returns value $2$, while the optimal solution takes the second item and returns $W$. 
+\[\frac{OPT}{ALG} = \frac{W}{2}\]
+There is no constant approximation factor, meaning this algorithm can give us arbitrarily bad result. 
+\subsubsection*{Identify the gap}
+From the counter example, we can see that a gap is caused by high-value low density (consequently high weight) items. 
+This suggests another greedy approach: prioritize items by value rather than by density.
+
+\begin{algorithm}[H]
+  \caption{Value-first greedy for 0/1 knapsack}
+  \KwIn{
+    Values $v_1,\ldots,v_n$, weights $w_1,\ldots,w_n$, capacity $W$
+  }
+  \KwOut{
+    A feasible item set $S_V$ and its total value $V_V$
+  }
+  $F \gets \{i \in \{1,\ldots,n\}:w_i\leq W\}$\;
+  Sort the items in $F$ by non-increasing value $v_i$\;
+  $S_V \gets \varnothing$, $W_V \gets 0$, $V_V \gets 0$\;
+  \ForEach{$i \in F$ in value order}{
+    \If{$W_V+w_i\leq W$}{
+      $S_V \gets S_V\cup\{i\}$\;
+      $W_V \gets W_V+w_i$\;
+      $V_V \gets V_V+v_i$\;
+    }
+  }
+  \Return $(S_V,V_V)$\;
+\end{algorithm}
+
+This solves the problem of overlooking a high-value item, but it can still be arbitrarily bad.
+\subsubsection*{Counter example for value-first greedy}
+Let the capacity be $W>2$, with one heavy item and $W$ unit items:
+\begin{align*}
+  v &= \{2, \underbrace{1,1,\ldots,1}_{W\text{ items}}\},\\
+  w &= \{W, \underbrace{1,1,\ldots,1}_{W\text{ items}}\}.
+\end{align*}
+Value-first greedy takes the heavy item, fills the knapsack, and returns value $2$. The optimal solution takes all $W$ unit items and has value $W$. Therefore,
+\[
+  \frac{OPT}{ALG}=\frac{W}{2}\longrightarrow\infty.
+\]
+Thus neither density-first nor value-first greedy has a constant approximation factor by itself.
+
+\subsubsection*{Modified greedy: keep the better candidate}
+The fractional solution is a whole-item density-greedy prefix plus a fraction of the first item that does not fit. This identifies the two candidates needed for the repair: the density-greedy prefix and the best feasible singleton.
+
+\begin{algorithm}[H]
+  \caption{Modified two-candidate greedy for 0/1 knapsack}
+  \KwIn{
+    Values $v_1,\ldots,v_n$, weights $w_1,\ldots,w_n$, capacity $W$
+  }
+  \KwOut{
+    A feasible item set $S$ and its total value
+  }
+  $F \gets \{i \in \{1,\ldots,n\}:w_i\leq W\}$\;
+  \If{$F=\varnothing$}{
+    \Return $(\varnothing,0)$\;
+  }
+  Sort the items in $F$ by non-increasing density $v_i/w_i$\;
+  $S_G \gets \varnothing$, $W_G \gets 0$, $V_G \gets 0$\;
+  \ForEach{$i \in F$ in density order}{
+    \If{$W_G+w_i>W$}{
+      \textbf{break}\;
+    }
+    $S_G \gets S_G\cup\{i\}$\;
+    $W_G \gets W_G+w_i$\;
+    $V_G \gets V_G+v_i$\;
+  }
+  $i_{\max}\gets\arg\max_{i\in F}v_i$\;
+  $S_M\gets\{i_{\max}\}$, $V_M\gets v_{i_{\max}}$\;
+  \eIf{$V_G\geq V_M$}{
+    \Return $(S_G,V_G)$\;
+  }{
+    \Return $(S_M,V_M)$\;
+  }
+\end{algorithm}
+
+The value-first greedy solution always contains the best feasible singleton, so it could replace the singleton candidate and would preserve the guarantee. The singleton is used because it is the minimal repair required by the proof.
+
+\subsection{Strategy: Pick the best among candidate algorithm results}
+Suppose our goal is to maximize $g(x)$,  where
+\[g(x) = f_1(x) + f_2(x) + \dots + f_n(x)\]
+But we only have an optimal solution $x_i$ for each individual function $f_i$. Consider 
+\[g'(x) = \max_{j \in [1, n]}\{\sum_{n}^{i = 1} f_i(x_j)\}\]
+We can show that this will give us a solution at worst n times less the optimal solution. 
+\begin{proof}
+  Suppose there exists an optimal solution $x^*$, such that $\forall x, g(x^*) \geq g(x)$
+  thus we have 
+  \[OPT = \sum_{i=1}^{n} f_i(x^*)\]
+  Given that we have the local optimal $x_i$ for each $f_i$, we also have
+    \[\forall i \leq n,f_i(x^*) \leq f_i(x_i)\\\]
+    \[OPT = \sum_{i=1}^{n} f_i(x^*) \leq \sum_{i=1}^{n} f_i(x_i) \leq \sum_{j=1}^{n}\sum_{i=1}^{n}f_i(x_j) \leq n \times \max_{j \in [1, n]}\{\sum_{n}^{i = 1} f_i(x_j)\} = n\cdot ALG\]
+    \[ALG\geq \frac{OPT}{n}\]
+\end{proof}
+
+
+The important constraint of picking candidate algorithms is to make sure that 
+\[OPT \leq \sum_i A_i\]
+In the 0/1 knapsack problem, this guarantee is enforced, as the optimal solution for fractional knapsack
+\[G + \alpha v_j\]
+where $0 \leq \alpha \leq 1$, and $v_j$ is the partially taken item in the greedy solution to the fractional problem. From this we have a series of inequalities:
+\[G + \alpha v_j \leq G + v_j \leq G + v_{\max}\]
+And as the fractional version is a relaxed version of the integral version, meaning 
+\[OPT \leq G + \alpha v_j\]
+Our modified algorihtm gives us 
+\[ALG = \max(G, v_{\max}) \geq \frac{G + v_{\max}}{2}\]
+Overall 
+\[OPT \leq 2 \cdot ALG\]
+
+\subsection{Example: Subset-sum}
+Consider the optimization version of the subset sum problem, where given a set $S$, find the max sum of $S' \subseteq S$ such that $\sum S' \leq B$. 
+
+\subsubsection*{Greedy approach}
+An obvious greedy solution would be to select the largest numbers first. 
+
+\begin{algorithm}[H]
+  \KwIn{Set $S$, threshold $B$}
+  \KwOut{
+    Subset sum $S'$
+  }
+
+  $S' \gets \emptyset$\;
+  \ForEach{$s_i \in S$ in descending order}{
+    \If{$B - \sum S' < s_i$}{
+      \Return{$S'$}\;
+    } 
+    \Else {
+      $S' \gets S' \cup \{s_i\}$\;
+      $B \gets B + s_i$\;
+    }
+  }
+  \Return{$S'$}\;
+\end{algorithm}
+
+We can construct a counter example simiarly to the highest-value first greedy approach for knapsack:
+Consider 
+\[S = \{100, 51, 51\}, B = 102\]
+The greedy algorithm gives us 100, while optimal solution is 102. However in this case the greedy algorithm is already a 2-approximation. 
+\begin{proof}
+  Let the greedy sum be $G$, and the largest feasible number is $M$. Given that we select from the largest, we have $G \geq M$ OR $G = 0$.
+  in the case of $G = 0$, meaning there is no feaible element, thus $OPT = ALG = 0$. Remaining 2 non trivial cases: 
+  \subsubsection*{case 1: $G < \frac{B}{2}$}
+  We will show that $G < \frac{B}{2} \implies G = OPT$. 
+  According to our algorithm, suppose a rejection happens after selection some elements, a partial sum $s \leq G$, due to over capacity, meaning
+  \[s + a_i > B, \quad s > B - a_i\]
+  Under our assumption, 
+  \[B - a_i < s \leq G < \frac{B}{2}\]
+  \[a_i > \frac{B}{2}\]
+  Suppose the first largest item exist in thr selection, 
+  \[G \geq a_1 \geq a_i > \frac{B}{2}\]
+  contradition, as we assume $G < \frac{B}{2}$
+  \subsubsection*{case 2: $G \geq \frac{B}{2}$}
+  given that $OPT \leq B$, 
+  \[\frac{OPT}{2} \leq \frac{B}{2} < G\]
+\end{proof}
+
+
+\subsection{Heuristic}
+\subsection{Set cover}
+Given a universe $U$ and a family of candidate sets $\mathcal{S}_U$, each
+$S\in\mathcal{S}_U$ has a non-negative cost $\operatorname{cost}(S)$. The
+weighted set cover problem asks for a subfamily $S'\subseteq\mathcal{S}_U$
+such that
+\[
+  \bigcup_{S\in S'}S=U,
+\]
+while minimizing $\sum_{S\in S'}\operatorname{cost}(S)$.
+
+\subsubsection*{Greedy score}
+Let $R$ be the set of elements that remain uncovered. For every set that can
+still cover at least one new element, define
+\[
+  \operatorname{score}(S)=
+  \frac{\operatorname{cost}(S)}{|S\cap R|}.
+\]
+This is the average cost per newly covered element. Greedy repeatedly chooses
+a set of minimum score.
+
+\begin{algorithm}[H]
+\KwIn{Universe $U$, candidate family $\mathcal{S}_U$ with costs}
+\KwOut{A set cover $S'\subseteq\mathcal{S}_U$}
+$R\gets U$ and $S'\gets\emptyset$\;
+\While{$R\neq\emptyset$}{
+  $A_i\gets\displaystyle
+  \arg\min_{\substack{S\in\mathcal{S}_U\\S\cap R\neq\emptyset}}
+  \dfrac{\operatorname{cost}(S)}{|S\cap R|}$\;
+  $S'\gets S'\cup\{A_i\}$\;
+  $R\gets R\setminus A_i$\;
+}
+\Return{$S'$}\;
+\end{algorithm}
+
+We prove
+\[
+  \ALG\leq H_n\OPT\leq(1+\ln n)\OPT,
+  \qquad
+  H_n=\sum_{j=1}^{n}\frac1j,\qquad n=|U|.
+\]
+
+\begin{proof}
+Assume the instance is feasible, so
+$\bigcup_{S\in\mathcal{S}_U}S=U$. The invariant is
+\[
+  U\setminus R=\bigcup_{A\in S'}A:
+\]
+the elements removed from $R$ are exactly those covered by the sets already
+selected. If $R\neq\emptyset$, feasibility guarantees a candidate set with
+$S\cap R\neq\emptyset$, so every iteration removes at least one element from
+$R$. Hence the algorithm terminates with $R=\emptyset$ and $S'$ is a cover.
+
+\medskip
+\noindent
+\textcolor{algblue}{\textbf{Blue: express the greedy cost exactly.}}\quad
+\textcolor{optred}{\textbf{Red: bound prices using OPT.}}\quad
+\textcolor{bridgepurple}{\textbf{Purple: combine the two.}}
+
+\subsubsection*{\textcolor{algblue}{1. Rewrite the greedy cost as element prices}}
+
+Let $R_i$ be the set of uncovered elements at the beginning of iteration $i$,
+and let $A_i$ be the set selected in that iteration. The elements newly
+covered in this iteration are exactly $A_i\cap R_i$. For each
+$e\in A_i\cap R_i$, define
+\[
+  \color{algblue}
+  p(e)=\frac{\operatorname{cost}(A_i)}{|A_i\cap R_i|}.
+\]
+This is an accounting price, not an intrinsic cost of $e$. Already-covered
+elements of $A_i$ are not charged again. The prices assigned in iteration
+$i$ recover exactly the cost of $A_i$:
+\[
+  \color{algblue}
+  \sum_{e\in A_i\cap R_i}p(e)
+  =|A_i\cap R_i|\frac{\operatorname{cost}(A_i)}{|A_i\cap R_i|}
+  =\operatorname{cost}(A_i).
+\]
+Every element is newly covered exactly once, so summing over all iterations
+gives the exact identity
+\[
+  \color{algblue}
+  \boxed{\ALG=\sum_{A\in S'}\operatorname{cost}(A)
+  =\sum_{e\in U}p(e).}
+\]
+
+\subsubsection*{\textcolor{optred}{2. Use one optimal set to bound its elements' prices}}
+
+Let $\mathcal{O}\subseteq\mathcal{S}_U$ be a fixed optimal cover and define
+\[
+  \color{optred}
+  \OPT=\sum_{S\in\mathcal{O}}\operatorname{cost}(S).
+\]
+Fix any one set $S^*\in\mathcal{O}$ and let $m=|S^*|$. The set $S^*$ may or
+may not also be selected by greedy; the proof only needs it to be an available
+candidate for comparison.
+
+Order its elements by when greedy first covers them:
+\[
+  S^*=\{e_1,e_2,\ldots,e_m\}.
+\]
+If several elements are first covered in the same iteration, break the tie
+arbitrarily. Let $j(t)$ be the iteration in which $e_t$ is first covered and
+define
+\[
+  r_t=|S^*\cap R_{j(t)}|.
+\]
+Immediately before that iteration, at least
+$e_t,e_{t+1},\ldots,e_m$ are still uncovered. Therefore
+\[
+  r_t\geq m-t+1.
+\]
+At iteration $j(t)$, greedy chooses $A_{j(t)}$ with minimum score. Comparing
+its score with the available candidate $S^*$ gives
+\[
+  \color{optred}
+  \begin{aligned}
+  p(e_t)
+  &=\frac{\operatorname{cost}(A_{j(t)})}
+          {|A_{j(t)}\cap R_{j(t)}|}\\
+  &\leq\frac{\operatorname{cost}(S^*)}{|S^*\cap R_{j(t)}|}
+   =\frac{\operatorname{cost}(S^*)}{r_t}\\
+  &\leq\frac{\operatorname{cost}(S^*)}{m-t+1}.
+  \end{aligned}
+\]
+The same inequality handles simultaneous coverage: tied elements are all
+still in $R_{j(t)}$ before that iteration, making $r_t$ larger and the bound
+only stronger. Summing over the elements of this one optimal set,
+\[
+  \color{optred}
+  \begin{aligned}
+  \sum_{e\in S^*}p(e)
+  &=\sum_{t=1}^{m}p(e_t)\\
+  &\leq\operatorname{cost}(S^*)
+    \sum_{t=1}^{m}\frac1{m-t+1}\\
+  &=\operatorname{cost}(S^*)H_m
+   \leq\operatorname{cost}(S^*)H_n.
+  \end{aligned}
+\]
+This is a bound on the \emph{accounting prices of elements in $S^*$}; it is
+not a separate cost paid by greedy to cover only those elements.
+
+\subsubsection*{\textcolor{bridgepurple}{3. Bridge the optimal-set bounds back to ALG}}
+
+Every $e\in U$ belongs to at least one set in the optimal cover $\mathcal O$.
+Thus the middle sum below counts every $p(e)$ at least once (and may count it
+more than once when optimal sets overlap):
+\[
+  \color{bridgepurple}
+  \begin{aligned}
+  \ALG
+  &=\sum_{e\in U}p(e)\\
+  &\leq\sum_{S^*\in\mathcal O}\sum_{e\in S^*}p(e)\\
+  &\leq\sum_{S^*\in\mathcal O}
+      H_n\operatorname{cost}(S^*)\\
+  &=H_n\OPT.
+  \end{aligned}
+\]
+Therefore greedy weighted set cover is an $H_n$-approximation, and since
+$H_n\leq1+\ln n$, it is also a $(1+\ln n)$-approximation.
+\end{proof}
+
+
+\subsection{Vertex Cover as a special case of Set cover}
+Vertex cover can be seen as a special case of set cover with additional structure. In set cover we need to cover all elements, 
+while in vertex cover we are covering edges. The additional structure is the fact that each edge, the element we want to cover, only exist in 
+exactly 2 "sets", which are the vertices. 
+\subsubsection*{Stronger structure may give better approximation}
+\begin{algorithm}[H]
+  \KwIn{$G = (V, E)$}
+  \KwOut{$n$}
+  $M \gets \emptyset$
+  \While{$E \neq \emptyset$}{
+    Choose any remaining $e \in E$\;
+    $M \gets M \cup \{e\}$\;
+    \ForEach{$e' \in E, e'$ incident to $e$}{
+      $E \gets E \setminus \{e'\}$\;
+    }
+  }
+  \Return{$M$}\;
+\end{algorithm}
+We can show that this simple algorithm yields 2-approximation. 
+\begin{proof}
+  \subsubsection*{Feasibility}
+  First we need to show the correctness (feasibility) of this algorithm. Consider otherwise, 
+  there exist uncovered edges, meaning both endpoints $u, v$ of the edge do not incident to a matched 
+  edge $e \in M$, meaning $\{u, v\}$ is disjoint, and therefore could be added to $M$, contradicting to 
+  the maximality of $M$. 
+  \subsubsection*{Guarantee}
+  A Matching lower-bounds every possible vertex cover, because matching edges are disjoint, so a cover needs 
+  a distinct chosen endpoint for each one, i.e. at least one endpoint for each match.
+  \[|M| \leq OPT\]
+  Our algorithm takes both endpoint, thus 
+  \[ALG = 2\cdot |M| \leq 2\cdot OPT\]
+\end{proof}
+\section*{Tutorial 1}
+\subsection*{Q1}
+\subsubsection*{Counter example of naive random start greedy algorithm}
+\[G = (V, E), \quad V = \{u_0, u_1\} \cup \{v_i \mid i \in [0, n]\}, \quad E = \{(u_0, u_1)\} \cup \{(u_0, v_i), (u_1, v_i) \mid i \in [0, n]\}\]
+
+\begin{tikzpicture}[
+    vertex/.style={circle, draw, minimum size=7mm, inner sep=0pt},
+    every edge/.style={draw}
+]
+
+% u vertices
+\node[vertex] (u0) at (0, 1.5) {$u_0$};
+\node[vertex] (u1) at (0,-1.5) {$u_1$};
+
+% v vertices
+\node[vertex] (v0) at (4, 2.4) {$v_0$};
+\node[vertex] (v1) at (4, 1.2) {$v_1$};
+\node          at (4, 0)       {$\vdots$};
+\node[vertex] (vn) at (4,-2.4) {$v_n$};
+
+% Edge between u_0 and u_1
+\draw (u0) -- (u1);
+
+% Edges to v_0
+\draw (u0) -- (v0);
+\draw (u1) -- (v0);
+
+% Edges to v_1
+\draw (u0) -- (v1);
+\draw (u1) -- (v1);
+
+% Indicate the repeated pattern
+\draw[dashed] (u0) -- (4,0.35);
+\draw[dashed] (u1) -- (4,-0.35);
+
+% Edges to v_n
+\draw (u0) -- (vn);
+\draw (u1) -- (vn);
+
+\end{tikzpicture}
+
+Worst case scenario $(u_0, u_1)$ is never removed, resulting $n$ edges removed instead of 1.
+
+\subsubsection*{Simple greedy solution gives 3-approx}
+Similar to vertex cover, here we are looking for "triangle cover". Similar to a miximal matching set, we can 
+find a maximal set of edge-disjoint triangles. 
+
+\begin{algorithm}[H]
+\KwIn{$G=(V,E)$}
+\KwOut{Set $R$ of edges to remove}
+
+$R \gets \emptyset$\;
+
+\While{$G$ contains a triangle}{
+    Find any triangle $(u,v,w)$ in $G$\;
+
+    $R \gets R \cup \{(u,v),(v,w),(u,w)\}$\;
+
+    Remove edges $(u,v)$, $(v,w)$, and $(u,w)$ from $G$\;
+}
+
+\Return{$R$}\;
+\end{algorithm}
+\begin{proof}
+  \subsubsection*{Feasibility}
+  Trivial
+  \subsubsection*{Guarantee}
+  In the optimal solution, every disjoint triangle needs to have at least 1 edge removed in $OPT$, suppose there
+  are $k$ disjoint triangles, 
+  \[k \leq OPT\]
+  Our algorithm remove all edges of all disjoint triangles, 
+  \[ALG = 3k \leq 3\cdot OPT\]
+\end{proof}
+\subsubsection*{Patching with heurstic function of each edge}
+Rank all candidate edges by the number of traiangles that can be removed. This can be done in 
+polynomial time: 
+\begin{algorithm}[H]
+\KwIn{$G = (V, E)$}
+\KwOut{Number of edges removed $n$}
+$H \gets \emptyset$\;
+$\text{triangleCount} \gets \emptyset$\; % store edges with associated triangle counts in a tree map
+\ForEach{$e = (u, v) \in E$}{
+  $H[u] \gets H[u].\text{append}(v)$\;
+  $H[v] \gets H[v].\text{append}(u)$\; % add edge information to a hashtable
+}   
+while any edge has triangle count > 0:
+  access the edge with most triangles, 
+  remove, 
+  update, 
+  n++
+\Return{$n$\;}
+  
+\end{algorithm}
+
+
+\subsection{Fully polynomial-time approximation scheme}
+
+\subsection{Randomized approximation algorithm}
+\subsection{Example: (Minimum) Vertex Cover}
+\subsubsection{Greedy approach}
+Edge-based greedy selection yields us 2-approximation. 
+
+\begin{algorithm}[H]
+  \KwIn{$G = (V, E)$}
+  \KwOut{$V' \subseteq V$}
+  $V' \gets \emptyset$\;
+  \ForEach{$e = (u, v)\in E$}{
+    \If{$u \in V'$ or $v \in V'$}{
+      continue\;
+    }
+    \Else {
+      $b \gets \text{Random}(0, 1)$\;
+      $z \gets \emptyset$\;
+      \If{$b = 0$}{
+        $z \gets u$\;
+      }
+      \Else {
+        $z \gets v$\;
+      }
+      $V' \gets V' \cup \{z\}$\;
+      $V \gets V \setminus \{z\}$\;
+      \ForEach{$e' = (u', v') \in E$}{
+        \If {$z = u'$ or $z = v'$}{
+          $E \gets E \setminus \{e'\}$\;
+        }
+      }
+    }
+  }
+  \Return{$V'$}\;
+\end{algorithm}
+\begin{proof}
+  Consider the optimal (minimum) vertex cover $V_{OPT} \subseteq V$, and the greedily chosen $V_{ALG}$. Since our
+  algorithm guarantees that 
+  \[\forall e = (u, v) \in E, u \in V_{ALG} \lor v \in V_{ALG}\]
+  The same applies to the optimal cover, i.e. 
+  \[\forall e = (u, v) \in E, u \in V_{OPT} \lor v \in V_{OPT}\]
+
+\end{proof}
+\subsection{Example: MAX-SAT}
+Similarly to vertex cover, a simple random assignment gives us 2-approximation. Given a CNF formula
+\[\varphi = \bigwedge_{i = 1}^{n} \bigvee_{j \in [1, m]} l_{j}\]
+with $n$ clauses, and $m$ boolean variables, a random assignment assigns each variable True or False.
+
+\begin{algorithm}[H]
+\KwIn{CNF $\varphi$}
+\KwOut{Assignment $A \in \{0, 1\}^m$}
+$A \gets \emptyset$\;
+\ForEach{$v \in \varphi.V$}{
+  $b \gets \text{Random}(0,1)$\;
+  $A[v] = b$\;
+}
+\Return {
+  $A$\;
+}
+\end{algorithm}
+\begin{proof}
+Define independent probability vatiabble $p_i$ for each variable in $\varphi$
+\end{proof}
+
+\subsection{Inapproximability}
+
+\end{document}

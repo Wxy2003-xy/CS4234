@@ -1,0 +1,120 @@
+\contentsline {section}{\numberline {1}Core Dynamic Programming Families}{3}{}%
+\contentsline {subsection}{\numberline {1.1}The Knapsack Problem and Its Variants}{3}{}%
+\contentsline {subsubsection}{\numberline {1.1.1}Classical 0/1 Knapsack}{3}{}%
+\contentsline {paragraph}{Problem.}{3}{}%
+\contentsline {paragraph}{Recursive formulation.}{3}{}%
+\contentsline {paragraph}{DP table (bottom-up).}{3}{}%
+\contentsline {subsubsection}{\numberline {1.1.2}Complete (Unbounded) Knapsack}{3}{}%
+\contentsline {paragraph}{Problem.}{3}{}%
+\contentsline {paragraph}{Recursive formulation.}{3}{}%
+\contentsline {paragraph}{DP table formulation.}{3}{}%
+\contentsline {paragraph}{Interpretation.}{3}{}%
+\contentsline {subsubsection}{\numberline {1.1.3}Multiple / Bounded Knapsack}{3}{}%
+\contentsline {paragraph}{Problem.}{3}{}%
+\contentsline {paragraph}{Recursive formulation.}{3}{}%
+\contentsline {paragraph}{DP table formulation.}{3}{}%
+\contentsline {paragraph}{Time complexity.}{4}{}%
+\contentsline {subsubsection}{\numberline {1.1.4}Relationship Between the Variants}{4}{}%
+\contentsline {subsubsection}{\numberline {1.1.5}Summary}{4}{}%
+\contentsline {subsection}{\numberline {1.2}Longest Increasing Subsequence and Its Variants}{4}{}%
+\contentsline {subsubsection}{\numberline {1.2.1}Longest Increasing Subsequence (1D)}{4}{}%
+\contentsline {paragraph}{Problem.}{4}{}%
+\contentsline {paragraph}{DP recurrence (classical $O(n^2)$).}{4}{}%
+\contentsline {paragraph}{Binary-search optimization ($O(n\log n)$).}{4}{}%
+\contentsline {subsubsection}{\numberline {1.2.2}Longest Contiguous Increasing Subarray with Switching Between Price Sources}{4}{}%
+\contentsline {paragraph}{DP formulation.}{4}{}%
+\contentsline {paragraph}{Base case.}{5}{}%
+\contentsline {paragraph}{Recurrence relation.}{5}{}%
+\contentsline {paragraph}{Final answer.}{5}{}%
+\contentsline {paragraph}{Complexity.}{5}{}%
+\contentsline {paragraph}{Summary.}{5}{}%
+\contentsline {subsubsection}{\numberline {1.2.3}LIS in 2D: Longest Increasing Sequence in the Plane}{5}{}%
+\contentsline {paragraph}{Sort + LIS trick.}{5}{}%
+\contentsline {paragraph}{Applications.}{5}{}%
+\contentsline {subsubsection}{\numberline {1.2.4}LIS in a 2D Grid (Monotone Paths)}{5}{}%
+\contentsline {paragraph}{DP formulation.}{5}{}%
+\contentsline {paragraph}{Remarks.}{6}{}%
+\contentsline {subsubsection}{\numberline {1.2.5}Longest Chain in Higher Dimensions}{6}{}%
+\contentsline {subsubsection}{\numberline {1.2.6}Summary of Patterns}{6}{}%
+\contentsline {subsection}{\numberline {1.3}Path DP}{6}{}%
+\contentsline {subsection}{\numberline {1.4}Interval DP}{6}{}%
+\contentsline {section}{\numberline {2}Implementation Strategies and State Design}{6}{}%
+\contentsline {subsection}{\numberline {2.1}Bottom-Up DP: Iterative DP (Coin Change)}{6}{}%
+\contentsline {subsection}{\numberline {2.2}Top-Down DP: Recursion with Memoization (Coin Change)}{7}{}%
+\contentsline {subsection}{\numberline {2.3}Choosing Additional State Dimensions}{7}{}%
+\contentsline {section}{\numberline {3}Classic Dynamic Programming Problem Catalogue}{8}{}%
+\contentsline {subsection}{\numberline {3.1}0/1 Knapsack (Maximize Value Within Capacity)}{8}{}%
+\contentsline {subsection}{\numberline {3.2}Coin Change (Minimum Coins, Unbounded)}{8}{}%
+\contentsline {subsection}{\numberline {3.3}Longest Increasing Subsequence ($O(n^2)$)}{8}{}%
+\contentsline {subsection}{\numberline {3.4}Edit Distance (Levenshtein)}{9}{}%
+\contentsline {subsection}{\numberline {3.5}Regular Expression Matching (LeetCode 10)}{9}{}%
+\contentsline {paragraph}{Problem.}{9}{}%
+\contentsline {paragraph}{State.}{9}{}%
+\contentsline {paragraph}{Base Cases.}{9}{}%
+\contentsline {paragraph}{Recurrence.}{9}{}%
+\contentsline {paragraph}{Bottom-Up DP.}{9}{}%
+\contentsline {paragraph}{Correctness.}{10}{}%
+\contentsline {paragraph}{Complexity.}{10}{}%
+\contentsline {subsection}{\numberline {3.6}Matrix Chain Multiplication}{10}{}%
+\contentsline {subsection}{\numberline {3.7}Longest Common Subsequence}{10}{}%
+\contentsline {subsection}{\numberline {3.8}Subset Sum (Feasibility)}{10}{}%
+\contentsline {subsection}{\numberline {3.9}Weighted Interval Scheduling}{10}{}%
+\contentsline {subsection}{\numberline {3.10}Rod Cutting}{11}{}%
+\contentsline {subsection}{\numberline {3.11}Palindrome Partitioning II (Minimum Cuts)}{11}{}%
+\contentsline {subsection}{\numberline {3.12}Egg Dropping}{11}{}%
+\contentsline {subsection}{\numberline {3.13}Catalan Numbers (Count Valid Parentheses/BSTs)}{11}{}%
+\contentsline {subsection}{\numberline {3.14}Word Break (Feasibility with a Dictionary)}{11}{}%
+\contentsline {subsection}{\numberline {3.15}Distinct Subsequences (Count \(S \to T\))}{12}{}%
+\contentsline {subsection}{\numberline {3.16}Longest Palindromic Subsequence}{12}{}%
+\contentsline {subsection}{\numberline {3.17}Tree Minimum Vertex Cover (Rooted)}{12}{}%
+\contentsline {subsection}{\numberline {3.18}Traveling Salesman (Bitmask DP)}{12}{}%
+\contentsline {subsection}{\numberline {3.19}Grid Minimum Path Sum (Right/Down Moves)}{12}{}%
+\contentsline {subsection}{\numberline {3.20}Interleaving String (Feasibility)}{13}{}%
+\contentsline {subsection}{\numberline {3.21}Bellman--Ford from a Dynamic Programming Perspective}{13}{}%
+\contentsline {paragraph}{Problem.}{13}{}%
+\contentsline {paragraph}{DP Formulation.}{13}{}%
+\contentsline {paragraph}{Recurrence.}{13}{}%
+\contentsline {paragraph}{Key Observation.}{13}{}%
+\contentsline {paragraph}{Bellman--Ford Algorithm.}{13}{}%
+\contentsline {paragraph}{Detecting Negative Cycles.}{13}{}%
+\contentsline {paragraph}{DP Interpretation.}{13}{}%
+\contentsline {paragraph}{Time Complexity.}{14}{}%
+\contentsline {paragraph}{Conclusion.}{14}{}%
+\contentsline {subsection}{\numberline {3.22}Floyd--Warshall (All-Pairs Shortest Paths)}{14}{}%
+\contentsline {subsection}{\numberline {3.23}Maximum Score from Multiplication Operations (LeetCode 1770)}{14}{}%
+\contentsline {paragraph}{Problem.}{14}{}%
+\contentsline {paragraph}{State Definition.}{14}{}%
+\contentsline {paragraph}{Base Case.}{15}{}%
+\contentsline {paragraph}{Recurrence.}{15}{}%
+\contentsline {paragraph}{Why the Recurrence is Correct.}{15}{}%
+\contentsline {paragraph}{Time and Space Complexity.}{15}{}%
+\contentsline {section}{\numberline {4}High-Dimensional Dynamic Programming}{15}{}%
+\contentsline {subsection}{\numberline {4.1}LCS of Three Strings (3D)}{16}{}%
+\contentsline {subsection}{\numberline {4.2}0/1 Knapsack with Exactly \(K\) Items}{16}{}%
+\contentsline {subsection}{\numberline {4.3}2D Knapsack (Weight and Volume)}{16}{}%
+\contentsline {subsection}{\numberline {4.4}Count Grid Paths with at Most \(K\) Turns}{17}{}%
+\contentsline {subsection}{\numberline {4.5}Traveling Salesman (Bitmask DP)}{17}{}%
+\contentsline {paragraph}{Problem.}{17}{}%
+\contentsline {paragraph}{State.}{18}{}%
+\contentsline {paragraph}{Base Case.}{18}{}%
+\contentsline {paragraph}{Recurrence.}{18}{}%
+\contentsline {paragraph}{Answer.}{18}{}%
+\contentsline {paragraph}{Bottom-Up Bitmask DP.}{18}{}%
+\contentsline {paragraph}{Correctness.}{18}{}%
+\contentsline {paragraph}{Complexity.}{19}{}%
+\contentsline {subsection}{\numberline {4.6}Minimum Cost to Merge Stones (LeetCode 1000)}{19}{}%
+\contentsline {paragraph}{Problem.}{19}{}%
+\contentsline {paragraph}{Feasibility Condition.}{19}{}%
+\contentsline {paragraph}{Prefix Sums.}{19}{}%
+\contentsline {paragraph}{State.}{19}{}%
+\contentsline {paragraph}{Base Case.}{19}{}%
+\contentsline {paragraph}{Recurrence.}{19}{}%
+\contentsline {paragraph}{Bottom-Up Interval DP.}{19}{}%
+\contentsline {paragraph}{Correctness.}{20}{}%
+\contentsline {paragraph}{Complexity.}{20}{}%
+\contentsline {section}{\numberline {5}Pseudo-Polynomial Dynamic Programming}{20}{}%
+\contentsline {subsection}{\numberline {5.1}Overview}{20}{}%
+\contentsline {subsection}{\numberline {5.2}Counting $(r,\ell )$-Spaced Subsets in $O(rn \log n)$ Time}{20}{}%
+\contentsline {paragraph}{Base Cases.}{20}{}%
+\contentsline {paragraph}{Case 1: Use element \(A[i]\).}{20}{}%
+\contentsline {paragraph}{Case 2: Do not use element \(A[i]\).}{21}{}%

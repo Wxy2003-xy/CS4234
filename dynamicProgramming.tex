@@ -1,0 +1,1696 @@
+\documentclass[9pt]{extarticle}
+
+% Encoding and typography
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+
+% Mathematics
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{dsfont}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{invariant}{Invariant}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+
+% Lists, code, and colour
+\usepackage{enumerate}
+\usepackage{xcolor}
+\usepackage{listings}
+
+% Figures and diagrams
+\usepackage{graphicx}
+\usepackage{pdfpages}
+\usepackage{tikz-cd}
+\usepackage{tikz}
+\usepackage{forest}
+\usetikzlibrary{arrows.meta,calc,decorations.pathreplacing,trees}
+
+% Page layout and headings
+\usepackage{titlesec}
+\titlespacing*{\subsubsection}{0pt}{3pt plus 1pt minus 1pt}{1pt}
+\usepackage[
+  twoside,
+  left=0.8in,
+  right=0.8in,
+  top=0.8in,
+  bottom=0.8in,
+  bindingoffset=1cm
+]{geometry}
+
+\setcounter{tocdepth}{2}
+\setcounter{secnumdepth}{3}
+\linespread{0.9}
+
+\lstset{
+  frame=tb,
+  language=C,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,   
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{brown},
+  stringstyle=\color{orange},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
+
+\begin{document}
+
+\title{Dynamic Programming Notes}
+\author{@Wxy2003-xy}
+\date{}
+\maketitle
+
+\newpage
+\tableofcontents
+\newpage
+
+% ============================================================================
+% Core problem families
+% ============================================================================
+\section{Core Dynamic Programming Families}
+\subsection{The Knapsack Problem and Its Variants}
+
+The family of knapsack problems is central in algorithm design and dynamic
+programming.  Each variant differs in whether items may be taken once, 
+infinitely many times, or with bounded multiplicities.  
+We discuss the standard recursive formulation, derive each recurrence, and 
+show how the recurrences translate into tabulated DP algorithms.
+
+\subsubsection{Classical 0/1 Knapsack}
+
+\paragraph{Problem.}
+Given $n$ items, each with weight $w_i$ and value $v_i$, and knapsack capacity
+$W$, find the maximum total value using each item at most once.
+
+\paragraph{Recursive formulation.}
+Let $K(i,w)$ be the maximum value achievable using the first $i$ items within
+capacity $w$.
+
+Base cases:
+\[
+K(0,w) = 0,\qquad K(i,0)=0.
+\]
+
+If item $i$ is too heavy:
+\[
+K(i,w) = K(i-1,w).
+\]
+
+Otherwise:
+\[
+K(i,w) = \max\left(K(i-1,w),\;\; v_i + K(i-1,\, w-w_i)\right).
+\]
+
+\paragraph{DP table (bottom-up).}
+Construct a table $dp[i][w] = K(i,w)$ for $i=0\dots n$, $w=0\dots W$:
+\[
+dp[i][w] =
+\begin{cases}
+dp[i-1][w] & w_i > w,\\[6pt]
+\max\bigl(dp[i-1][w],\; v_i + dp[i-1][w-w_i]\bigr) & w_i \le w.
+\end{cases}
+\]
+
+Time complexity: $\Theta(nW)$.
+
+\subsubsection{Complete (Unbounded) Knapsack}
+
+\paragraph{Problem.}
+Each item $i$ may be taken \emph{infinitely many times}.  
+This changes the structure: the choice to include $i$ does not prevent 
+including it again.
+
+\paragraph{Recursive formulation.}
+Base cases remain $0$.  If $w_i > w$:
+\[
+K(i,w) = K(i-1,w).
+\]
+Otherwise:
+\[
+K(i,w) = \max\left(K(i-1,w),\;\; v_i + K(i,\, w-w_i)\right).
+\]
+
+\emph{Key difference:} the second term uses $K(i,\; w-w_i)$ instead of
+$K(i-1,\;w-w_i)$ because we may reuse item $i$.
+
+\paragraph{DP table formulation.}
+\[
+dp[i][w] =
+\max\bigl(dp[i-1][w],\;\; v_i + dp[i][w-w_i]\bigr).
+\]
+
+To optimize, we loop $w$ \emph{increasing}:
+\[
+\text{for } i=1..n:
+\quad
+\text{for } w=w_i..W:
+\quad
+dp[w] = \max(dp[w],\; v_i + dp[w-w_i]).
+\]
+
+This avoids repetition and ensures correctness.
+
+\paragraph{Interpretation.}
+This variant resembles coin change, rod cutting, or unbounded production tasks.
+
+\subsubsection{Multiple / Bounded Knapsack}
+
+\paragraph{Problem.}
+Each item $i$ may be taken at most $c_i$ times.
+
+\paragraph{Recursive formulation.}
+Naively:
+\[
+K(i,w) = \max_{0 \le k \le c_i,\; k w_i \le w}
+\left(
+k v_i + K(i-1,\; w - k w_i)
+\right).
+\]
+
+This directly follows from enumerating $k$ copies of item $i$.
+
+\paragraph{DP table formulation.}
+The naive DP:
+\[
+dp[i][w]
+=
+\max_{0 \le k \le c_i,\; k w_i \le w}
+\left(
+dp[i-1][w-k w_i] + k v_i
+\right).
+\]
+
+This takes $O(n W \cdot \max c_i)$ in general and can be improved by
+\emph{binary splitting} (a.k.a. binary optimization) of $c_i$:
+\[
+c_i = (1 + 2 + 4 + \dots + 2^k) + r.
+\]
+This converts bounded knapsack into a series of $O(\log c_i)$ 0/1 knapsack items.
+
+\paragraph{Time complexity.}
+With binary splitting:  
+\[
+O\!\left(W \sum_{i=1}^n \log c_i\right).
+\]
+
+\subsubsection{Relationship Between the Variants}
+
+Each recurrence contains the same structural choices but differs in the 
+subproblem invoked when an item is chosen:
+
+\[
+\begin{array}{c|c}
+\textbf{Variant} & \textbf{Choice if take item $i$} \\ \hline
+0/1 & v_i + K(i-1,\, w-w_i) \\[4pt]
+Unbounded & v_i + K(i,\, w-w_i) \\[4pt]
+Bounded & \max_{k\le c_i} \bigl(k v_i + K(i-1,\, w-k w_i)\bigr)
+\end{array}
+\]
+
+Conceptually:
+\begin{itemize}
+    \item 0/1 Knapsack disallows reuse $\Rightarrow$ previous row only.
+    \item Complete Knapsack allows reuse $\Rightarrow$ current row reused.
+    \item Bounded Knapsack is between them, requiring enumeration or binary expansion.
+\end{itemize}
+
+\subsubsection{Summary}
+
+Knapsack DP always follows the same overarching pattern:
+\[
+\text{value}(w) = \max \{\text{skip item},\;\text{take item (once/many/limited)}\}.
+\]
+
+What differs is the \emph{subproblem} that taking an item leads to:
+\[
+K(i-1,w-w_i) \text{ (0/1)},\;
+K(i,\ w-w_i) \text{ (unbounded)},\;
+K(i-1,w-k w_i) \text{ (bounded)}.
+\]
+
+The transition between the recurrence and the tabulated DP is systematic:
+rows correspond to items, columns correspond to capacities, and 
+the change of index in the “take” case reflects the allowed multiplicities.
+
+\subsection{Longest Increasing Subsequence and Its Variants}
+
+The Longest Increasing Subsequence (LIS) problem is a fundamental example of
+dynamic programming, binary search optimization, and multi-dimensional ordering.
+This subsection summarizes its DP formulation, the $O(n\log n)$ algorithm, and
+common extensions such as 2D LIS on point sets and on 2D grids.
+
+\subsubsection{Longest Increasing Subsequence (1D)}
+
+\paragraph{Problem.}
+Given an array $A[1..n]$, find the longest subsequence
+\[
+i_1 < i_2 < \dots < i_k
+\qquad\text{such that}\qquad
+A[i_1] < A[i_2] < \cdots < A[i_k].
+\]
+
+\paragraph{DP recurrence (classical $O(n^2)$).}
+Let $dp[i]$ be the length of the LIS ending at index $i$.
+\[
+dp[i] = 1 + \max_{j<i,\;A[j]<A[i]} dp[j],
+\qquad
+dp[i] = 1 \text{ if no such } j.
+\]
+The final answer is $\max_i dp[i]$.
+
+\paragraph{Binary-search optimization ($O(n\log n)$).}
+Maintain an array $T$ where $T[\ell]$ stores the minimum possible ending value
+of an increasing subsequence of length $\ell$.
+
+Algorithm:
+\begin{enumerate}
+    \item Initialize an empty array $T$.
+    \item For each $A[i]$:
+          use binary search to find the smallest $\ell$ such that $T[\ell] \ge A[i]$.
+    \item Set $T[\ell] = A[i]$.
+\end{enumerate}
+The length of $T$ equals the LIS length.
+This method exploits the monotonic structure of the DP.
+\subsubsection{Longest Contiguous Increasing Subarray with Switching Between Price Sources}
+
+We are given three arrays \texttt{price1}, \texttt{price2}, and \texttt{price3} of equal length $n$,
+representing the stock price reported by three different market makers on each day.
+On every day $i$, we may freely choose one of the three prices to form a
+\emph{combined} array \texttt{price}.  
+Our goal is to determine the length of the longest contiguous non-empty subarray
+of \texttt{price} whose values are strictly increasing.
+
+\paragraph{DP formulation.}
+Let the three sources be indexed by $k \in \{1,2,3\}$ and the days by
+$i \in \{1,\dots,n\}$.
+Define
+\[
+\mathrm{dp}[k][i]
+= \text{length of the longest valid strictly increasing contiguous segment 
+   ending at day } i
+   \text{ if we choose price source } k \text{ on day } i.
+\]
+
+\paragraph{Base case.}
+A single day alone forms a strictly increasing subarray of length $1$:
+\[
+\mathrm{dp}[k][1] = 1
+\quad\forall k \in \{1,2,3\}.
+\]
+
+\paragraph{Recurrence relation.}
+For each day $i > 1$, if we choose price source $k$ on day $i$, then we may extend
+a segment ending at day $i-1$ only if the chosen price is strictly larger than the
+previous day's value:
+\[
+\mathrm{dp}[k][i]
+= 1 + 
+\max_{\substack{j \in \{1,2,3\} \\ \texttt{price}_j[i-1] < \texttt{price}_k[i]}}
+\mathrm{dp}[j][i-1].
+\]
+If no $j$ satisfies $\texttt{price}_j[i-1] < \texttt{price}_k[i]$, then the segment
+must start anew at day $i$:
+\[
+\mathrm{dp}[k][i] = 1.
+\]
+
+\paragraph{Final answer.}
+The length of the longest valid segment is
+\[
+\max_{i=1..n} \max_{k=1..3} \mathrm{dp}[k][i].
+\]
+
+\paragraph{Complexity.}
+The DP table has only $3n$ states, and each state checks only the three possible
+previous choices, giving a linear running time:
+\[
+O(n).
+\]
+Space usage can be $O(3n)$ or reduced to $O(1)$ by storing only values for day $i$
+and day $i-1$.
+
+\paragraph{Summary.}
+This problem is solved by a small constant-state dynamic program.  
+At each day, the decision depends only on the strictly increasing condition
+against the previous day’s three possible prices.  
+Contiguousness is enforced naturally because each $\mathrm{dp}[k][i]$ extends only
+from day $i-1$, and switching between sources is free.
+
+\subsubsection{LIS in 2D: Longest Increasing Sequence in the Plane}
+
+A common generalization is LIS over points $(x_i,y_i)$.
+We seek the largest subset of points ordered so that
+\[
+x_{i_1} < x_{i_2} < \cdots < x_{i_k}
+\quad\text{and}\quad
+y_{i_1} < y_{i_2} < \cdots < y_{i_k}.
+\]
+
+\paragraph{Sort + LIS trick.}
+Sort points by:
+\[
+\text{increasing } x,\qquad
+\text{and for equal } x,\;\text{decreasing } y.
+\]
+This prevents selecting two points with equal $x$ or forming invalid ties.
+
+After sorting, the problem reduces to LIS on the $y$-coordinates:
+\[
+\text{LIS on } (y_1,y_2,\dots,y_n).
+\]
+
+Time:
+\[
+O(n\log n) \quad \text{via the binary search LIS algorithm}.
+\]
+
+\paragraph{Applications.}
+\begin{itemize}
+    \item Russian-doll envelopes (LeetCode 354),
+    \item scheduling where both start- and end-times must increase,
+    \item multi-criteria filtering and skyline queries,
+    \item geometry and dominance problems.
+\end{itemize}
+
+\subsubsection{LIS in a 2D Grid (Monotone Paths)}
+
+Given an $m\times n$ grid $A$, a “2D LIS path’’ requires increasing values along 
+a path moving only rightward or downward:
+\[
+A[i_1][j_1] < A[i_2][j_2] < \cdots,
+\qquad
+i_{t+1} \ge i_t,\ j_{t+1} \ge j_t.
+\]
+
+\paragraph{DP formulation.}
+Let $dp[i][j]$ be the length of the longest increasing path ending at $(i,j)$.
+\[
+dp[i][j] = 1 + \max\Big( dp[i-1][j]\ \text{if}\ A[i-1][j] < A[i][j],\quad
+                         dp[i][j-1]\ \text{if}\ A[i][j-1] < A[i][j]\Big).
+\]
+
+Boundary:
+\[
+dp[i][j] = 1 \;\text{ if neither neighbor is smaller.}
+\]
+
+Time complexity:
+\[
+O(mn).
+\]
+
+\paragraph{Remarks.}
+This is not the same as LIS on the array formed by flattening the matrix,
+because 2D movement constraints restrict the transitions.
+
+\subsubsection{Longest Chain in Higher Dimensions}
+
+For $d$-dimensional points $p_i = (a_{i,1},a_{i,2},\dots,a_{i,d})$, we want the
+longest chain satisfying
+\[
+p_{i_1} < p_{i_2} < \cdots < p_{i_k}
+\quad\text{in all coordinates}.
+\]
+
+Typical solution:
+\begin{itemize}
+    \item Sort lexicographically by $(a_{1},a_{2},\dots,a_{d-1})$,
+    \item Apply LIS to the last coordinate, possibly with transformations when
+          ties occur.
+\end{itemize}
+
+This generalizes the 2D LIS sorting trick.
+
+\subsubsection{Summary of Patterns}
+
+\begin{itemize}
+    \item 1D LIS: $dp[i] = 1 + \max_{j<i, A[j]<A[i]} dp[j]$ or 
+          $O(n\log n)$ via patience sorting.
+    \item 2D LIS: sort by one coordinate, apply 1D LIS to the other.
+    \item Grid LIS: DP with directional constraints; no binary-search reduction.
+    \item Higher-dimensional LIS: sort by all but one coordinate, LIS on last.
+\end{itemize}
+
+Across all variants, the structural pattern is:
+\[
+\text{Sort or order the states so that the remaining dimension becomes 1D LIS.}
+\]
+This unifies many “increasing sequence’’ problems.
+
+\subsection{Path DP}
+
+For Floyd--Warshall, let \(T_k(i,j)\) denote the shortest path from \(i\) to
+\(j\) whose intermediate vertices are drawn from \(\{1,\ldots,k\}\). Then:
+\begin{align*}
+    T_0(i,j) &=
+    \begin{cases}
+        0 & i=j,\\
+        w(i,j) & (i,j)\text{ is an edge},\\
+        \infty & \text{otherwise},
+    \end{cases}\\
+    T_k(i,j) &= \min\bigl(T_{k-1}(i,j),\;
+        T_{k-1}(i,k)+T_{k-1}(k,j)\bigr).
+\end{align*}
+
+\subsection{Interval DP}
+
+Example: convex polygon triangulation\\
+\begin{align*}
+T[x, y] &= 0 \quad \text{if } y \leq x + 1,\\
+T[x, y] &= \min_{x<k<y}\bigl(T[x, k] + W(x, k, y) + T[k, y]\bigr).
+\end{align*}
+
+% ============================================================================
+% Implementation strategies and state design
+% ============================================================================
+\section{Implementation Strategies and State Design}
+
+\subsection{Bottom-Up DP: Iterative DP (Coin Change)}
+
+given the recurrence: $T(n) = min_{c \in coins}(T(n - c) + 1)$, we know the state we need to remember is the min number of coins
+to get $n - c$. Only 1 param $\rightarrow$ 1D DP
+\begin{lstlisting}
+int coinChangeMin(vector<int>& coins, int amount) {
+    const int INF = 1e9;                 // sentinel for impossible
+    vector<int> dp(amount + 1, INF);
+    dp[0] = 0;                           // base: 0 coins to make 0
+
+    for (int a = 1; a <= amount; ++a) {
+        for (int c : coins) {
+            if (c <= a && dp[a - c] != INF) {
+                dp[a] = min(dp[a], dp[a - c] + 1);
+            }
+        }
+    }
+    return (dp[amount] == INF ? -1 : dp[amount]);
+}
+\end{lstlisting}
+\subsection{Top-Down DP: Recursion with Memoization (Coin Change)}
+\begin{lstlisting}
+int helper(int amount, vector<int>& coins, vector<int>& memo) {
+    if (amount == 0) return 0;          // base: 0 coins to make 0
+    if (amount < 0) return 1e9;         // sentinel: impossible
+    if (memo[amount] != -1) return memo[amount];
+
+    int best = 1e9;
+    for (int c : coins) {
+        best = min(best, 1 + helper(amount - c, coins, memo));
+    }
+    return memo[amount] = best;
+}
+
+int coinChangeMin(vector<int>& coins, int amount) {
+    vector<int> memo(amount + 1, -1);
+    int res = helper(amount, coins, memo);
+    return (res >= 1e9 ? -1 : res);     // -1 means impossible
+}
+\end{lstlisting}
+Notice that in coint change, we only need to maintain a 1D memo table for top-down dp and 1D dp table, 
+as in the naive recursive solution we found out there is only 1 state needs to be remembered, therefore
+1 dimensional auxillary ds is needed. In comparison, for knapsack, where 2 states need to be remembered, 
+remaining weight and current value sum, we need a 2D table to implement dp.
+\begin{lstlisting}
+int helper (int k, const vector<vector<int>>& c, int cur) {
+    if (k < 0) {
+        return -1;
+    }
+    if (k >= 0 && cur == 0) {
+        return 0;
+    }
+    int best = 0;
+    return max(helper(k - c[cur][0], c, cur - 1) + c[cur][1], 
+               helper(k, c, cur - 1));
+}
+int knapsack(int k, const vector<vector<int>>& c) {
+    return helper(k, c, c.size()-1);
+}
+
+int knapsack_bu(int k, const vector<vector<int>>& c) {
+    vector<vector<int>> dp(c.size() + 1, vector<int>(k+1, -1));
+    for (int i = 0; i < k; i++) {
+        dp[0][i] = 0;
+    }
+    for (int i = 0; i < c.size() + 1; i++) {
+        dp[i][0] = 0;
+    }
+    for (int i = 1; i < c.size()+1; i++) {
+        for (int j = 1; j < k+1; j++) {
+            if (j >= c[i-1][0]) {
+                dp[i][j] = max(dp[i-1][j], dp[i-1][j-c[i-1][0]] + c[i-1][1]);
+            } else {
+                dp[i][j] = dp[i-1][j];
+            }
+        }
+    }
+    return dp[c.size()][k-1];
+}
+\end{lstlisting}
+
+From another view, to uniquely identify an 
+instance of coin change problem (on the same set of coins available), 1 key is needed (total value); while to uniquely identify
+an instance of kanpsack (on the same set of items), we need 2 keys. This alludes that we can choose the dimension of our dp table 
+based on the number of states need to be maintained. 
+\subsection{Choosing Additional State Dimensions}
+In max profit problem, 
+\begin{lstlisting}
+long long maximumProfit(vector<int>& p, int k) {
+    int n = p.size();
+    if (n < 2 || k == 0) return 0;
+    const long long NEG_INF = -(1LL << 60);
+
+    // dp[day][transactions][state]
+    // state: 0 = NOT_HOLDING, 1 = HOLDING, 2 = HOLDING_SHORT
+    vector<vector<vector<long long>>> dp(
+        n, vector<vector<long long>>(k+1, vector<long long>(3, NEG_INF))
+    );
+
+    // pad base case: max profit no transaction yet
+    dp[0][0][0] = 0;                  // NOT_HOLDING
+    dp[0][0][1] = -(long long)p[0];   // HOLDING
+    dp[0][0][2] =  (long long)p[0];   // HOLDING_SHORT
+
+    for (int j = 1; j < n; j++) {          // day
+        for (int i = 0; i <= k; i++) {     // transactions
+            // if continue to enter NOT_HOLDING
+            dp[j][i][0] = max(dp[j][i][0], dp[j-1][i][0]);
+            // if choose to enter HOLDING
+            dp[j][i][1] = max(dp[j-1][i][1], dp[j-1][i][0] - (long long)p[j]);
+            // if choose to enter HOLDING_SHORT
+            dp[j][i][2] = max(dp[j-1][i][2], dp[j-1][i][0] + (long long)p[j]);
+            if (i >= 1) {   // selling only possible after first day
+                // if choose to enter NOT_HOLDING
+                dp[j][i][0] = max(dp[j][i][0], dp[j-1][i-1][1] + (long long)p[j]);
+                dp[j][i][0] = max(dp[j][i][0], dp[j-1][i-1][2] - (long long)p[j]);
+            }
+        }
+    }
+
+    long long ans = 0;
+    for (int i = 1; i <= k; i++) {
+        ans = max(ans, dp[n-1][i][0]);  // need to end with NOT_HOLDING state. (Invariant 5)
+    }
+    return ans;
+}
+\end{lstlisting}
+There are 2 obvious states, day and number of transactions. But there are additional constraint in the question, which
+is the current action state, whether we are holding a stock. This state affects decision making as it is 1. independent from
+other states, ie any day we may be in any action state; 2. the transition among this action states is one of the constraints 
+posed by the problem. 
+
+Here’s a quick nudge first: for each problem, name a **state** that captures exactly “what’s left to decide,” ensure **overlap** (reuse subresults), and pick a **loop order** that enforces the selection rules (0/1 vs unbounded, interval growth, masks, post-order on trees).
+
+% ============================================================================
+% Classic problem catalogue
+% ============================================================================
+\section{Classic Dynamic Programming Problem Catalogue}
+
+\subsection{0/1 Knapsack (Maximize Value Within Capacity)}
+Note: DP solution runs in pseudo-poly time, the problem is NPC\\
+\textbf{Description.} Choose a subset of items (each at most once) to maximize total value without exceeding capacity.\\
+\textbf{Recurrence/base.} Let \(dp[i][c]\) be max value using first \(i\) items within capacity \(c\).  
+\(dp[i][c]=\max\big(dp[i-1][c],\; dp[i-1][c-w_i]+v_i\big)\) if \(w_i\le c\), else \(dp[i][c]=dp[i-1][c]\).  \\
+Base: \(dp[0][c]=0,\; dp[i][0]=0\).
+\begin{verbatim}
+for i=1..n:
+  for c=0..K:
+    dp[i][c] = dp[i-1][c]
+    if w[i] <= c:
+      dp[i][c] = max(dp[i][c], dp[i-1][c-w[i]] + v[i])
+answer = dp[n][K]
+\end{verbatim}
+
+\subsection{Coin Change (Minimum Coins, Unbounded)}
+\textbf{Description.} Using unlimited copies of given coin denominations, make amount \(K\) with fewest coins.\\
+\textbf{Recurrence/base.} \(dp[a]=\min_{d\le a}(1+dp[a-d])\).  \\
+Base: \(dp[0]=0\); others \(+\infty\).
+\begin{verbatim}
+dp[0]=0; for a=1..K: dp[a]=INF
+for a=1..K:
+  for d in coins:
+    if d <= a and dp[a-d] < INF:
+      dp[a] = min(dp[a], dp[a-d] + 1)
+answer = (dp[K]<INF ? dp[K] : -1)
+\end{verbatim}
+
+\subsection{Longest Increasing Subsequence ($O(n^2)$)}
+\textbf{Description.} Longest subsequence with strictly increasing values.\\
+\textbf{Recurrence/base.} \(dp[i]=1+\max_{j<i,\,a_j<a_i} dp[j]\); \\base \(dp[i]=1\).
+\begin{verbatim}
+for i=1..n:
+  dp[i]=1
+  for j=1..i-1:
+    if a[j] < a[i]: dp[i]=max(dp[i], dp[j]+1)
+answer = max_i dp[i]
+\end{verbatim}
+
+\subsection{Edit Distance (Levenshtein)}
+\textbf{Description.} Minimum insert/delete/replace operations to convert string \(s\) to \(t\).\\
+\textbf{Recurrence/base.} \(dp[i][j]=\min\{dp[i-1][j]+1,\,dp[i][j-1]+1,\,dp[i-1][j-1]+\![s_i\ne t_j]\}\).  \\
+Base: \(dp[0][j]=j,\,dp[i][0]=i\).
+\begin{verbatim}
+for i=0..n: dp[i][0]=i
+for j=0..m: dp[0][j]=j
+for i=1..n:
+  for j=1..m:
+    cost = (s[i]==t[j]?0:1)
+    dp[i][j]=min(dp[i-1][j]+1, dp[i][j-1]+1, dp[i-1][j-1]+cost)
+answer = dp[n][m]
+\end{verbatim}
+
+\subsection{Regular Expression Matching (LeetCode 10)}
+
+\paragraph{Problem.}
+Given a text \(s\) and a pattern \(p\), determine whether the pattern matches
+the \emph{entire} text. A dot \texttt{.} matches any single character, while
+\texttt{*} matches zero or more copies of the immediately preceding element.
+
+\paragraph{State.}
+Let
+\[
+dp[i][j] =
+\begin{cases}
+\text{true} & \text{if } s[0..i-1] \text{ matches } p[0..j-1],\\
+\text{false} & \text{otherwise}.
+\end{cases}
+\]
+Define
+\[
+\operatorname{match}(i,j)
+  \equiv i>0 \;\land\;
+  \bigl(p[j-1]=\texttt{.} \;\lor\; p[j-1]=s[i-1]\bigr).
+\]
+
+\paragraph{Base Cases.}
+The two empty prefixes match:
+\[
+dp[0][0]=\text{true}.
+\]
+A nonempty text cannot match an empty pattern, so \(dp[i][0]=\text{false}\)
+for \(i>0\). An empty text can match patterns such as \texttt{a*b*c*}:
+\[
+dp[0][j] = dp[0][j-2]
+\quad\text{when }p[j-1]=\texttt{*}.
+\]
+
+\paragraph{Recurrence.}
+If the current pattern character is not \texttt{*}, it must consume exactly
+one text character:
+\[
+dp[i][j]
+  = \operatorname{match}(i,j) \land dp[i-1][j-1].
+\]
+If \(p[j-1]=\texttt{*}\), there are two possibilities:
+\[
+\boxed{
+dp[i][j]
+  = dp[i][j-2]
+    \;\lor\;
+    \bigl(\operatorname{match}(i,j-1) \land dp[i-1][j]\bigr).
+}
+\]
+The first term uses zero copies of the starred element. The second consumes
+one matching text character and keeps the same pattern prefix, allowing more
+copies to be consumed.
+
+\paragraph{Bottom-Up DP.}
+\begin{verbatim}
+bool isMatch(const string& s, const string& p) {
+    int n = s.size(), m = p.size();
+    vector<vector<char>> dp(n + 1, vector<char>(m + 1, false));
+    dp[0][0] = true;
+
+    for (int j = 2; j <= m; ++j)
+        if (p[j - 1] == '*')
+            dp[0][j] = dp[0][j - 2];
+
+    for (int i = 1; i <= n; ++i) {
+        for (int j = 1; j <= m; ++j) {
+            if (p[j - 1] != '*') {
+                bool same = p[j - 1] == '.' || p[j - 1] == s[i - 1];
+                dp[i][j] = same && dp[i - 1][j - 1];
+            } else if (j >= 2) {
+                dp[i][j] = dp[i][j - 2];  // zero copies
+                bool same = p[j - 2] == '.' || p[j - 2] == s[i - 1];
+                if (same)
+                    dp[i][j] = dp[i][j] || dp[i - 1][j];
+            }
+        }
+    }
+    return dp[n][m];
+}
+\end{verbatim}
+
+\paragraph{Correctness.}
+Every non-starred pattern element has exactly one legal action: match and
+consume one text character. A starred element either contributes zero copies
+or contributes at least one copy; these cases are disjoint and cover every
+valid match. Since each transition refers to shorter prefixes, induction on
+\(i+j\) proves that every table entry has the stated meaning.
+
+\paragraph{Complexity.}
+There are \((n+1)(m+1)\) states and \(O(1)\) work per state:
+\[
+O(nm)\text{ time}, \qquad O(nm)\text{ space}.
+\]
+The space can be reduced to \(O(m)\) by retaining only the current and previous
+rows.
+
+\subsection{Matrix Chain Multiplication}
+\textbf{Description.} Parenthesize a chain of matrices to minimize scalar multiplications.\\
+\textbf{Recurrence/base.} \(dp[i][j]=\min_{i\le k<j}\{dp[i][k]+dp[k+1][j]+p_{i-1}p_kp_j\}\).\\  
+Base: \(dp[i][i]=0\).
+\begin{verbatim}
+for i=1..n: dp[i][i]=0
+for len=2..n:
+  for i=1..n-len+1:
+    j=i+len-1; dp[i][j]=INF
+    for k=i..j-1:
+      dp[i][j]=min(dp[i][j], dp[i][k]+dp[k+1][j]+p[i-1]*p[k]*p[j])
+answer = dp[1][n]
+\end{verbatim}
+
+\subsection{Longest Common Subsequence}
+\textbf{Description.} Longest sequence that appears as a subsequence in both strings.\\
+\textbf{Recurrence/base.} If \(s_i=t_j\): \(dp[i][j]=dp[i-1][j-1]+1\), else \(dp[i][j]=\max(dp[i-1][j],dp[i][j-1])\).  \\
+Base: \(dp[0][*]=dp[*][0]=0\).
+\begin{verbatim}
+for i=0..n: dp[i][0]=0
+for j=0..m: dp[0][j]=0
+for i=1..n:
+  for j=1..m:
+    if s[i]==t[j]: dp[i][j]=dp[i-1][j-1]+1
+    else: dp[i][j]=max(dp[i-1][j], dp[i][j-1])
+answer = dp[n][m]
+\end{verbatim}
+
+\subsection{Subset Sum (Feasibility)}
+Note: DP solution runs in pseudo-poly time, the problem is NPC\\
+\textbf{Description.} Decide if some subset sums exactly to \(K\).\\
+\textbf{Recurrence/base.} \(F[i][c]=F[i-1][c]\;\lor\;(w_i\le c \land F[i-1][c-w_i])\).  \\
+Base: \(F[0][0]=\text{true},\;F[0][c>0]=\text{false}\).
+\begin{verbatim}
+F[0][0]=true; for c=1..K: F[0][c]=false
+for i=1..n:
+  for c=0..K:
+    F[i][c]=F[i-1][c]
+    if w[i]<=c and F[i-1][c-w[i]]: F[i][c]=true
+answer = F[n][K]
+\end{verbatim}
+
+\subsection{Weighted Interval Scheduling}
+\textbf{Description.} Pick non-overlapping weighted intervals to maximize total weight.\\
+\textbf{Recurrence/base.} Sort by finish; let \(p(i)\) be last non-overlapping.  \\
+\(OPT[i]=\max\big(OPT[i-1],\,v_i+OPT[p(i)]\big)\). Base \(OPT[0]=0\).\\
+\begin{verbatim}
+OPT[0]=0
+for i=1..n:
+  OPT[i]=max( OPT[i-1], v[i] + OPT[p(i)] )
+answer = OPT[n]
+\end{verbatim}
+
+\subsection{Rod Cutting}
+\textbf{Description.} Cut a rod into lengths to maximize sale price.\\
+\textbf{Recurrence/base.} \(dp[L]=\max_{1\le j\le L}(price[j]+dp[L-j])\).\\  
+Base: \(dp[0]=0\).
+\begin{verbatim}
+dp[0]=0
+for L=1..N:
+  dp[L]=0
+  for j=1..L:
+    dp[L]=max(dp[L], price[j]+dp[L-j])
+answer = dp[N]
+\end{verbatim}
+
+\subsection{Palindrome Partitioning II (Minimum Cuts)}
+\textbf{Description.} Split a string into palindromic substrings with minimum cuts.\\
+\textbf{Recurrence/base.} Precompute \(pal[i][j]\).  \\
+\(cuts[i]=\min_{0\le j\le i,\,pal[j][i]}( (j==0?0:cuts[j-1]+1) )\).  \\
+Base: handled via \(j==0\).
+\begin{verbatim}
+build pal[n][n]  // O(n^2)
+for i=0..n-1:
+  cuts[i]=INF
+  for j=0..i:
+    if pal[j][i]:
+      cuts[i]=min(cuts[i], (j==0?0:cuts[j-1]+1))
+answer = cuts[n-1]
+\end{verbatim}
+
+\subsection{Egg Dropping}
+\textbf{Description.} Minimize worst-case trials to find critical floor with given eggs.\\
+\textbf{Recurrence/base.} \(dp[e][f]=1+\min_{1\le x\le f}\max(dp[e-1][x-1],\,dp[e][f-x])\).\\  
+Base: \(dp[1][f]=f,\;dp[e][0]=0\).
+\begin{verbatim}
+for f=0..F: dp[1][f]=f
+for e=2..E: dp[e][0]=0
+for e=2..E:
+  for f=1..F:
+    dp[e][f]=INF
+    for x=1..f:
+      dp[e][f]=min(dp[e][f], 1+max(dp[e-1][x-1], dp[e][f-x]))
+answer = dp[E][F]
+\end{verbatim}
+
+\subsection{Catalan Numbers (Count Valid Parentheses/BSTs)}
+\textbf{Description.} Count structures like valid parentheses strings or BST shapes.\\
+\textbf{Recurrence/base.} \(C_0=1,\; C_n=\sum_{i=0}^{n-1} C_i\,C_{n-1-i}\).\\
+\begin{verbatim}
+C[0]=1
+for n=1..N:
+  C[n]=0
+  for i=0..n-1:
+    C[n]+=C[i]*C[n-1-i]
+answer = C[N]
+\end{verbatim}
+
+\subsection{Word Break (Feasibility with a Dictionary)}
+\textbf{Description.} Check if a string can be segmented into dictionary words.\\
+\textbf{Recurrence/base.} \(dp[i]=\bigvee_{0\le j<i}(dp[j]\land s[j..i-1]\in D)\).\\  
+Base: \(dp[0]=\text{true}\).
+\begin{verbatim}
+dp[0]=true; for i=1..n: dp[i]=false
+for i=1..n:
+  for j=0..i-1:
+    if dp[j] and (s[j..i-1] in D): dp[i]=true
+answer = dp[n]
+\end{verbatim}
+
+\subsection{Distinct Subsequences (Count \(S \to T\))}
+\textbf{Description.} Number of ways string \(T\) appears as a subsequence of \(S\).\\
+\textbf{Recurrence/base.} \(dp[i][j]=dp[i-1][j]+[s_i=t_j]\cdot dp[i-1][j-1]\).  \\
+Base: \(dp[i][0]=1,\; dp[0][j>0]=0\).
+\begin{verbatim}
+for i=0..n: dp[i][0]=1
+for j=1..m: dp[0][j]=0
+for i=1..n:
+  for j=1..m:
+    dp[i][j]=dp[i-1][j]
+    if s[i]==t[j]: dp[i][j]+=dp[i-1][j-1]
+answer = dp[n][m]
+\end{verbatim}
+
+\subsection{Longest Palindromic Subsequence}
+\textbf{Description.} Longest subsequence that is a palindrome.\\
+\textbf{Recurrence/base.} If \(s_i=s_j\): \(dp[i][j]=2+dp[i+1][j-1]\) else \(dp[i][j]=\max(dp[i+1][j],dp[i][j-1])\).  \\
+Base: \(dp[i][i]=1\); \(dp[i][i-1]=0\).
+\begin{verbatim}
+for i=0..n-1: dp[i][i]=1
+for len=2..n:
+  for i=0..n-len:
+    j=i+len-1
+    if s[i]==s[j]:
+      dp[i][j]= (len==2?2:2+dp[i+1][j-1])
+    else:
+      dp[i][j]=max(dp[i+1][j], dp[i][j-1])
+answer = dp[0][n-1]
+\end{verbatim}
+
+\subsection{Tree Minimum Vertex Cover (Rooted)}
+\textbf{Description.} Smallest set of vertices covering all edges in a tree.\\
+\textbf{Recurrence/base.} \(dp[u][1]=1+\sum_{v} \min(dp[v][0],dp[v][1])\),  \\
+\(dp[u][0]=\sum_{v} dp[v][1]\). \\
+Base: leaf \(dp[leaf][1]=1, dp[leaf][0]=0\).
+\begin{verbatim}
+postorder over tree:
+  if leaf: dp[u][0]=0; dp[u][1]=1
+  else:
+    take = 1 + sum_v min(dp[v][0], dp[v][1])
+    skip =     sum_v dp[v][1]
+    dp[u][0]=skip; dp[u][1]=take
+answer = min(dp[root][0], dp[root][1])
+\end{verbatim}
+
+\subsection{Traveling Salesman (Bitmask DP)}
+\textbf{Description.} Shortest Hamiltonian tour visiting all nodes once and returning to start.\\
+\textbf{Recurrence/base.} \(dp[mask][i]=\min_{j \in mask\setminus\{i\}} dp[mask\setminus\{i\}][j]+dist[j][i]\).  \\
+Base: \(dp[1\ll s][s]=0\).
+\begin{verbatim}
+for mask=0..(1<<n)-1:
+  for i in nodes:
+    dp[mask][i]=INF
+dp[1<<s][s]=0
+for mask from 1..(1<<n)-1:
+  for i in mask:
+    for j in mask, j!=i:
+      dp[mask][i]=min(dp[mask][i], dp[mask^(1<<i)][j]+dist[j][i])
+answer = min_i dp[(1<<n)-1][i] + dist[i][s]
+\end{verbatim}
+
+\subsection{Grid Minimum Path Sum (Right/Down Moves)}
+\textbf{Description.} Minimum sum path from top-left to bottom-right moving only right or down.\\
+\textbf{Recurrence/base.} \(dp[i][j]=w_{i,j}+\min(dp[i-1][j],dp[i][j-1])\).  \\
+Base: first row/col cumulative.
+\begin{verbatim}
+dp[0][0]=w[0][0]
+for i=1..R-1: dp[i][0]=dp[i-1][0]+w[i][0]
+for j=1..C-1: dp[0][j]=dp[0][j-1]+w[0][j]
+for i=1..R-1:
+  for j=1..C-1:
+    dp[i][j]=w[i][j]+min(dp[i-1][j], dp[i][j-1])
+answer = dp[R-1][C-1]
+\end{verbatim}
+
+\subsection{Interleaving String (Feasibility)}
+\textbf{Description.} Decide if \(s_3\) can be formed by interleaving \(s_1\) and \(s_2\) in order.\\
+\textbf{Recurrence/base.} \(dp[i][j]=\big( dp[i-1][j]\land s1_i=s3_{i+j}\big)\;\lor\;\big( dp[i][j-1]\land s2_j=s3_{i+j}\big)\).  \\
+Base: \(dp[0][0]=\text{true}\); first row/col by equality chains.
+\begin{verbatim}
+dp[0][0]=true
+for i=1..n: dp[i][0]= dp[i-1][0] and s1[i]==s3[i]
+for j=1..m: dp[0][j]= dp[0][j-1] and s2[j]==s3[j]
+for i=1..n:
+  for j=1..m:
+    dp[i][j]= (dp[i-1][j] and s1[i]==s3[i+j]) or
+              (dp[i][j-1] and s2[j]==s3[i+j])
+answer = dp[n][m]
+\end{verbatim}
+\subsection{Bellman--Ford from a Dynamic Programming Perspective}
+
+\paragraph{Problem.}
+Given a directed graph $G=(V,E)$ with edge weights $w:E\to\mathbb{R}$ and a source $s\in V$, compute the shortest-path distance from $s$ to all vertices, even when some edge weights are negative (but no negative cycles reachable from $s$).
+
+\paragraph{DP Formulation.}
+Define a DP table $d[k][v]$ as:
+\[
+  d[k][v] = \text{shortest-path distance from $s$ to $v$ using \emph{at most} $k$ edges}.
+\]
+We initialize:
+\[
+  d[0][s] = 0, \qquad d[0][v] = +\infty \;\text{for } v \neq s.
+\]
+
+\paragraph{Recurrence.}
+For $k \ge 1$:
+\[
+  d[k][v]
+    = \min\Big(
+        d[k-1][v],\;
+        \min_{(u,v)\in E} \big( d[k-1][u] + w(u,v) \big)
+      \Big).
+\]
+This captures the idea:
+\begin{itemize}
+  \item Either the shortest $k$-edge path to $v$ uses $\le k-1$ edges, or
+  \item It ends with a single edge $(u,v)$ and a $(k-1)$-edge path to $u$.
+\end{itemize}
+
+\paragraph{Key Observation.}
+Any simple shortest path in a graph with $|V|=n$ has at most $n-1$ edges.  
+Thus:
+\[
+  d[n-1][v] = \text{true shortest-path distance from $s$ to $v$}.
+\]
+
+\paragraph{Bellman--Ford Algorithm.}
+Rather than store a full $n \times n$ DP table, we keep only the previous row:
+\[
+  d[v] \gets d[v] \text{ at iteration $k-1$}, \qquad
+  d'[v] \gets d[v] \text{ at iteration $k$}.
+\]
+
+Each iteration performs:
+\[
+  \forall (u,v)\in E:
+    \quad d[v] \gets \min\big( d[v],\; d[u] + w(u,v) \big).
+\]
+
+We repeat this for $n-1$ iterations.  
+By the DP lemma above, after iteration $n-1$ the distances are optimal.
+
+\paragraph{Detecting Negative Cycles.}
+If a further iteration (the $n$th) still changes some $d[v]$, then:
+\[
+  d[n][v] < d[n-1][v],
+\]
+which means that there exists a path with more than $n-1$ improving relaxations—  
+impossible unless a negative-weight cycle is reachable from $s$.
+
+\paragraph{DP Interpretation.}
+The classical Bellman--Ford relaxation loop
+\[
+  \text{repeat $n-1$ times: for every edge $(u,v)$, relax $d[v]$}
+\]
+is exactly computing the DP layers $d[1], d[2], \dots, d[n-1]$:
+each layer incorporates paths using at most one more edge.
+
+Thus Bellman--Ford is a straightforward instance of dynamic programming on path length:
+it monotonically improves the DP table until no better solution exists.
+
+\paragraph{Time Complexity.}
+The DP recurrence is evaluated $n-1$ times over the edge set, giving:
+\[
+  T(n,m) = O(nm),
+\]
+which is optimal for this DP formulation.
+
+\paragraph{Conclusion.}
+Bellman--Ford is dynamic programming over path length:  
+it computes shortest paths by repeatedly applying the DP recurrence for paths
+of increasing edge count, guaranteeing correctness even with negative weights.
+
+\subsection{Floyd--Warshall (All-Pairs Shortest Paths)}
+\textbf{Description.} Computes shortest-path distances between \emph{all} pairs of vertices
+in a weighted graph (directed or undirected), allowing negative edges but \emph{no}
+negative cycles reachable between pairs.
+
+\textbf{DP perspective.}  
+Let \(dp[k][i][j]\) = shortest distance from \(i\) to \(j\) using only intermediate
+vertices from the set \(\{1,\dots,k\}\).  
+Transition considers whether we use vertex \(k\) as an intermediate node:
+\[
+dp[k][i][j] = \min\bigl(dp[k-1][i][j],\;\; dp[k-1][i][k] + dp[k-1][k][j]\bigr).
+\]
+Final answer is \(dp[|V|][i][j]\) for all pairs \((i,j)\).
+
+\textbf{Space optimization.}  
+We only need the previous layer \(k-1\); thus we collapse into a 2D table:
+\[
+dist[i][j] = \min\bigl(dist[i][j],\; dist[i][k] + dist[k][j]\bigr).
+\]
+
+\textbf{Base initialization.}
+\[
+dist[i][i] = 0,\qquad
+dist[i][j] = w(i,j) \text{ if edge exists, else } \infty.
+\]
+
+\begin{verbatim}
+for i = 1..n:
+  for j = 1..n:
+    if i == j: dist[i][j] = 0
+    else if edge(i,j): dist[i][j] = w(i,j)
+    else: dist[i][j] = INF
+
+for k = 1..n:                # allow intermediate vertices up to k
+  for i = 1..n:
+    for j = 1..n:
+      if dist[i][k] + dist[k][j] < dist[i][j]:
+        dist[i][j] = dist[i][k] + dist[k][j]
+
+# dist[i][j] now contains APSP distances
+\end{verbatim}
+
+\textbf{Answer.}  
+The full APSP matrix \(dist[i][j]\) for all vertex pairs.
+
+\textbf{Time/Space.}  
+\[
+O(|V|^3) \text{ time}, \qquad O(|V|^2) \text{ space}.
+\]
+\subsection{Maximum Score from Multiplication Operations (LeetCode 1770)}
+
+\paragraph{Problem.}
+We are given:
+\begin{itemize}
+    \item an integer array \(\text{nums}\) of length \(n\),
+    \item an integer array \(\text{multipliers}\) of length \(m\), with \(m \le n\).
+\end{itemize}
+We perform exactly \(m\) operations. On the \(i\)-th operation (\(0 \le i < m\)):
+\begin{itemize}
+    \item we choose either the leftmost or rightmost element from the current \(\text{nums}\),
+    \item multiply it by \(\text{multipliers}[i]\),
+    \item add it to our total score, and remove that chosen element from \(\text{nums}\).
+\end{itemize}
+We want to maximize the total score after \(m\) operations.
+
+\paragraph{State Definition.}
+A key observation is that after \(i\) operations, we have removed exactly \(i\) elements in total, split between the left end and the right end. The remaining middle segment is uniquely determined by how many we have removed from the left.
+
+Let \(\text{nums}\) be 0-indexed of length \(n\), \(\text{multipliers}\) 0-indexed of length \(m\).
+Define a DP state:
+\[
+\text{dp}[i][\ell] = \text{maximum score after performing } i \text{ operations and having taken } \ell \text{ numbers from the left.}
+\]
+Then:
+\begin{itemize}
+    \item We have taken \(i - \ell\) numbers from the right.
+    \item The next multiplier we will use is \(\text{multipliers}[i]\).
+    \item The leftmost available index is \(\ell\).
+    \item The rightmost available index is
+    \[
+    r = (n - 1) - (i - \ell).
+    \]
+\end{itemize}
+
+\paragraph{Base Case.}
+Before performing any operations:
+\[
+\text{dp}[0][0] = 0,
+\]
+and all other \(\text{dp}[0][\ell]\) for \(\ell > 0\) are invalid (can be treated as \(-\infty\)).
+
+\paragraph{Recurrence.}
+At step \(i\) (\(0 \le i < m\)), suppose we are computing \(\text{dp}[i+1][\ell']\). There are two ways to reach it:
+
+\begin{enumerate}
+    \item \textbf{Pick from the left.}  
+    If at step \(i\) we had taken \(\ell'-1\) elements from the left, then we now take the next left element \(\text{nums}[\ell'-1]\) with multiplier \(\text{multipliers}[i]\):
+    \[
+    \text{dp}[i+1][\ell'] \supset \text{dp}[i][\ell'-1] + \text{multipliers}[i] \cdot \text{nums}[\ell'-1].
+    \]
+
+    \item \textbf{Pick from the right.}  
+    If at step \(i\) we had taken \(\ell'\) elements from the left, then we now take a right element. At that moment, we have taken \(i - \ell'\) from the right so far, so the rightmost available index is:
+    \[
+    r = (n-1) - (i - \ell').
+    \]
+    We gain:
+    \[
+    \text{dp}[i+1][\ell'] \supset \text{dp}[i][\ell'] + \text{multipliers}[i] \cdot \text{nums}[r].
+    \]
+\end{enumerate}
+
+Combining both choices, for valid indices:
+\[
+\boxed{
+\text{dp}[i+1][\ell] =
+\max \left(
+    \text{dp}[i][\ell-1] + \text{multipliers}[i] \cdot \text{nums}[\ell-1],\;
+    \text{dp}[i][\ell]   + \text{multipliers}[i] \cdot \text{nums}\bigl( (n-1)-(i-\ell) \bigr)
+\right).
+}
+\]
+
+We fill this DP table for \(i = 0,\dots,m-1\) and \(\ell = 0,\dots,i+1\). The answer is:
+\[
+\boxed{
+\max_{0 \le \ell \le m} \text{dp}[m][\ell]
+}
+\]
+since after \(m\) operations we may have taken any feasible number \(\ell\) from the left.
+
+\paragraph{Why the Recurrence is Correct.}
+After \(i\) operations, the configuration of remaining \(\text{nums}\) is completely determined by two numbers:
+\begin{itemize}
+    \item how many picks we have made (\(i\)),
+    \item how many of those picks were from the left (\(\ell\)).
+\end{itemize}
+Thus, the remaining available segment is from index \(\ell\) to index \(r = (n-1)-(i-\ell)\). The future decisions and score depend only on this segment and which multiplier index \(i\) we are at. This justifies that \(\text{dp}[i][\ell]\) captures all necessary information (optimal substructure).
+
+Each transition corresponds exactly to the only two available choices (pick left or pick right), and we take the maximum over them, so by standard DP cut-and-paste argument, this recurrence computes the optimal value.
+
+\paragraph{Time and Space Complexity.}
+The DP table has dimensions:
+\[
+i = 0,\dots,m \quad\text{and}\quad \ell = 0,\dots,i,
+\]
+so the number of states is:
+\[
+\sum_{i=0}^{m} (i+1) = O(m^2).
+\]
+Each state is computed in \(O(1)\) time from two previous states, giving total time:
+\[
+\boxed{O(m^2).}
+\]
+Space usage is \(O(m^2)\) if we store the full 2D table. Since \(\text{dp}[i+1][\ell]\) depends only on row \(i\), we can optimize to \(O(m)\) space by rolling arrays.
+
+In summary, the DP algorithm runs in \(O(m^2)\) time and \(O(m)\)–\(O(m^2)\) space and yields the maximum possible score.
+
+% ============================================================================
+% High-dimensional dynamic programming
+% ============================================================================
+\section{High-Dimensional Dynamic Programming}
+\textit{Hint.} Go up a dimension only when a real constraint requires it (extra budget, exact count, direction/turns, multiple strings, or a set-state like a bitmask). Watch base layers and sentinel values—most bugs are off-by-one or mixing "previous layer" with "current layer."
+
+% ------------------------------ Problem 1 ------------------------------
+\subsection{LCS of Three Strings (3D)}
+\textbf{Description.} Longest common subsequence among \(S,T,U\).  \\
+\textbf{State.} \(dp[i][j][k]\) = LCS length of \(S[1..i],T[1..j],U[1..k]\).  \\
+\textbf{Recurrence.}
+\[
+dp[i][j][k]=\begin{cases}
+dp[i-1][j-1][k-1]+1 & \text{if } S_i=T_j=U_k\\
+\max\{dp[i-1][j][k],dp[i][j-1][k],dp[i][j][k-1]\} & \text{otherwise}
+\end{cases}
+\]
+\textbf{Base.} Any index 0 gives 0.  
+\begin{verbatim}
+int lcs3(const string& A, const string& B, const string& C){
+  int n=A.size(), m=B.size(), l=C.size();
+  vector dp(n+1, vector(m+1, vector<int>(l+1, 0)));
+  for(int i=1;i<=n;i++) 
+  for(int j=1;j<=m;j++) 
+  for(int k=1;k<=l;k++){
+    if(A[i-1]==B[j-1] && B[j-1]==C[k-1]) 
+        dp[i][j][k]=dp[i-1][j-1][k-1]+1;
+    else 
+        dp[i][j][k]=max({dp[i-1][j][k], 
+                         dp[i][j-1][k], 
+                         dp[i][j][k-1]});
+  }
+  return dp[n][m][l];
+}
+\end{verbatim}
+
+% ------------------------------ Problem 2 ------------------------------
+\subsection{0/1 Knapsack with Exactly \(K\) Items}
+\textbf{Description.} Choose exactly \(K_{\text{items}}\) items, total weight \(\le K\), maximize value.  \\
+\textbf{State.} \(dp[i][c][k]\) = best value using first \(i\) items, capacity \(c\), picking exactly \(k\) items.  
+\textbf{Recurrence.}
+\[
+dp[i][c][k]=\max\Big(dp[i-1][c][k],\; dp[i-1][c-w_i][k-1]+v_i\Big)
+\]
+\textbf{Base.} \(dp[0][0][0]=0\); others \(-\infty\).  \\
+\textbf{(2-layer roll on \(i\)).}
+\begin{verbatim}
+int knap_exact_k(const vector<int>& W, 
+                 const vector<int>& V, int Kcap, int Kitems){
+  const int n=W.size(), NEG=-1e9;
+  vector prev(Kcap+1, vector<int>(Kitems+1, NEG)), cur=prev;
+  prev[0][0]=0;
+  for(int i=1;i<=n;i++){
+    cur=prev;
+    for(int c=0;c<=Kcap;c++){
+      for(int k=0;k<=Kitems;k++){
+        int best=prev[c][k];
+        if(k>0 && W[i-1]<=c && prev[c-W[i-1]][k-1]>NEG)
+          best=max(best, prev[c-W[i-1]][k-1]+V[i-1]);
+        cur[c][k]=best;
+      }
+    }
+    swap(prev,cur);
+  }
+  int ans=NEG; for(int c=0;c<=Kcap;c++) ans=max(ans, prev[c][Kitems]);
+  return ans;
+}
+\end{verbatim}
+
+% ------------------------------ Problem 3 ------------------------------
+\subsection{2D Knapsack (Weight and Volume)}
+\textbf{Description.} Each item has weight \(w_i\), volume \(u_i\), value \(v_i\). Maximize value under \(W\) and \(U\).  \\
+\textbf{State.} \(dp[i][w][u]\) = best value using first \(i\) items with caps \(w,u\).  \\
+\textbf{Recurrence.}
+\[
+dp[i][w][u]=\max\Big(dp[i-1][w][u],\; dp[i-1][w-w_i][u-u_i]+v_i\Big)
+\]
+(valid when \(w_i\le w, u_i\le u\)).  
+\textbf{Base.} \(dp[0][*][*]=0\).  \\
+\textbf{(2 layers, watch order).}
+\begin{verbatim}
+int knap_2d(const vector<int>& Wt,const vector<int>& Vol,
+            const vector<int>& Val,
+            int W,int U){
+  const int n=Wt.size(), NEG=-1e9;
+  vector prev(W+1, vector<int>(U+1, 0)), cur=prev;
+  for(int i=1;i<=n;i++){
+    cur=prev;
+    for(int w=0; w<=W; w++){
+      for(int u=0; u<=U; u++){
+        int best=prev[w][u];
+        if(Wt[i-1]<=w && Vol[i-1]<=u)
+          best=max(best, prev[w-Wt[i-1]][u-Vol[i-1]] + Val[i-1]);
+        cur[w][u]=best;
+      }
+    }
+    swap(prev,cur);
+  }
+  int ans=0; 
+  for(int w=0;w<=W;w++) 
+  for(int u=0;u<=U;u++) 
+    ans=max(ans, prev[w][u]);
+  return ans;
+}
+\end{verbatim}
+
+% ------------------------------ Problem 4 ------------------------------
+\subsection{Count Grid Paths with at Most \(K\) Turns}
+\textbf{Description.} From \((0,0)\) to \((R-1,C-1)\) moving only Right/Down; count paths using at most \(K\) turns (direction changes).  \\
+\textbf{State.} Let \(R[i][j][t]\) be \#paths to \((i,j)\) ending with a Right move using \(t\) turns, and \(D[i][j][t]\) similarly for Down.\\  
+\textbf{Recurrence.}
+\[
+\begin{aligned}
+R[i][j][t] &= R[i][j-1][t] + \mathbf{1}_{t>0}\cdot D[i][j-1][t-1],\\
+D[i][j][t] &= D[i-1][j][t] + \mathbf{1}_{t>0}\cdot R[i-1][j][t-1].
+\end{aligned}
+\]
+\textbf{Base.} Start from \((0,0)\): \(R[0][1][0]=1\) (first step right), \(D[1][0][0]=1\) (first step down) if in bounds.  \\
+\textbf{Answer.} \(\sum_{t=0}^K \big(R[R-1][C-1][t]+D[R-1][C-1][t]\big)\).  \\
+\textbf{(bounds-checked).}
+\begin{verbatim}
+long long paths_with_turns(int Rn,int Cn,int K){
+  vector R(Rn, vector(Cn, vector<long long>(K+1,0))),
+         D=R;
+  if(Cn>1) R[0][1][0]=1;
+  if(Rn>1) D[1][0][0]=1;
+  for(int i=0;i<Rn;i++) for(int j=0;j<Cn;j++){
+    if(i==0 && j<=1) continue;
+    if(j==0 && i<=1) continue;
+    for(int t=0;t<=K;t++){
+      if(j>0){
+        R[i][j][t] += R[i][j-1][t];
+        if(t>0) R[i][j][t] += D[i][j-1][t-1];
+      }
+      if(i>0){
+        D[i][j][t] += D[i-1][j][t];
+        if(t>0) D[i][j][t] += R[i-1][j][t-1];
+      }
+    }
+  }
+  long long ans=0;
+  for(int t=0;t<=K;t++) ans += R[Rn-1][Cn-1][t] + D[Rn-1][Cn-1][t];
+  if(Rn==1 && Cn==1) ans=1; // zero-move path
+  return ans;
+}
+\end{verbatim}
+
+% ------------------------------ Problem 5 ------------------------------
+\subsection{Traveling Salesman (Bitmask DP)}
+
+\paragraph{Problem.}
+Given a complete weighted graph on \(n\) vertices, find the minimum-cost tour
+that begins at a fixed vertex \(s\), visits every vertex exactly once, and
+returns to \(s\).
+
+\paragraph{State.}
+Represent a visited set \(S\) by an \(n\)-bit integer \(\textit{mask}\), where
+bit \(v\) is set exactly when \(v\in S\). Define
+\[
+dp[\textit{mask}][v]
+  = \text{minimum cost of a path that starts at }s,
+\]
+\[
+\text{visits exactly the vertices in }\textit{mask},
+\text{ and ends at }v.
+\]
+Only states with \(s,v\in\textit{mask}\) are valid. The mask is sufficient
+because future choices depend only on the current endpoint and which vertices
+remain unvisited, not on the order used to reach the state.
+
+\paragraph{Base Case.}
+\[
+dp[1\ll s][s]=0,
+\]
+and all other states initially have value \(+\infty\).
+
+\paragraph{Recurrence.}
+The vertex immediately before \(v\) must be some
+\(u\in\textit{mask}\setminus\{v\}\). Therefore:
+\[
+\boxed{
+dp[\textit{mask}][v]
+  = \min_{u\in\textit{mask}\setminus\{v\}}
+      \left(
+      dp[\textit{mask}\setminus\{v\}][u] + w[u][v]
+      \right).
+}
+\]
+Equivalently, a forward transition appends an unvisited vertex \(v\):
+\[
+dp[\textit{mask}\cup\{v\}][v]
+  = \min\left(
+      dp[\textit{mask}\cup\{v\}][v],
+      dp[\textit{mask}][u]+w[u][v]
+    \right).
+\]
+
+\paragraph{Answer.}
+After every vertex has been visited, close the tour by returning to \(s\):
+\[
+\boxed{
+\min_{v\ne s}
+  \left(dp[(1\ll n)-1][v]+w[v][s]\right).
+}
+\]
+
+\paragraph{Bottom-Up Bitmask DP.}
+\begin{verbatim}
+long long tsp(const vector<vector<int>>& w, int s = 0) {
+    int n = w.size();
+    int full = 1 << n;
+    const long long INF = (1LL << 60);
+
+    vector<vector<long long>> dp(
+        full, vector<long long>(n, INF)
+    );
+    dp[1 << s][s] = 0;
+
+    for (int mask = 0; mask < full; ++mask) {
+        if (!(mask & (1 << s))) continue;
+
+        for (int u = 0; u < n; ++u) {
+            if (dp[mask][u] == INF) continue;
+
+            for (int v = 0; v < n; ++v) {
+                if (mask & (1 << v)) continue;
+                int nextMask = mask | (1 << v);
+                dp[nextMask][v] = min(
+                    dp[nextMask][v],
+                    dp[mask][u] + w[u][v]
+                );
+            }
+        }
+    }
+
+    long long answer = INF;
+    for (int v = 0; v < n; ++v)
+        if (v != s)
+            answer = min(answer, dp[full - 1][v] + w[v][s]);
+
+    return n == 1 ? 0 : answer;
+}
+\end{verbatim}
+
+\paragraph{Correctness.}
+Proceed by induction on the number of set bits in \(\textit{mask}\). The base
+state is the zero-cost path containing only \(s\). For a larger state ending
+at \(v\), every valid path has a unique penultimate vertex \(u\); removing
+\(v\) produces exactly the smaller state in the recurrence. Minimizing over
+all possible \(u\) therefore produces the optimal path for the state. The
+final minimization adds the only missing edge, from the last vertex back to
+\(s\), so it yields the optimal Hamiltonian tour.
+
+\paragraph{Complexity.}
+There are \(n2^n\) states and at most \(n\) outgoing transitions per state:
+\[
+O(n^2 2^n)\text{ time}, \qquad O(n2^n)\text{ space}.
+\]
+This is practical only for small \(n\), commonly around \(n\le 20\).
+
+\subsection{Minimum Cost to Merge Stones (LeetCode 1000)}
+
+\paragraph{Problem.}
+Given \(n\) consecutive stone piles and an integer \(K\ge2\), one operation
+merges exactly \(K\) consecutive piles into one pile and costs the total number
+of stones in those piles. Find the minimum cost of merging all piles into one,
+or return \texttt{-1} if this is impossible.
+
+\paragraph{Feasibility Condition.}
+Every operation reduces the number of piles by exactly \(K-1\). If \(t\)
+operations turn \(n\) piles into one, then
+\[
+ n-t(K-1)=1.
+\]
+Consequently, a solution exists exactly when
+\[
+\boxed{(n-1)\bmod(K-1)=0.}
+\]
+
+\paragraph{Prefix Sums.}
+Let
+\[
+\textit{prefix}[i+1]
+  = \textit{prefix}[i]+\textit{stones}[i].
+\]
+The sum of the interval \([i,j]\) is then available in constant time:
+\[
+\operatorname{sum}(i,j)
+  = \textit{prefix}[j+1]-\textit{prefix}[i].
+\]
+
+\paragraph{State.}
+An interval of length \(L\) can be reduced as far as possible to
+\[
+1+((L-1)\bmod(K-1))
+\]
+piles. Define \(dp[i][j]\) as the minimum cost of reducing
+\(\textit{stones}[i..j]\) to this smallest attainable number of piles.
+
+\paragraph{Base Case.}
+One pile needs no operations:
+\[
+dp[i][i]=0.
+\]
+
+\paragraph{Recurrence.}
+Split the interval after \(m\). It is sufficient to try
+\(m=i,i+(K-1),i+2(K-1),\ldots\), because each left interval then has length
+congruent to \(1\pmod{K-1}\) and can be reduced to one pile:
+\[
+dp[i][j]
+  = \min_{\substack{i\le m<j\\m-i\equiv0\;(\mathrm{mod}\;K-1)}}
+      \bigl(dp[i][m]+dp[m+1][j]\bigr).
+\]
+If the whole interval can now become one pile, the final operation merges its
+\(K\) remaining piles and costs the interval sum:
+\[
+dp[i][j]\mathrel{+}=\operatorname{sum}(i,j)
+\quad\text{when}\quad
+(j-i)\bmod(K-1)=0.
+\]
+
+\paragraph{Bottom-Up Interval DP.}
+\begin{verbatim}
+long long mergeStones(const vector<int>& stones, int K) {
+    int n = stones.size();
+    if (n == 0) return 0;
+    if ((n - 1) % (K - 1) != 0) return -1;
+
+    vector<long long> prefix(n + 1, 0);
+    for (int i = 0; i < n; ++i)
+        prefix[i + 1] = prefix[i] + stones[i];
+
+    const long long INF = (1LL << 60);
+    vector<vector<long long>> dp(n, vector<long long>(n, 0));
+
+    for (int len = 2; len <= n; ++len) {
+        for (int i = 0; i + len <= n; ++i) {
+            int j = i + len - 1;
+            dp[i][j] = INF;
+
+            for (int m = i; m < j; m += K - 1)
+                dp[i][j] = min(
+                    dp[i][j],
+                    dp[i][m] + dp[m + 1][j]
+                );
+
+            if ((len - 1) % (K - 1) == 0)
+                dp[i][j] += prefix[j + 1] - prefix[i];
+        }
+    }
+
+    return dp[0][n - 1];
+}
+\end{verbatim}
+
+\paragraph{Correctness.}
+Consider intervals in increasing order of length. For a fixed interval, every
+valid merge plan must first reduce suitable subintervals independently; the
+split recurrence tries every possible boundary at which the left side can
+become one pile. By the induction hypothesis, both subinterval costs are
+optimal. If the interval is eligible to become one pile, every plan must
+perform one final merge whose cost is exactly its total sum, which the
+recurrence adds. Thus \(dp[i][j]\) is optimal for every interval, including the
+full array.
+
+\paragraph{Complexity.}
+There are \(O(n^2)\) intervals and \(O(n/(K-1))\) relevant split points per
+interval:
+\[
+O\left(\frac{n^3}{K-1}\right)=O(n^3)\text{ time},
+\qquad O(n^2)\text{ space}.
+\]
+
+\vspace{4pt}
+\noindent\textit{Nitpicks.} 
+(i) For maximization with impossible states, use a clear \(-\infty\) sentinel (e.g., \(-10^9\)) and guard additions. 
+(ii) Rolling arrays reduce memory for item-indexed DPs. 
+(iii) For path-counting, prefer \texttt{long long}/mod. 
+(iv) In turn-DP, initialize the first step explicitly; most mistakes there are off-by-one on the start cells.
+
+% ============================================================================
+% Pseudo-polynomial dynamic programming
+% ============================================================================
+\section{Pseudo-Polynomial Dynamic Programming}
+
+\subsection{Overview}
+
+Typical examples include 0/1 knapsack and coin change: their running times are
+polynomial in a numeric target such as the capacity or amount, rather than in
+the number of bits needed to encode that target.
+
+\subsection{Counting $(r,\ell)$-Spaced Subsets in $O(rn \log n)$ Time}
+
+We are given a set \(S\) of \(n\) distinct non-negative integers, and two integers
+\(r,\ell \ge 0\). A subset \(S' \subseteq S\) is called \((r,\ell)\)-spaced if:
+\begin{enumerate}
+    \item the sum of all elements in \(S'\) is exactly \(r\), and
+    \item for any two distinct \(a,b \in S'\), we have \(|a-b| \ge \ell\).
+\end{enumerate}
+We aim to count the number of such subsets in time \(O(rn \log n)\).
+
+\subsubsection*{Preprocessing}
+Sort the elements of \(S\) into an array
+\[
+A[0], A[1], \ldots, A[n-1],
+\]
+in non-decreasing order. Sorting costs \(O(n \log n)\).
+
+\subsubsection*{Dynamic Programming Definition}
+For indices \(i \in \{0,\ldots,n\}\) and sums \(j \in \{0,\ldots,r\}\), define:
+\[
+x(i,j) = \text{number of } (j,\ell)\text{-spaced subsets using only }
+A[i],A[i+1],\ldots,A[n-1].
+\]
+The desired answer is \(x(0,r)\).
+
+\paragraph{Base Cases.}
+\[
+x(n,0) = 1, \qquad
+x(n,j) = 0 \;\text{ for all } j > 0.
+\]
+
+\subsubsection*{Transition: Optimal Substructure}
+For each state \((i,j)\), we consider two possibilities:
+
+\paragraph{Case 1: Use element \(A[i]\).}
+This is only possible if \(A[i] \le j\).  
+If we include \(A[i]\), no further chosen elements may lie in the interval
+\([A[i], A[i]+\ell)\).  
+Define \(f(i)\) as the smallest index \(k > i\) such that:
+\[
+A[k] - A[i] \ge \ell.
+\]
+This index can be found in \(O(\log n)\) time using binary search over the sorted array.
+
+If we choose \(A[i]\), the new target sum becomes \(j - A[i]\) and the next
+allowed index is \(f(i)\), giving:
+\[
+x(i,j) \supset x(f(i),\, j - A[i]).
+\]
+
+\paragraph{Case 2: Do not use element \(A[i]\).}
+We simply skip \(A[i]\), giving:
+\[
+x(i,j) \supset x(i+1,\, j).
+\]
+
+\subsubsection*{DP Recurrence}
+Thus the recurrence is:
+\[
+x(i,j) =
+\begin{cases}
+    x(i+1,j) + x(f(i),\, j - A[i]) & \text{if } A[i] \le j,\\[3pt]
+    x(i+1,j)                       & \text{if } A[i] > j.
+\end{cases}
+\]
+
+\subsubsection*{Time Complexity}
+There are \((n+1)(r+1) = O(rn)\) DP states.  
+Each state requires:
+\begin{itemize}
+    \item \(O(1)\) time to combine solutions,
+    \item \(O(\log n)\) time to compute \(f(i)\) using binary search.
+\end{itemize}
+Therefore, the total DP time is:
+\[
+O(rn \log n).
+\]
+Including sorting, the overall running time remains:
+\[
+\boxed{O(rn \log n)}.
+\]
+
+Thus, we obtain an algorithm that counts all \((r,\ell)\)-spaced subsets in time
+\(O(rn \log n)\), as required.
+\end{document}

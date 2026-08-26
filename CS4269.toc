@@ -1,0 +1,112 @@
+\contentsline {section}{\numberline {1}Syntax of Propositional Logics}{3}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Well-formed Formula (WFF)}{3}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Closed Set}{3}{subsection.1.2}%
+\contentsline {subsubsection}{\numberline {1.2.1}All Closed Set}{3}{subsubsection.1.2.1}%
+\contentsline {subsection}{\numberline {1.3}FORM is the minimum of the set of Closed}{4}{subsection.1.3}%
+\contentsline {subsection}{\numberline {1.4}Subformula}{4}{subsection.1.4}%
+\contentsline {section}{\numberline {2}Sematics of Propositional Logics}{5}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Truth Assignment/Proposition evaluation}{5}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Entail/Model}{5}{subsection.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.1}Valuation and Model}{5}{subsubsection.2.2.1}%
+\contentsline {subsubsection}{\numberline {2.2.2}$\models $ as a relation}{5}{subsubsection.2.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.3}Logical Equivalence}{6}{subsubsection.2.2.3}%
+\contentsline {subsection}{\numberline {2.3}Satisfiability of Formula}{6}{subsection.2.3}%
+\contentsline {subsubsection}{\numberline {2.3.1}Valid formula(tautology)}{6}{subsubsection.2.3.1}%
+\contentsline {subsection}{\numberline {2.4}Satisfiability of a set of formula}{7}{subsection.2.4}%
+\contentsline {subsubsection}{\numberline {2.4.1}Relevance}{7}{subsubsection.2.4.1}%
+\contentsline {subsubsection}{\numberline {2.4.2}Logical consequence}{7}{subsubsection.2.4.2}%
+\contentsline {subsection}{\numberline {2.5}Modelling Computations as Propositional Logic}{8}{subsection.2.5}%
+\contentsline {paragraph}{Instance.}{9}{section*.7}%
+\contentsline {paragraph}{Variables.}{9}{section*.8}%
+\contentsline {paragraph}{Constraints.}{9}{section*.9}%
+\contentsline {paragraph}{Instance.}{10}{section*.11}%
+\contentsline {paragraph}{Variables.}{10}{section*.12}%
+\contentsline {paragraph}{Constraints.}{10}{section*.13}%
+\contentsline {paragraph}{Instance.}{10}{section*.15}%
+\contentsline {paragraph}{Variables.}{10}{section*.16}%
+\contentsline {paragraph}{Constraints.}{10}{section*.17}%
+\contentsline {paragraph}{Instance.}{10}{section*.19}%
+\contentsline {paragraph}{Variables.}{10}{section*.20}%
+\contentsline {paragraph}{Constraints.}{10}{section*.21}%
+\contentsline {paragraph}{Instance.}{10}{section*.23}%
+\contentsline {paragraph}{Variables.}{10}{section*.24}%
+\contentsline {paragraph}{Constraints.}{11}{section*.25}%
+\contentsline {paragraph}{Instance.}{11}{section*.27}%
+\contentsline {paragraph}{Variables.}{11}{section*.28}%
+\contentsline {paragraph}{Constraints.}{11}{section*.29}%
+\contentsline {subsection}{\numberline {2.6}Encoding a Full Adder in Pure Propositional Logic}{11}{subsection.2.6}%
+\contentsline {paragraph}{Carry Constraints}{12}{section*.33}%
+\contentsline {paragraph}{Sum Constraints (XOR Form)}{12}{section*.34}%
+\contentsline {section}{\numberline {3}Compactness Theorem for Propositional Logics}{13}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Application of the Compactness theorem for proposition logics}{16}{subsection.3.1}%
+\contentsline {section}{\numberline {4}Proof System}{18}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Hilbert Style Proof System }{18}{subsection.4.1}%
+\contentsline {paragraph}{Idea.}{19}{section*.40}%
+\contentsline {paragraph}{Idea.}{19}{section*.42}%
+\contentsline {paragraph}{Sketch.}{20}{section*.44}%
+\contentsline {paragraph}{Idea.}{20}{section*.46}%
+\contentsline {subsection}{\numberline {4.2}Metatheorems}{20}{subsection.4.2}%
+\contentsline {subsubsection}{\numberline {4.2.1}Monotonicity theorem}{20}{subsubsection.4.2.1}%
+\contentsline {subsubsection}{\numberline {4.2.2}Deduction}{21}{subsubsection.4.2.2}%
+\contentsline {subsection}{\numberline {4.3}Weak Completeness and Completeness of HSPS}{22}{subsection.4.3}%
+\contentsline {paragraph}{Idea.}{23}{section*.56}%
+\contentsline {paragraph}{Step 1: Consistency and Maximal Consistency.}{23}{section*.57}%
+\contentsline {paragraph}{Step 2: Canonical Valuation.}{23}{section*.58}%
+\contentsline {paragraph}{Step 3: Falsifying $\varphi $.}{23}{section*.59}%
+\contentsline {paragraph}{Conclusion.}{23}{section*.60}%
+\contentsline {paragraph}{Reduction to Weak Completeness.}{23}{section*.62}%
+\contentsline {paragraph}{Infinite Case.}{24}{section*.63}%
+\contentsline {subsection}{\numberline {4.4}Resolution Proof System}{24}{subsection.4.4}%
+\contentsline {section}{\numberline {5}Complexity}{27}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Turing Machine}{27}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Semantics of TM}{28}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Running time and Space}{30}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.4}Complexity classes}{31}{subsection.5.4}%
+\contentsline {subsection}{\numberline {5.5}Hardness}{31}{subsection.5.5}%
+\contentsline {subsection}{\numberline {5.6}Reduction}{32}{subsection.5.6}%
+\contentsline {subsection}{\numberline {5.7}Cook--Levin Theorem}{32}{subsection.5.7}%
+\contentsline {paragraph}{Proof Outline.}{32}{section*.81}%
+\contentsline {paragraph}{(A) Exactly-One Constraints}{33}{section*.87}%
+\contentsline {paragraph}{(B) Initial Configuration}{33}{section*.88}%
+\contentsline {paragraph}{(C) Transition Constraints}{33}{section*.89}%
+\contentsline {paragraph}{(D) Acceptance}{34}{section*.90}%
+\contentsline {paragraph}{Soundness}{34}{section*.92}%
+\contentsline {paragraph}{Completeness}{34}{section*.93}%
+\contentsline {section}{\numberline {6}Syntax of First Order Logics}{35}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Vocabulary of FOL}{35}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Modellng with FOL}{35}{subsection.6.2}%
+\contentsline {section}{\numberline {7}Sematics of First Order Logics}{35}{section.7}%
+\contentsline {section}{\numberline {8}Compactness of First Order Logics}{39}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Prenex Normal Form}{40}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}Skolemization}{41}{subsection.8.2}%
+\contentsline {subsection}{\numberline {8.3}Proof of the compactness theorem for FOL}{44}{subsection.8.3}%
+\contentsline {subsubsection}{\numberline {8.3.1}$\Gamma $ is satisfiable $\DOTSB \tmspace +\thickmuskip {.2777em}\DOTSB \Relbar \joinrel \Rightarrow \tmspace +\thickmuskip {.2777em}Gr(\Gamma )$ is propositionally satisfiable}{45}{subsubsection.8.3.1}%
+\contentsline {subsection}{\numberline {8.4}Special FOL fragments}{47}{subsection.8.4}%
+\contentsline {subsubsection}{\numberline {8.4.1}Quantifier-free FOL}{47}{subsubsection.8.4.1}%
+\contentsline {subsection}{\numberline {8.5}Homomorphism and Isomorphism}{47}{subsection.8.5}%
+\contentsline {subsection}{\numberline {8.6}Theory}{48}{subsection.8.6}%
+\contentsline {subsubsection}{\numberline {8.6.1}Common clauses used to define theories}{48}{subsubsection.8.6.1}%
+\contentsline {subsubsection}{\numberline {8.6.2}Monontonicity under theory inclusion}{49}{subsubsection.8.6.2}%
+\contentsline {subsubsection}{\numberline {8.6.3}Theory of a structure}{49}{subsubsection.8.6.3}%
+\contentsline {section}{\numberline {9}Computability}{51}{section.9}%
+\contentsline {subsection}{\numberline {9.1}Halting problem}{51}{subsection.9.1}%
+\contentsline {subsection}{\numberline {9.2}Reduction}{53}{subsection.9.2}%
+\contentsline {subsection}{\numberline {9.3}RE-hardness}{53}{subsection.9.3}%
+\contentsline {subsection}{\numberline {9.4}Validity of FOL}{54}{subsection.9.4}%
+\contentsline {section}{\numberline {10}Second Order Logics}{54}{section.10}%
+\contentsline {subsection}{\numberline {10.1}Syntax of Second Order Logics}{54}{subsection.10.1}%
+\contentsline {subsection}{\numberline {10.2}Expressiveness of SOL}{55}{subsection.10.2}%
+\contentsline {subsubsection}{\numberline {10.2.1}Finite structures}{55}{subsubsection.10.2.1}%
+\contentsline {subsubsection}{\numberline {10.2.2}Reachability}{56}{subsubsection.10.2.2}%
+\contentsline {subsubsection}{\numberline {10.2.3}Cyclic graph}{57}{subsubsection.10.2.3}%
+\contentsline {subsubsection}{\numberline {10.2.4}Even}{57}{subsubsection.10.2.4}%
+\contentsline {subsubsection}{\numberline {10.2.5}Bipartite graph}{57}{subsubsection.10.2.5}%
+\contentsline {subsubsection}{\numberline {10.2.6}Connectedness}{57}{subsubsection.10.2.6}%
+\contentsline {subsubsection}{\numberline {10.2.7}Well-Ordering}{57}{subsubsection.10.2.7}%
+\contentsline {subsubsection}{\numberline {10.2.8}Hamiltonian Graphs}{58}{subsubsection.10.2.8}%
+\contentsline {subsubsection}{\numberline {10.2.9}Well-Foundedness}{58}{subsubsection.10.2.9}%
+\contentsline {subsubsection}{\numberline {10.2.10}Graph Isomorphism}{58}{subsubsection.10.2.10}%
+\contentsline {paragraph}{Structural Induction Principle.}{72}{section*.158}%
+\contentsline {paragraph}{Case 1: $\psi _i \in \Gamma $ or $\psi _i$ is an Axiom}{84}{section*.219}%
+\contentsline {paragraph}{Case 2: $\psi _i = \varphi $}{84}{section*.220}%
+\contentsline {paragraph}{Case 3: $\psi _i$ via MP from $\psi _j, \psi _k$ where $\psi _j = \psi _k \rightarrow \psi _i$}{84}{section*.221}%

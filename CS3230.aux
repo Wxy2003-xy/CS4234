@@ -1,0 +1,567 @@
+\relax 
+\@writefile{toc}{\contentsline {section}{\numberline {1}Asymptotic Analysis}{7}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.1}Proof with limit}{7}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{To show $f\in o(g)$:}{7}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{To show $f\in O(g)$:}{8}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{To show $f\in \Omega (g)$:}{8}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{To show $f\in \Theta (g)$:}{8}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{To show $f\in \omega (g)$:}{8}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.2}Reflexivity}{9}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.2.1}$f(n)\in O(f(n))$}{9}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.2.2}$f(n) \in \Omega (f(n))$, $f(n) \in \Theta (f(n))$}{9}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.3}Transitivity}{9}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.3.1}$f(n) \in O(g(n)) \land g(n) \in O(h(n)) \DOTSB \tmspace  +\thickmuskip {.2777em}\DOTSB \Relbar \joinrel \Rightarrow \tmspace  +\thickmuskip {.2777em}f(n) \in O(h(n))$}{9}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.3.2}$f(n) \in \Omega (g(n)) \land g(n) \in \Omega (h(n)) \DOTSB \tmspace  +\thickmuskip {.2777em}\DOTSB \Relbar \joinrel \Rightarrow \tmspace  +\thickmuskip {.2777em}f(n) \in \Omega (h(n))$}{9}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.3.3}$f(n) \in \Theta (g(n)) \land g(n) \in \Theta (h(n)) \DOTSB \tmspace  +\thickmuskip {.2777em}\DOTSB \Relbar \joinrel \Rightarrow \tmspace  +\thickmuskip {.2777em}f(n) \in \Theta (h(n))$}{9}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.3.4}$f(n) \in o(g(n)) \land g(n) \in o(h(n)) \DOTSB \tmspace  +\thickmuskip {.2777em}\DOTSB \Relbar \joinrel \Rightarrow \tmspace  +\thickmuskip {.2777em}f(n) \in o(h(n))$}{10}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.3.5}$f(n) \in \omega (g(n) \land g(n) \in \omega (h(n))) \DOTSB \tmspace  +\thickmuskip {.2777em}\DOTSB \Relbar \joinrel \Rightarrow \tmspace  +\thickmuskip {.2777em}f(n) \in \omega (h(n))$}{10}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.4}Symmetry: $f(n) \in \Theta (g(n)) \DOTSB \tmspace  +\thickmuskip {.2777em}\DOTSB \Leftarrow \joinrel  \Rightarrow \tmspace  +\thickmuskip {.2777em}g(n)\in \Theta (f(n))$}{10}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.5}Complementary}{10}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.5.1}$f(n) \in O(g(n) \DOTSB \tmspace  +\thickmuskip {.2777em}\DOTSB \Leftarrow \joinrel  \Rightarrow \tmspace  +\thickmuskip {.2777em}g(n) \in \Omega (f(n)))$}{10}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.5.2}$f(n) \in o(g(n) \DOTSB \tmspace  +\thickmuskip {.2777em}\DOTSB \Leftarrow \joinrel  \Rightarrow \tmspace  +\thickmuskip {.2777em}g(n) \in \omega (f(n)))$}{10}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.6}Problems}{10}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.7}Math utils}{12}{}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces First 20 Bernoulli numbers $B_n$}}{13}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.8}Techniques}{13}{}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces First 20 approximations $\gamma _n = H_n - \ln n$ to the Euler--Mascheroni constant}}{13}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {2}Recurrence}{14}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}master theorem}{14}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.1.1}Common recurrence table}{14}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Case 1: subpolynomially smaller than \(n^p\).}{14}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Case 2: same polynomial order (polylog factor).}{14}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Case 3: polynomially larger than \(n^p\) (with regularity).}{15}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Telescoping}{15}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.2.1}Normalization: $T(n) = T(n^{\frac  {1}{c}})$}{15}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Step 1: Normalize.}{15}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Step 2: Change variables.}{15}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Step 3: Linearize the recurrence.}{16}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Step 4: Substitute back.}{16}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Step 1: Normalize.}{16}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Step 2: Logarithmic substitution.}{16}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Step 3: Linearize.}{16}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Step 4: Substitute back.}{16}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.2.2}The Iterated Logarithm $\log ^{*} n$}{16}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Recurrences involving $\log ^{*} n$.}{17}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.2.3}Comparison}{17}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}WA1 Practice on Asymptotic analysis and recurrence}{19}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.1}$f(n) = 3n + 1,\tmspace  +\thickmuskip {.2777em} g(n) = 4n$}{19}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.2}$f(n) = 3^n,\tmspace  +\thickmuskip {.2777em} g(n) = 2^n \cdot n^{10000}$}{19}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.3}$f(n) = 2^n,\tmspace  +\thickmuskip {.2777em} g(n) = 2^{n+1}$}{19}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.4}$f(n) = 2^{(2^n)},\tmspace  +\thickmuskip {.2777em} g(n) = 2^{(2^{n+1})}$}{19}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.5}$f(n) = \DOTSB \sum@ \slimits@ _{i=1}^n \frac  {1}{2^i},\tmspace  +\thickmuskip {.2777em} g(n) = \DOTSB \sum@ \slimits@ _{i=1}^n \frac  {i^{10000}}{2^i}$}{20}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.6}$f(n) = \log \log (n^n),\tmspace  +\thickmuskip {.2777em} g(n) = \log \log (2^{\sqrt  {n}})$}{20}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.7}$f(n) = 2^{\sqrt  {\log n}},\tmspace  +\thickmuskip {.2777em} g(n) = \sqrt  {n}$}{20}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.8}$f(n) = 2^{\sqrt  {\log n}},\tmspace  +\thickmuskip {.2777em} g(n) = 2^{2^{\sqrt  {\log \log n}}}$}{20}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.9}$f(n) = n^{\frac  {1}{\log n}},\tmspace  +\thickmuskip {.2777em} g(n) = n^{\frac  {1}{(\log n)^2}}$}{20}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.10}$f(n) = n^{\frac  {1}{\log n}},\tmspace  +\thickmuskip {.2777em} g(n) = n^{\frac  {1}{\sqrt  {\log n}}}$}{20}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.11}$T(n) = 16T(\frac  {n}{4}) + 32n\log ^{128}n$}{21}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.12}$T(n) = 16T(\frac  {n}{4}) + 64n^2 \log ^8 n + 32n \log ^{128} n$}{22}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.13}$T(n) = 16\cdot T(\frac  {n}{4}) + n^4$}{22}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.14}$T(n) = T(\sqrt  {n}) + \log (n)$}{23}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.15}$T(n) = T(\sqrt  {n}) + \log \log (n)$}{23}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3}Proof of Correctness}{24}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Iterative algorithms}{24}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Example: Dijkstra}{24}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Example: Insertion Sort}{24}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Stooge sort}{25}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}2D Peak Finding via Divide-and-Conquer}{26}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4}Divide and Conquer}{28}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Fast Exponentiation from a Divide-and-Conquer Perspective}{28}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Problem.}{28}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Divide-and-Conquer Idea.}{28}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Algorithm.}{28}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Recurrence Relation.}{28}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Solving the Recurrence.}{28}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Conclusion.}{28}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Strassen’s Matrix Multiplication — Analysis}{28}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Setup and Block Form.}{28}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Work Recurrence (Arithmetic Count).}{29}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Asymptotic vs Practical.}{29}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Pseudocode (Recursive, with Base Cutoff).}{29}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Communication/Cache Considerations (brief).}{29}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Takeaways.}{30}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Karatsuba's Algorithm and Its Divide-and-Conquer Analysis}{30}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Divide-and-Conquer Algorithm for the Discrete Fourier Transform}{31}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5}Lower bound analysis \& Linear time sorting \& order statistics}{32}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Proof of the Lower Bound of Comparison-Based Sorting}{32}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Decision Tree Model}{32}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Decision-Tree Lower Bounds (Beyond Sorting \& Searching)}{32}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.3.1}1) Planar Convex Hull: $\Omega (n\log n)$ in algebraic decision trees.}{32}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.3.2}2) 2D Maxima / Skyline: $\Omega (n\log n)$ in algebraic decision trees.}{33}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.3.3}3) Planar Point Location: $\Omega (\log n)$ queries.}{33}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.3.4}4) Minimum Spanning Tree (MST): $\Omega (m)$ edge-weight comparisons.}{33}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.3.5}5) Majority Element Decision (is there an element with count $> n/2$?): $\Omega (n)$.}{33}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.3.6}6) Segment Intersection Emptiness (no pair intersects?): $\Omega (n\log n)$.}{33}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.3.7}7) Voronoi Diagram / Delaunay Triangulation: $\Omega (n\log n)$.}{33}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.3.8}8) Linear Programming in Fixed Dimension $d$ (e.g., $d=2,3$): $\Omega (n)$.}{33}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.3.9}9) Closest Pair (planar): $\Omega (n\log n)$ in algebraic decision trees.}{33}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.3.10}10) Transitive Reduction / Cover Graph of a Total Order: $\Omega (n\log n)$.}{33}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}Linear-Time Sorting: Stable Counting Sort and Radix Sort}{34}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.4.1}Stable Counting Sort}{34}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Algorithm outline.}{34}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Complexity.}{34}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Use cases.}{34}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.4.2}Radix Sort}{35}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Least-Significant-Digit (LSD) Radix Sort.}{35}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Correctness.}{35}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Running time.}{35}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.5}Selction/Order statistics}{36}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.5.1}Randomized Quickselect for the \(i\)-th Smallest Element}{36}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Problem.}{36}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Algorithm idea.}{36}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Expected running time.}{37}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Worst-case behavior.}{37}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Summary.}{37}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.5.2}Median of Medians}{37}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.6}Tutorial problems}{38}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.7}Tutorial: Order Statistics (Model Answers)}{39}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Review: Linear-Time Sorting and Selection.}{39}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Part 1 (lucky case).}{40}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Part 2 (unlucky case).}{40}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Conclusion.}{40}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Q4a. Expected value of $X_k$.}{40}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Q4b. Derivation.}{40}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Q4c. Solving the inequality.}{41}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Summary.}{41}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6}Randomized Algorithms}{42}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Freivalds}{42}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.1.1}Probability Analysis}{42}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.1.2}Success Probability Amplification}{42}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Coupon collection and Hashing}{42}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}Randomized Quicksort: Analysis}{42}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Algorithm}{42}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Expected Comparisons via Pairwise Indicators.}{42}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Expectation Recurrence (Avg case).}{43}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{High-Probability Behavior.}{44}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Space and Depth.}{44}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Worst-Case Probability (tiny).}{44}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Implementation Notes (brief).}{44}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Takeaway.}{44}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.4}Reservoir sampling}{44}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.5}Fisher--Yates (a.k.a.\ Knuth/Durstenfeld) Shuffle}{44}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Goal.}{44}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Algorithm (Durstenfeld in-place).}{44}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Correctness (uniformity).}{45}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Complexity.}{45}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Common Pitfalls (nitpicky but fatal).}{45}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Inside-Out Variant (build permutation of \([0..n-1]\) from scratch).}{45}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{C++ (correct, modern \texttt  {<random>}):}{45}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Notes on RNG Quality.}{45}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Testing Uniformity (sanity).}{45}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.6}Relationship Between Expected Runtime and Tail Decay}{45}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{A1 implies A2.}{46}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{A2 does not imply A1.}{46}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Conclusion.}{46}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Remark.}{46}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Remark.}{47}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {7}Dynamic Programming}{48}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.1}The Knapsack Problem and Its Variants}{48}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Problem.}{48}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Recursive formulation.}{48}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{DP table (bottom-up).}{48}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Problem.}{48}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Recursive formulation.}{48}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{DP table formulation.}{48}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Interpretation.}{48}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Problem.}{48}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Recursive formulation.}{48}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{DP table formulation.}{48}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Time complexity.}{49}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.2}Longest Increasing Subsequence and Its Variants}{49}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.2.1}Longest Increasing Subsequence (1D)}{49}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Problem.}{49}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{DP recurrence (classical $O(n^2)$).}{49}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Binary-search optimization ($O(n\log n)$).}{49}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.2.2}Longest Contiguous Increasing Subarray with Switching Between Price Sources}{49}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{DP formulation.}{49}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Base case.}{50}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Recurrence relation.}{50}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Final answer.}{50}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Complexity.}{50}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Summary.}{50}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.2.3} LIS in 2D: Longest Increasing Sequence in the Plane}{50}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Sort + LIS trick.}{50}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Applications.}{50}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.2.4}LIS in a 2D Grid (Monotone Paths)}{50}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{DP formulation.}{50}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Remarks.}{51}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.2.5}Longest Chain in Higher Dimensions}{51}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.3}Twenty Classic Dynamic Programming Problems}{53}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.3.1}1. 0/1 Knapsack (maximize value within capacity)}{53}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.3.2}2. Coin Change (min coins, unbounded)}{53}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.3.3}3. Longest Increasing Subsequence $(O(n^2))$}{53}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.3.4}4. Edit Distance (Levenshtein)}{53}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.3.5}5. Matrix Chain Multiplication}{54}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.3.6}6. Longest Common Subsequence}{54}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.3.7}7. Subset Sum (feasibility)}{54}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.3.8}8. Weighted Interval Scheduling}{54}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.3.9}9. Rod Cutting}{54}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.3.10}10. Palindrome Partitioning II (min cuts)}{54}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.3.11}11. Egg Dropping}{55}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.3.12}12. Catalan Numbers (count valid parentheses/BSTs)}{55}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.3.13}13. Word Break (feasibility with dictionary)}{55}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.3.14}14. Distinct Subsequences (count S→T)}{55}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.3.15}15. Longest Palindromic Subsequence}{55}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.3.16}16. Tree Minimum Vertex Cover (rooted)}{55}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.3.17}17. Traveling Salesman (bitmask DP)}{56}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.3.18}18. Grid Min Path Sum (right/down moves)}{56}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.3.19}19. Interleaving String (feasibility)}{56}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.3.20}20. Bellman--Ford Algorithm from a Dynamic Programming Perspective}{56}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Problem.}{56}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{DP Formulation.}{56}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Recurrence.}{56}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Key Observation.}{57}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Bellman--Ford Algorithm.}{57}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Detecting Negative Cycles.}{57}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{DP Interpretation.}{57}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Time Complexity.}{57}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Conclusion.}{57}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.3.21}21. Floyd–Warshall Algorithm (All-Pairs Shortest Paths)}{57}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.3.22}22. Maximum Score from Performing Multiplication Operations (LeetCode 1770)}{58}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Problem.}{58}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{State Definition.}{58}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Base Case.}{58}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Recurrence.}{58}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Why the Recurrence is Correct.}{59}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Time and Space Complexity.}{59}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.4}High-Dimensional DP}{59}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.4.1}1) LCS of Three Strings (3D)}{59}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.4.2}2) 0/1 Knapsack with Exactly K Items (3D with rolling over items)}{59}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.4.3}3) 2D Knapsack (Weight \& Volume) (3D with rolling on items)}{60}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.4.4}4) Count Grid Paths with \(\le K\) Turns (4D split into two 3D arrays)}{60}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.4.5}5) Traveling Salesman (Bitmask DP: exponential dimension)}{61}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.4.6}6) Minimum Cost to Merge Stones (Dynamic Programming Analysis)}{61}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Problem.}{61}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Feasibility Condition.}{61}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{DP Structure.}{61}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Base Case.}{61}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Recurrence.}{62}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Key Structural Observation.}{62}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Complexity Analysis.}{62}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Conclusion.}{62}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.5}Pseudo-polynomial DP}{62}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.5.1}0/1 Knapsack, coin-change etc}{62}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.5.2}Counting $(r,\ell )$-Spaced Subsets in $O(rn \log n)$ Time}{62}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Base Cases.}{63}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Case 1: Use element \(A[i]\).}{63}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Case 2: Do not use element \(A[i]\).}{63}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {8}Probability \& Statistics Formulae for Algorithm Analysis}{64}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.1}Basic Probability Identities}{64}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.2}Indicator Trick \& Linearity}{64}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.3}Expectation/Variance Identities}{64}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.4}Inequalities (Concentration)}{64}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.5}Common Inequalities for Mathematical Proofs}{64}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Master Chain of Useful Inequalities.}{65}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Notes.}{66}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.6}Common Taylor Series Expansions}{66}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.7}Common Distributions (means/vars)}{67}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.8}Asymptotic Approximations}{67}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.9}Classic “Balls-into-Bins” Facts}{67}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.10}Coupon Collector}{67}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.11}Conditioning \& Decomposition}{67}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.12}Jensen \& Convexity}{68}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.13}“With High Probability” (w.h.p.)}{68}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.14}Divisibility, GCD, and Bézout}{68}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.15}Modular Arithmetic \& Inverses}{68}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.16}Chinese Remainder Theorem (CRT)}{68}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.17}Prime Factorization Facts}{68}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.18}Primitive Roots \& Orders}{69}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.19}Combinatorics Mod Prime}{69}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.20}Base Representation \& Digit Properties}{69}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.21}Sieve \& Multiplicative Precomputation}{69}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.22}Miscellaneous Handy Facts}{69}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {9}Greedy Algorithm}{70}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.1}Example: Hoffman Code}{70}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Problem Setting.}{70}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Example and Tree Illustration.}{71}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.2}Greedy Choice Proofs examples}{71}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.2.1}Dijkstra’s Algorithm as a Greedy Algorithm}{71}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Goal.}{71}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Greedy Perspective.}{71}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Why This Greedy Choice is Safe.}{71}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Algorithm Sketch.}{71}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Complexity.}{72}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Greedy Takeaway.}{72}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.2.2}Prim’s Algorithm as a Greedy Algorithm}{72}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Goal.}{72}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Greedy Perspective.}{72}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Why This Greedy Choice is Safe.}{72}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Algorithm Sketch.}{72}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Complexity.}{72}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Greedy Takeaway.}{72}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.2.3}Burning CDs Problem}{72}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Optimal substructure.}{72}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Caption.}}{72}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Greedy choice: the smallest file must appear in a pair.}{72}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Caption.}}{73}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Greedy choice: pair the smallest file with the largest file that fits.}{73}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Conclusion.}{74}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.2.4}Analysis of Statements for the CD Burning Problem}{74}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.3}Maximizing Profit in the Fish Selling Problem}{74}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.4}Activity Selection Problem}{75}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Optimal substructure.}{75}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Greedy choice: choose the activity that starts last.}{75}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Conclusion.}{75}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.5}Dominating Set Variant of the Activity Selection Problem}{75}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {10}Amortization Analysis}{77}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {10.1}Aggregate method}{77}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {10.2}Accounting method}{77}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {10.3}Potential method}{77}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {10.4}Amortized Analysis: Choosing Accounting and Potential Functions}{78}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{(a) Dynamic Table Insertion (doubling).}{78}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{(b) Queue with ENQUEUE/DEQUEUE/DELETE/ADD.}{78}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Heuristic 1: The potential should decrease sharply during expensive operations.}{78}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{(a) Queue with ENQUEUE/DEQUEUE/DELETE/ADD.}{78}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{(b) Dynamic Table with POP() only (halving).}{79}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Summary.}{79}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {10.5}Amortized Analysis of Dynamic Hash Tables with Rehashing}{79}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {10.6}Amortized Analysis of Data Structures via the Potential Method}{80}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {10.6.1}Self-Adjusting Binary Search Tree (Splay Tree)}{80}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Model.}{80}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Size and Rank.}{81}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Single Splay Step.}{81}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Amortized Cost of Operations.}{81}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {10.6.2}Binary Heap Priority Queue}{81}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Model.}{81}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Trivial Potential.}{81}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Amortized Costs.}{81}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {10.6.3}Fibonacci Heap}{82}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Model.}{82}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Potential Function.}{82}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Operation Analyses.}{82}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Summary.}{83}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {10.6.4}Disjoint Set Union (Union-Find) with Union-by-Rank and Path Compression}{83}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Model.}{83}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{High-Level Potential Idea.}{83}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Key Consequence.}{84}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {10.6.5}B-Tree}{84}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Model.}{84}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Goal.}{84}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Potential Function (Slack-Based).}{84}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Effect of Operations.}{84}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Conclusion.}{84}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {10.6.6}AVL Tree}{85}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Model.}{85}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Goal.}{85}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Potential Function (Imbalance).}{85}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Insertion.}{85}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Deletion.}{85}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Conclusion.}{85}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {10.6.7}Resizable Hash Table with Linked-List Chaining}{85}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Model.}{85}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Potential Function (Load-Factor Deviation).}{85}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Insertion Without Resizing.}{86}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Deletion Without Resizing.}{86}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Resize (Expansion).}{86}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Resize (Shrink).}{86}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Conclusion.}{86}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {10.7}Practice: WA2 task 1}{86}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {10.7.1}Claim: \texttt  {increment(i)} has $O(1)$ amortized cost.}{86}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {10.7.2}There exists a sequence of $n$ operations with one operation costing $\Omega (n)$}{87}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {10.7.3}Cost of the $n$-th operation.}{87}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {10.7.4}There exists a finite sequence of operations that the process does not terminate}{87}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {11}Common Graph Algorithms and Their Time Complexities}{88}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {11.1}Shortest Path Algorithms}{88}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {11.1.1}Dijkstra's Algorithm (Binary Heap)}{88}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {11.1.2}Dijkstra's Algorithm (Fibonacci Heap)}{88}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {11.1.3}Bellman--Ford}{88}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {11.1.4}Floyd--Warshall}{88}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {11.1.5}Johnson's Algorithm}{88}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {11.1.6}SPFA (Shortest-Path Faster Algorithm)}{88}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {11.2}Minimum Spanning Tree Algorithms}{88}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {11.2.1}Kruskal's Algorithm (Union--Find)}{88}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {11.2.2}Prim's Algorithm (Binary Heap)}{88}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {11.2.3}Prim's Algorithm (Fibonacci Heap)}{88}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {11.3}Maximum Flow Algorithms}{88}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {11.3.1}Ford--Fulkerson}{88}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {11.3.2}Edmonds--Karp}{89}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {11.3.3}Dinic's Algorithm}{89}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {11.3.4}Push--Relabel (Goldberg--Tarjan)}{89}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {11.4}Connectivity and Components}{89}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {11.4.1}Tarjan's SCC Algorithm}{89}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {11.4.2}Kosaraju's SCC Algorithm}{89}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {11.5}Matching and Assignment}{89}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {11.5.1}Hopcroft--Karp}{89}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {11.5.2}Hungarian Algorithm}{89}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {11.6}Planar Graph Algorithms}{89}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {11.6.1}Planar SSSP}{89}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {11.6.2}Planar Max-Flow}{89}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {11.7}All-Pairs Shortest Paths (APSP)}{89}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {11.7.1}APSP via Repeated Dijkstra}{89}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {11.7.2}APSP via Repeated Bellman--Ford}{89}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {11.7.3}APSP via Fast Matrix Multiplication}{89}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {12}Reduction}{90}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {12.1}p(n)-time reduction}{90}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {12.2}Running time composition}{90}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {12.3}polynomial time reduction}{90}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {12.4}Input size: problem encoding}{90}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {12.5}Example: Karp Reduction from 3SAT to INDEPENDENT SET}{90}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Source Problem.}{90}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Target Problem.}{90}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Reduction Construction.}{91}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Intuition.}{91}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Correctness Proof.}{91}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Complexity.}{91}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Conclusion.}{91}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Note.}{91}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {12.6}Tutorial:}{92}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {12.6.1}Q1. Graph Coloring}{92}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {12.6.2}Q2. Partition versus Ball-Partition}{92}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {12.6.3}Q3. Partition versus Knapsack}{93}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {12.6.4}Q4. Hamiltonian Cycle (HC) versus Travelling Salesperson Problem (TSP)}{93}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {13}NP Complete}{94}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {13.1}3-SAT $\leq _P$ IS}{95}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {13.2}3-SAT $\leq _P$ VC}{95}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{To prove something is in NP:}{95}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{NP-hard:}{95}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{To prove something is NP-hard:}{95}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{NP-complete:}{95}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{To prove something is NP-complete:}{95}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {13.3}NP-Hardness and Its Relationship to NP}{96}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{NP-Hard vs.\ NP.}{96}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{NP-Complete Problems.}{96}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Summary.}{96}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {13.3.1}Karp Reductions: Propagation of Easiness and Hardness}{97}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Incorrect Implications.}{97}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Correct Implications.}{97}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Takeaway.}{97}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Problem.}{97}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Basic Bounds (useful in analysis).}{97}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Greedy (Welsh–Powell) \& Degeneracy Orders.}{97}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{DSATUR Heuristic (Brélaz).}{98}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Exact Coloring: Branch-and-Bound on a Search Tree.}{98}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Special Classes (Polynomial-Time).}{98}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Approximation \& Hardness (high level).}{98}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{ILP / Set Cover Formulation (for exact solvers).}{98}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Memory \& Engineering Notes.}{99}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Takeaways.}{99}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Example:}{99}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Definitions:}{100}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Decision problem: FIND-FAMILY}{100}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Example bipartite graph with $L = \{0, 2, 4\}$ and $R = \{1, 3\}$. Here, 0 and 2 are siblings, 2 and 4 are siblings, but $\{0, 2, 4\}$ is not a family since 0 and 4 are not siblings.}}{100}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {14}Common NPC proofs}{101}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {14.1}Reduction from \textsc  {Circuit-SAT} to \textsc  {SAT} (NP-Completeness of SAT)}{101}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Conceptual Note.}{101}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{AND Gate.}{101}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{OR Gate.}{101}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{NOT Gate.}{101}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Conceptual Note.}{101}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{($\Rightarrow $) If the circuit is satisfiable.}{102}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{($\Leftarrow $) If the formula is satisfiable.}{102}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {14.2}Reduction from \textsc  {3-SAT} to \textsc  {NAE-3-SAT}$^+$}{102}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Conceptual Note.}{102}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Step 1: Introduce a global reference variable.}{102}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Step 2: Simulating literals.}{102}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Conceptual Note.}{103}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Step 3: Converting each clause.}{103}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{($\Rightarrow $) If $\varphi $ is satisfiable.}{103}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{($\Leftarrow $) If $\psi $ is NAE-satisfiable.}{103}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Key Insight.}{104}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Construction.}{104}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Why this works.}{104}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Correctness.}{104}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Comparison to the \textsc  {NAE-3-SAT}$^+$ Reduction.}{104}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {14.3}Reduction from \textsc  {3-SAT} to \textsc  {0-1-Linear-SAT}}{105}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Conceptual Note.}{105}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Variables.}{105}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Literal Encoding.}{105}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Clause Encoding.}{105}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Resulting System.}{105}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{($\Rightarrow $) If $\varphi $ is satisfiable.}{106}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{($\Leftarrow $) If $\mathcal  {L}_\varphi $ is satisfiable.}{106}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {14.4}Reduction from \textsc  {3-SAT} to \textsc  {Exact-1 3-SAT}}{106}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Conceptual Note.}{106}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Step 1: Literal Variables.}{107}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Step 2: Introduce Clause Selector Variables.}{107}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Step 3: Replace Each Clause with Three Exact-1 Clauses.}{107}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Intuition.}{107}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{($\Rightarrow $) If $\varphi $ is satisfiable.}{107}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{($\Leftarrow $) If $\psi $ is Exact-1 satisfiable.}{107}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {14.5}Reduction from \textsc  {3-SAT} to Group Interval Scheduling (Group Size $\ge 3$)}{108}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Intuition.}{108}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Correctness.}{108}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {14.6}Reduction from \textsc  {3-SAT} to \textsc  {Planar 3-SAT}}{109}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Conceptual Note.}{109}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Step 1: Draw the incidence graph.}{109}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Step 2: Turn edges into wires.}{109}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Step 3: Crossover gadget for one crossing.}{109}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Step 4: Replace all crossings.}{110}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{($\Rightarrow $) From $\varphi $ to $\psi $.}{110}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{($\Leftarrow $) From $\psi $ to $\varphi $.}{110}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {14.7}Reduction from 3SAT to Bounded-Occurrence 3SAT}{110}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{If $\varphi $ is satisfiable, then $\varphi '$ is satisfiable.}{111}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{If $\varphi '$ is satisfiable, then $\varphi $ is satisfiable.}{111}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {14.8}Reduction from \textsc  {3-SAT} to \textsc  {3-Dimensional Matching}}{111}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Conceptual Note.}{111}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Structure.}{112}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Enforced Choice.}{112}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Literal–Clause Link.}{112}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Clause Satisfaction via Matching.}{112}{}\protected@file@percent }
+\citation{garey-johnson}
+\@writefile{toc}{\contentsline {paragraph}{($\Rightarrow $) If \(\varphi \) is satisfiable.}{113}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{($\Leftarrow $) If a perfect 3D matching exists.}{113}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {14.9}Reduction from \textsc  {3-Dimensional Matching} to \textsc  {4-Partition} and then to \textsc  {3-Partition}}{113}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Encoding elements.}{114}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Encoding triples.}{114}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{The multiset.}{114}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Correctness.}{114}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Padding construction.}{114}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Correctness.}{114}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {14.10}Reduction from \textsc  {3-Dimensional Matching} to \textsc  {Partition into Triangles}}{115}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{3-Dimensional Matching (3DM).}{115}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Exact Cover by 3-Sets (X3C).}{115}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Partition into Triangles (PIT).}{115}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Correctness of Step 1.}{115}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Correctness of Step 2 (Sketch).}{116}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {14.11}Direct Reduction from \textsc  {X3C} to \textsc  {Partition into Triangles}}{116}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{High-Level Idea.}{117}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Vertices.}{117}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Edges in Element Gadgets.}{117}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Edges in Set Gadgets.}{117}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{($\Rightarrow $) Exact Cover $\Rightarrow $ Triangle Partition.}{117}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{($\Leftarrow $) Triangle Partition $\Rightarrow $ Exact Cover.}{118}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Complexity.}{118}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {14.12}Reduction from \textsc  {Planar 3-SAT} to \textsc  {Partition into Triangles}}{118}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{High-Level Idea.}{118}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{($\Rightarrow $) Triangle Partition $\Rightarrow $ Satisfying Assignment.}{119}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{($\Leftarrow $) Satisfying Assignment $\Rightarrow $ Triangle Partition.}{119}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {14.13}Reduction from 3-SAT to VERTEX COVER}{119}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Vertices.}{120}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Edges.}{120}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Cover size.}{120}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {14.14}Reduction from \textsc  {Vertex Cover} to \textsc  {Hitting Set}}{121}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Vertex Cover.}{121}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Hitting Set.}{121}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Conceptual Note.}{121}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{($\Rightarrow $) Vertex Cover $\Rightarrow $ Hitting Set.}{122}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{($\Leftarrow $) Hitting Set $\Rightarrow $ Vertex Cover.}{122}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {14.15}Reduction from \textsc  {Vertex Cover} to \textsc  {Set Cover}}{122}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Vertex Cover.}{122}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Set Cover.}{123}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Conceptual Note.}{123}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{($\Rightarrow $) From Vertex Cover to Set Cover.}{123}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{($\Leftarrow $) From Set Cover to Vertex Cover.}{124}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {14.16}Reduction from \textsc  {Set Cover} to \textsc  {Dominating Set}}{124}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Set Cover.}{124}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Dominating Set.}{124}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Conceptual Note.}{124}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Vertices.}{124}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Edges.}{125}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Parameter.}{125}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{($\Rightarrow $) From Set Cover to Dominating Set.}{125}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{($\Leftarrow $) From Dominating Set to Set Cover.}{125}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {14.17}WA3 Task 2: Complexity of MIS Variants}{125}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{min-MIS.}{125}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{min-VC.}{126}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Correctness.}{126}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Correctness.}{126}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {14.18}More Reductions Overview and Examples}{127}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {14.18.1}Polynomial-Time Reductions}{127}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {14.18.2}Reduction: 3SAT to Vertex 3-Coloring}{127}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {14.18.3}Reduction: 3SAT to Hamiltonian Cycle}{127}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {14.18.4}Reduction: 3SAT to Super Mario}{127}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {14.18.5}Takeaways}{127}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {14.19}3-Partition $\leq _P$ 2-partition(partition)}{128}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {14.20}Partition $\leq _P$ 0/1 Knapsack}{128}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {14.21}0/1 Knapsack $\leq _P$ coin change}{128}{}\protected@file@percent }
+\gdef \@abspage@last{128}
