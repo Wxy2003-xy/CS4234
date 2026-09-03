@@ -1,1 +1,0 @@
-/opt/homebrew/bin/g++-15  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/knapsack.dir/src/main.cpp.o -o knapsack  libknapsack_lib.a /opt/homebrew/Cellar/gcc/15.2.0/lib/gcc/current/libgomp.dylib

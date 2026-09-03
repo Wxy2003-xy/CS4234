@@ -28,8 +28,9 @@
 \contentsline {subsection}{\numberline {1.7}Set cover}{10}{subsection.1.7}%
 \contentsline {subsection}{\numberline {1.8}Vertex Cover as a special case of Set cover}{12}{subsection.1.8}%
 \contentsline {subsection}{\numberline {1.9}Fully polynomial-time approximation scheme}{14}{subsection.1.9}%
+\contentsline {subsubsection}{\numberline {1.9.1}Woeginger FPTAS}{14}{subsubsection.1.9.1}%
 \contentsline {subsection}{\numberline {1.10}Randomized approximation algorithm}{14}{subsection.1.10}%
 \contentsline {subsection}{\numberline {1.11}Example: (Minimum) Vertex Cover}{14}{subsection.1.11}%
 \contentsline {subsubsection}{\numberline {1.11.1}Greedy approach}{14}{subsubsection.1.11.1}%
-\contentsline {subsection}{\numberline {1.12}Example: MAX-SAT}{14}{subsection.1.12}%
+\contentsline {subsection}{\numberline {1.12}Example: MAX-SAT}{15}{subsection.1.12}%
 \contentsline {subsection}{\numberline {1.13}Inapproximability}{15}{subsection.1.13}%

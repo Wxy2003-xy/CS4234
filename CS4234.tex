@@ -901,6 +901,49 @@ while any edge has triangle count > 0:
 
 
 \subsection{Fully polynomial-time approximation scheme}
+Some pseudo polynomial dynamic programming algorithm can be converted to fully polynomial time approximation algorithm
+by sacrificing some precision to make pseudo polynomial term polynomial to the problem size. 
+
+\subsubsection{Woeginger FPTAS}
+Given an algorithm in the form of
+
+\begin{algorithm}[H]
+\KwIn{vectors $x_1, x_2, \dots, x_n$, where each vector is made of non negative integers not bounded by $n$}
+\end{algorithm}
+
+
+\begin{itemize}
+  \item $\epsilon :=$ the required approximation ratio
+  \item $G$: there exists an integer $G \geq 0$
+  \item $1 + \frac{\epsilon}{2Gn}$
+\end{itemize}
+
+
+\subsubsection*{Example: Knapsack}
+First we need to derive 
+given the pseudo polynomial dynamic programming solution that runs in $O(nW)$, we can reduce the number of columns 
+in the DP table, by reducing the resolution. Given an $\epsilon > 0$, max price of any single item $v_{\max}$, define:
+\begin{itemize}
+  \item $K = \frac{\epsilon v_{\max}}{n}$
+  \item For each item $x_i$, define $v'_i = \lfloor \frac{v_i}{K} \rfloor.$ 
+\end{itemize}
+We are defining a rounding down function that convert unbounded variable $v_i$ into $v'_i$ that is bounded by an order of $n$: 
+\[f: v_i \mapsto \lfloor \frac{n v_i}{\epsilon v_{\max}}\rfloor \]
+\[v'_i \leq \frac{n}{\epsilon}\]
+The range of total value becomes 
+\[R: [0, n v_{\max}] \mapsto [0, n \times \lfloor \frac{n }{\epsilon}\rfloor]\]
+Where $\epsilon$ is the parameterized approximation factor, and $v_{\max}$ is constant.
+We can transform the original bound $
+ O(n^2 W) = O(n^2 v_{\max})$ to $O(n^2 \lfloor \frac{n}{\epsilon}\rfloor)$
+
+First we make the claim that this approximation scheme is feasible (correctness proof)
+\[ALG \geq (1 - \epsilon) \cdot OPT\]
+\begin{proof}
+  Let $\mathcal{O}$ be the optimal choice set, for any item $i$, we are rounding down the value, meaning 
+  \[\forall i \in \mathcal{O}, v_i \leq \frac{n}{\epsilon}\]
+  \[\sum_{i\in \mathcal{O}} v_i - K \times \sum_{i \in \mathcal{O}} v'_i \leq nK\]
+
+\end{proof}
 
 \subsection{Randomized approximation algorithm}
 \subsection{Example: (Minimum) Vertex Cover}
