@@ -32,5 +32,6 @@
 \contentsline {subsection}{\numberline {1.10}Randomized approximation algorithm}{14}{subsection.1.10}%
 \contentsline {subsection}{\numberline {1.11}Example: (Minimum) Vertex Cover}{14}{subsection.1.11}%
 \contentsline {subsubsection}{\numberline {1.11.1}Greedy approach}{14}{subsubsection.1.11.1}%
-\contentsline {subsection}{\numberline {1.12}Example: MAX-SAT}{15}{subsection.1.12}%
-\contentsline {subsection}{\numberline {1.13}Inapproximability}{15}{subsection.1.13}%
+\contentsline {subsection}{\numberline {1.12}Example: weighted MAX-SAT}{15}{subsection.1.12}%
+\contentsline {subsection}{\numberline {1.13}LP relaxation}{16}{subsection.1.13}%
+\contentsline {subsection}{\numberline {1.14}Inapproximability}{17}{subsection.1.14}%

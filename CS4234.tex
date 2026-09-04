@@ -986,7 +986,7 @@ Edge-based greedy selection yields us 2-approximation.
   \[\forall e = (u, v) \in E, u \in V_{OPT} \lor v \in V_{OPT}\]
 
 \end{proof}
-\subsection{Example: MAX-SAT}
+\subsection{Example: weighted MAX-SAT}
 Similarly to vertex cover, a simple random assignment gives us 2-approximation. Given a CNF formula
 \[\varphi = \bigwedge_{i = 1}^{n} \bigvee_{j \in [1, m]} l_{j}\]
 with $n$ clauses, and $m$ boolean variables, a random assignment assigns each variable True or False.
@@ -1004,9 +1004,73 @@ $A \gets \emptyset$\;
 }
 \end{algorithm}
 \begin{proof}
-Define independent probability vatiabble $p_i$ for each variable in $\varphi$
+Define independent probability vatiabble $x_i$ for each variable in $\varphi$. And indicator $\tau(C_i)$ for each clause in $\varphi$, such that 
+\[\tau(C_i) = \begin{cases}
+  1, \quad C_i \text{is satisfied};\\
+  0, \quad \text{otherwise}
+\end{cases}\]
+Denote the weight of each clause as $w_i$, our objective is to find $\tau$ to maximize
+\[\text{weight}(\tau) = \sum_{i}w_i \tau(C_i)\]
+\subsubsection*{Unbiased coin: $P(x_i) = \frac{1}{2}$}
+The probability of clause $C_i$ 
+evaluates to true can be expressed as 
+\[P(C_i) = 1 - (\frac{1}{2})^{|C_i|}\]
+We can express the expectation 
+\[\mathbb{E}[\text{weight}(\tau)] = \sum_{i} w_i (1 - \frac{1}{2^{|C_i|}}) \geq \frac{1}{2}\sum_i w_i\]
+We know that the optimal is at most the sum of weights of all clauses (when all clasues are satisfied), we have
+\[\mathbb{E}[\text{weight}(\tau)] \geq \frac{1}{2}\sum_i w_i \geq \frac{1}{2}\cdot OPT\]
+
+
+\subsubsection*{Biased coin}
+Suppose the coin flip is biased, with a probabiluty of $p$ instead of $\frac{1}{2}$. Let $\ell^+_i$ denote the number of positive literals in clause $C_i$, and $\ell_i^-$ for negative literals. We can similarly express the probability of one clause the evaluates to true as
+\[P(C_i) = 1 - (p)^{\ell^-_i}(1 - p)^{\ell^+_i}\]
+WLOG, let $p \geq \frac{1}{2}$, we have 
+\[P(C_i) = 1 - p^{\ell^-_i}(1 - p)^{\ell^+_i} \geq 1 - p^{\ell^-_i}\cdot p^{\ell^+_i} = 1 - p^{|C_i|}\]
+Then we can express the expectation of total weight as
+\[\mathbb{E}[\text{weight}(\tau)] = \sum_i w_i [1 - p^{\ell^-_i}(1 - p)^{\ell^+_i}] \geq \sum_i w_i (1 - p^{|C_i|})\]
+
+
+Similar to the unbiased case, we need to construct a lower bound on the probability of each clasue to evaluate to true. 
+In the uniased casse, we have $P[C_i] = \frac{1}{2}$ for $|C_i| = 1$, regardless if the singleton clause contains a positive or negative literal. 
+And $\forall |C_j| > |C_i| > 1, (1 - (\frac{1}{2})^|C_i|) < (1 - (\frac{1}{2})^|C_j|)$, which means the probability is monotonously decreasing as the 
+length of the clause. 
+
+This is not the case for a biased coin, as we have $p > \frac{1}{2}$, therefore we cannot effectively bound the probaility of a clause is satisfiable. 
+For now we patch this by making the following assumption: all singleton contains only positive literals. Now we can construct a non-trivial lower bound 
+\[q = \min(p, 1 - p^2)\]
+Where $p$ represents the case of singleton clauses, and $1 - p^2$ take accont of clause of size $\geq 2$, as the 
+monontoncity still holds here. It follows 
+\[\mathbb{E}[\text{weight}(\tau)] \geq \min(p, 1 - p^2) \sum_i w_i \geq \min(p, 1 - p^2)\cdot OPT\]
+Now we have expressed the approximation factor in one variable $p$, finding the maximun we have 
+\[\mathbb{E}[\text{weight}(\tau)] \geq \min(p, 1 - p^2)\cdot OPT \approx \frac{\sqrt{5} - 1}{2} \cdot OPT\]
 \end{proof}
 
+
+
+
+
+
+\subsection{LP relaxation}
+Similar to propositional logics, we can use integer linear system to model decision and choice based optimization problem.
+Integer linear programming is NP-hard, but LP in real is not. We may relax a ILP formulation to LP, and round the solutions to 
+integer in a way that the feasibility is preserved. 
+\begin{enumerate}
+  \item Model problem as an instance of ILP
+  \item Replace $v_i \in \{0, 1\} to v^*_i \in [0,1]$, relax to LP
+  \item solve
+  \item Rounding 
+\end{enumerate}
+\subsubsection*{Example: weighted MAX-SAT}
+Consider the assignment of each individual variable $v_i$ as a binray variable $x_i$, and the truth value of each clauuse $C_j$ using a 
+binary variable $y_i$ dependent on the assignmentd. 
+\begin{itemize}
+  \item Constraints: $\forall C_i$
+  \[
+    \sum_{x_j \in C_i} x_j + \sum_{\neg x_k \in C_i} (1 - x_k) \geq y_i
+  \]
+  \item Goal: maximize
+\end{itemize}
+Note here we dont need additional clauses to enforce structural constraints like in PL. 
 \subsection{Inapproximability}
 
 \end{document}
