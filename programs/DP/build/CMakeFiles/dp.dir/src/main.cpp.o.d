@@ -442,4 +442,5 @@ CMakeFiles/dp.dir/src/main.cpp.o: \
  /opt/homebrew/Cellar/gcc/15.2.0/include/c++/15/latch \
  /opt/homebrew/Cellar/gcc/15.2.0/include/c++/15/syncstream \
  /Users/wxy/Desktop/CS4234/programs/DP/include/knapsack.hpp \
- /Users/wxy/Desktop/CS4234/programs/DP/include/regexMatch.hpp
+ /Users/wxy/Desktop/CS4234/programs/DP/include/regexMatch.hpp \
+ /Users/wxy/Desktop/CS4234/programs/DP/include/distinctSubsequenceCounter.hpp

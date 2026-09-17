@@ -2,6 +2,7 @@
 
 #include "knapsack.hpp"
 #include "regexMatch.hpp"
+#include "distinctSubsequenceCounter.hpp"
 
 using namespace std;
 
@@ -36,6 +37,11 @@ void print_usage(const char* executable) {
          << " [all|knapsack|regex]\n";
 }
 
+void distinctSubseq() {
+    string s = "abc";
+    cout << distinctSubseqII(s) << endl;
+}
+
 } // namespace
 
 int main(int argc, char* argv[]) {
@@ -56,5 +62,6 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
+    distinctSubseq();
     return 0;
 }

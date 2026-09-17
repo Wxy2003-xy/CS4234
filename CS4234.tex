@@ -10,9 +10,10 @@
 \usepackage{geometry}
 \usepackage{hyperref}
 \usepackage{algpseudocode}
+\usepackage{float}
 \usepackage[ruled, vlined, algoruled]{algorithm2e} % Options for styling
 \usepackage{tikz}
-\geometry{top=0.65in,bottom=0.65in,left=0.7in,right=0.7in}
+\geometry{top=0.65in,bottom=0.65in,left=1.2in,right=1.2in}
 \hypersetup{
   colorlinks=true,
   linkcolor=blue!60!black,
@@ -984,8 +985,28 @@ Edge-based greedy selection yields us 2-approximation.
   \[\forall e = (u, v) \in E, u \in V_{ALG} \lor v \in V_{ALG}\]
   The same applies to the optimal cover, i.e. 
   \[\forall e = (u, v) \in E, u \in V_{OPT} \lor v \in V_{OPT}\]
-
+  Therefore we have $\forall e = (u, v) \in E, $
+  WLOG, let $|ALG| > |OPT|$
+  Let $A$ and $B$ denotes the set of vertices optimially and not optimally picked, 
+  \[A = ALG \cap OPT, \quad B = ALG \setminus OPT\]
+  Defined random indicator variable $X_{e = (u, v)}$ such that 
+  \[X_{e = (u, v)} = \begin{cases}
+    1, \quad u \text{ or } v \in OPT \\
+    0, \quad u \text{ or } v \notin OPT 
+  \end{cases}\]
+  After running hthe algorihtm, all edegs are considered. 
+  \[ \mathbb{E}[|A|]= \mathbb{E}[\sum_{e \in E} X_{e = (u)}]\]
+  By linear expectation 
+  \[\mathbb{E}[|A|] = \sum_{e \in E} \mathbb{E}[X_{e = (u, v)}]\]
 \end{proof}
+
+
+
+\subsubsection*{Example: Max Cut}
+\begin{algorithm}[H]
+  
+\end{algorithm}
+
 \subsection{Example: weighted MAX-SAT}
 Similarly to vertex cover, a simple random assignment gives us 2-approximation. Given a CNF formula
 \[\varphi = \bigwedge_{i = 1}^{n} \bigvee_{j \in [1, m]} l_{j}\]
@@ -1047,16 +1068,13 @@ Now we have expressed the approximation factor in one variable $p$, finding the 
 
 
 
-
-
-
 \subsection{LP relaxation}
 Similar to propositional logics, we can use integer linear system to model decision and choice based optimization problem.
 Integer linear programming is NP-hard, but LP in real is not. We may relax a ILP formulation to LP, and round the solutions to 
 integer in a way that the feasibility is preserved. 
 \begin{enumerate}
   \item Model problem as an instance of ILP
-  \item Replace $v_i \in \{0, 1\} to v^*_i \in [0,1]$, relax to LP
+  \item Replace $x_i \in \{0, 1\} $ to $x^*_i \in [0,1]$, relax to LP
   \item solve
   \item Rounding 
 \end{enumerate}
@@ -1066,11 +1084,193 @@ binary variable $y_i$ dependent on the assignmentd.
 \begin{itemize}
   \item Constraints: $\forall C_i$
   \[
-    \sum_{x_j \in C_i} x_j + \sum_{\neg x_k \in C_i} (1 - x_k) \geq y_i
+    \sum_{v_j \in C_i} x_j + \sum_{\neg v_k \in C_i} (1 - x_k) \geq y_i
   \]
   \item Goal: maximize
 \end{itemize}
-Note here we dont need additional clauses to enforce structural constraints like in PL. 
+Note here we dont need additional clauses to enforce structural constraints like in PL. (may not be the case for other problems, see MAX-DICUT)
+\subsubsection*{Use real solution as expectation to assign integral values}
+after solving, $\forall x_i$, we assign variable $v_i$ to be true at probability of $x_i^*$
+\[Pr(v_i) = x_i\]
+We can express the probabality of clause $C_i$ to be true as 
+\[Pr(C_i) = 1 - \prod_{v_j \in C_i} (1 - x_j^*) \cdot \prod_{\neg v_k^* \in C_i} x_k^*\]
+thus 
+\[\mathbb{E}[\tau(C_i)] = 1 - \prod_{v_j \in C_i} (1 - x_j^*) \cdot \prod_{\neg v_k^* \in C_i} x^*_k\]
+\[\sum_{C_i \in \varphi} w_i \cdot \mathbb{E}[\tau(C_i)], \quad\quad OPT = \sum_{C_i \in \varphi} w_i \cdot y_i^*\]
+\subsubsection*{Bound Analysis}
+From our LP formulation 
+\[y_i^* \leq \sum_{v_j \in C_i} x_j^* + \sum_{v_k \in C_i} (1 - x_k^*)\]
+\[\mathbb{E}[\tau(C_i)] = 1 - \prod_{v_j \in C_i} (1 - x_j^*) \cdot \prod_{\neg v_k^* \in C_i} x^*_k\]
+Using AM-GM inequality: 
+\[(\prod_{i=1}^k a^i)^{\frac{1}{k}} \leq \frac{1}{k} \sum_{i=1}^{k}a_i, \quad\quad \prod_{i=1}^{k} a_i \leq (\frac{1}{k} \sum_{i=1}^k a_i)^k\]
+Use inequality
+\[\mathbb{E}[\tau(C_i)] \geq 1 - \left[ \frac{1}{|C_i|} \left(\sum_{v_j \in C_i} (1 - x_j^*) + \sum_{\neg v_k \in C_i} x_k^* \right)\right]^{\frac{1}{|C_i|}}\]
+\[= 1 - \left[ 1 - \frac{1}{|C_i|} \left( \sum_{v_j \in C_i} x_j^* + \sum_{\neg v_k \in C_i} (1 - x_k^*) \right)\right]^{\frac{1}{|C_i|}}\]
+\[\geq 1 - \left[ 1 - \frac{1}{|C_i|} y^*_i\right]^{\frac{1}{|C_i|}}\]
+From standard inequalities 
+\[1 - x \leq e^{-x}, \quad\quad 1 + x \leq e^x\]
 \subsection{Inapproximability}
+
+
+
+
+
+
+
+
+
+\section{Linear programming and integer programming}
+\subsection{ILP formulation from finite space FOL}
+\begin{enumerate}
+  \item Express logical constraints using FOL formula
+  \item Convert FOL formula to grounded propositional logic formula
+  \item Binary encoding
+\end{enumerate}
+\begin{table}[H]
+\centering
+
+\begin{tabular}{l l}
+\hline
+\textbf{Boolean Expression} & \textbf{Linear Constraint} \\
+\hline
+
+$\displaystyle \bigvee_{i\in I} A_i$
+&
+$\displaystyle \sum_{i\in I} A_i \ge 1$
+\\[6pt]
+
+$\displaystyle \bigwedge_{i\in I} A_i$
+&
+$\displaystyle \sum_{i\in I} A_i = |I|$
+\\[6pt]
+
+$\displaystyle \neg\left(\bigvee_{i\in I} A_i\right)$
+&
+$\displaystyle \sum_{i\in I} A_i = 0$
+\\[6pt]
+
+$\displaystyle \neg\left(\bigwedge_{i\in I} A_i\right)$
+&
+$\displaystyle \sum_{i\in I} A_i \le |I|-1$
+\\[6pt]
+
+$\displaystyle
+\left(\bigvee_{i\in I} A_i\right)\rightarrow B$
+&
+$\displaystyle
+|I|B-\sum_{i\in I}A_i \ge 0$
+\\[6pt]
+
+$\displaystyle
+\left(\bigwedge_{i\in I} A_i\right)\rightarrow B$
+&
+$\displaystyle
+B-\sum_{i\in I}A_i \ge -( |I|-1)$
+\\[6pt]
+
+$\displaystyle
+A\rightarrow\left(\bigvee_{i\in I}B_i\right)$
+&
+$\displaystyle
+\sum_{i\in I}B_i-A\ge0$
+\\[6pt]
+
+$\displaystyle
+A\rightarrow\left(\bigwedge_{i\in I}B_i\right)$
+&
+$\displaystyle
+\sum_{i\in I}B_i-|I|A\ge0$
+\\
+
+\hline
+\end{tabular}
+
+\caption{Generalized Boolean expressions using binary variables.}
+\end{table}
+\subsubsection*{Example: Vertex cover}
+Express the constraints in FOL is simple, define relation $S(v)$ as $v \in VC$
+\[\forall (u, v) \in E, S(u) \lor S(v)\]
+Define selection indicator variable $x_v$
+\[x_v = \begin{cases}
+  1, \quad \text{ S(v)}\\
+  0, \quad \text{ otherwise}
+\end{cases}\]
+Use the encoding, we have 
+\[\forall (u, v ) \in E, \quad x_u + x_v \geq 1\]
+The goal becomes to find 
+\[\min(\sum_{v \in V} x_v )\]
+
+
+
+\subsection{Randomized Rounding}
+To map LP result in $[0, 1]$ back to $\{0, 1\}$ rounding is needed. The most naive rounding scheme would be
+to assign $x$ with 1 at probability of $x^*$
+\[\mathbb{E}[x = 1] = x^*\]
+\subsubsection*{Example: MAX-SAT}
+see above 
+\subsubsection*{Example: MAX-DICUT}
+Sometimes directly using $x$ may not be optimal. For example MAX-DICUT
+
+\subsubsection*{Let $p_i = \frac{1}{4} + \frac{x_i}{2}$}
+Recall the LP formulation, the relaxed formulation reuslt is 
+\[LP^* = \sum_{(i, j) \in A} w_{ij}z_{ij}\]
+The probability of an edge being admitted to the dicut is 
+\begin{align*}
+P[(i \in U) \land j \in W] &= p_i \cdot (1 - p_j)  \\
+&= (\frac{1}{4} + \frac{x_i}{2})(1 - \frac{1}{4} - \frac{x_j}{2})\\
+&= (\frac{1}{4} + \frac{x_i}{2})(\frac{1}{4} + \frac{1 - x_j}{2}) 
+\end{align*}
+From the constraints, which are 
+\begin{align*}
+  z_{ij} \leq x_i\\
+  z_{ij} \leq 1 - x_j
+\end{align*}
+We have 
+\[\frac{1}{4} + \frac{x_i}{2} \geq \frac{1}{4} + \frac{z_{ij}}{2}, \quad\quad \frac{1}{4} + \frac{1-x_j}{2} \geq \frac{1}{4} + \frac{z_{ij}}{2} \]
+therefore 
+\begin{align*}
+P[(i \in U) \land j \in W] &\geq \left(\frac{1}{4} + \frac{z_{ij}}{2} \right)^2  \\
+&=\frac{z_{ij}}{2} + \frac{(2z_{ij} -1)^2}{16}\\
+&\geq \frac{z_{ij}}{2}
+\end{align*}
+Define indicator variable $X_{ij}$ to indicate $arc(i, j)$ is in dicut
+\begin{align*}
+  \mathbb{E}[\text{weight}(A)] &= \sum_{(i, j) \in A} w_{ij} \mathbb{E}[X_{ij}]\\
+  &= \sum_{(i,j) \in A} w_{ij} P[(i \in U) \land (j \in W)]\\
+  &\geq \frac{1}{2} \sum_{(i,j) \in A} w_{ij} z_{ij}\\
+  & = \frac{1}{2} LP^* \geq \frac{1}{2} \cdot OPT
+\end{align*}
+
+
+
+\subsubsection*{Native probability assignemnt}
+We will see now using $p_i = x_i$ will not give as good approximation. 
+\begin{align*}
+  P[(i \in U) \land j \in W] &= p_i \cdot (1 - p_j) \\
+  &= x_i \cdot (1 - x_j)\\
+  &\geq z_{ij}^2
+\end{align*}
+thus 
+\begin{align*}
+  \mathbb{E}[\text{value}(A)]&=\sum_{(i,j)\in A} w_{ij} \mathbb{E}[X_{ij}]\\
+  &\geq \sum_{(i,j)\in E} w_{ij} z_{ij}^2
+\end{align*}
+using Cauchy-scharwz inequality: 
+\[(\sum_{i=1}^{n} a_i b_i)^2 \leq (\sum_{i=1}^{n} a_i^2)(\sum_{i=1}^{n} b_i^2)\]
+rearrange by letting $a_{ij} = \sqrt{w_{ij}} z_{ij}, b_{ij} = \sqrt{w_{ij}}$
+\begin{align*}
+  (\sum_{(i,j)\in E} w_{ij} z_{ij})^2 &\leq (\sum_{(i,j)\in E} w_{ij})(\sum_{(i,j)\in E} w_{ij} z_{ij}^2)\\
+  (\sum_{(i,j)\in E} w_{ij} z_{ij}^2) &\geq \frac{(\sum_{(i,j)\in E} w_{ij} z_{ij})^2}{\sum_{(i,j)\in E} w_{ij}}\\
+  &= \frac{(LP^*)^2}{\sum_{(i,j)\in E} w_{ij}}
+\end{align*}
+Let 
+\[L = LP^*, \quad\quad W = \sum_{(i,j)\in E} w_{ij}\]
+\begin{align*}
+  \mathbb{E}[ALG] \geq \frac{L^2}{W} &= \alpha L\\
+  \alpha &= \frac{L}{W}
+\end{align*}
+
+\section{Network flow}
+
 
 \end{document}

@@ -6,5 +6,7 @@ CXX_DEFINES =
 
 CXX_INCLUDES = -I/Users/wxy/Desktop/CS4234/programs/DP/include
 
-CXX_FLAGS = -g -std=c++20 -Wall -Wextra -Wpedantic
+CXX_FLAGSarm64 = -g -std=c++20 -arch arm64 -Wall -Wextra -Wpedantic
+
+CXX_FLAGS = -g -std=c++20 -arch arm64 -Wall -Wextra -Wpedantic
 

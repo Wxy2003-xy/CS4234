@@ -10,6 +10,8 @@
 \usepackage{geometry}
 \usepackage{hyperref}
 \usepackage{algpseudocode}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
 \usepackage[ruled, vlined, algoruled]{algorithm2e} % Options for styling
 \usepackage{tikz}
 \geometry{top=0.65in,bottom=0.65in,left=0.7in,right=0.7in}
@@ -55,7 +57,163 @@
 \newpage
 
 \section{MAX-CFSU}
-\subsection{weighted MAX-SAT $\leq_p$ MAX-CFSU}
-Intuitively we can transform an instance of weighted MAX-SAT to an instance of MAX-CFSU, by treating gateways as clauses and sensors as variables. 
-The goal is to find an assignment such that the 
+\begin{algorithm}[H]
+  \KwIn{Gateway set $J$, importance set $P$, $q \in [0, 1]$}
+  \KwOut{Transmitting gateway set $J^+ \subseteq J$}
+  $J^+ \gets \emptyset$\;
+  \ForEach{$j \in J$}{
+    At probability $q$,\\
+    $J^+ \gets J^+ \cup \{j\}$\;
+  }
+  \Return {$J^+$}
+\end{algorithm}
+\subsection{Approximation factor}
+\begin{proof}
+  Define indicator binary variable $\tau$ as
+  \[\tau(j) = \begin{cases}
+    1, \quad j \text{ successfully decode}\\
+    0, \quad \text{otherwise}
+  \end{cases}\]
+  For each gateway, the probability of successful transmission can be expressed as 
+  \[P(j) = q \cdot (1 - q)^{k - 1} \cdot k\]
+  Expectation of the importance from gateway $j$ as
+  \[\mathbb{E}[\text{importance}(\tau(j))] = p_j \cdot kq(1-q)^{k-1}\]
+  and the total importance of all successfully transmitted gateway as 
+  \[\mathbb{E}[\text{importance}(\tau)] = \mathbb{E}[\sum_j \text{importance}(\tau(j))] = 
+  \sum_j p_j\cdot kq(1-q)^{k-1}\]
+  As we can define $q$ arbitrarily over $[0, 1]$, we will maximize the total expectation by finding the optimal $q$. 
+  Notice that $f(q) = kq(1-q)^{k-1}$ is concave for $k \geq 2$, 
+
+  \begin{align*}
+  f'(q) &= k[(1 - q)^{k-1} - q(k-1)(1-q)^{k - 2}]\\
+    &= k(1-kq)(1-q)^{k-2}
+  \end{align*}
+  When $f'(q) = 0, q = 1$ or $q = \frac{1}{k}$. 
+  substitute $q$ with $\frac{1}{k}$, 
+  \[f(q)_{\max} = (1 - \frac{1}{k})^{k - 1}\]
+  \[(1 - \frac{1}{k})^{k-1} \geq (1 - \frac{1}{k})^{k} \geq \frac{1}{e}\]
+  We have 
+  \[\mathbb{E}[\text{importance}(\tau)] \geq \frac{1}{e} \sum_j p_j \geq \frac{1}{e} OPT\]
+\end{proof}
+Thus the algorithm is \\
+\begin{algorithm}[H]
+  \KwIn{Gateway set $J$, importance set $P$, }
+  \KwOut{Transmitting gateway set $J^+ \subseteq J$}
+  $k \gets |J[0]|$
+  $J^+ \gets \emptyset$\;
+  \ForEach{$j \in J$}{
+    At probability $\frac{1}{k}$,\\
+    $J^+ \gets J^+ \cup \{j\}$\;
+  }
+  \Return {$J^+$}
+\end{algorithm}
+
+\section{PBS}
+Define marginal value of adding a new route $i$ to the collection of routes $A$  
+\[\Delta(i\mid A) = F(A \cup \{i\}) - F(A)\]
+and the value density per cost of route $i$ when being added to $A$ as
+\[\delta(i\mid A) = \frac{\Delta (i \mid A)}{c_i}\]
+\begin{algorithm}[H]
+  \KwIn{Species set $U = \{u_1, u_2, \dots\}$, route set $\mathcal{S}$, budget $B$}
+  \KwOut{Total importance}
+  Stack $A \gets \emptyset$\;
+  \While{$B \geq 0 \land \mathcal{S} \neq \emptyset$ }{
+    $i_{\max} = \arg\max_{i \in \mathcal{S}}\frac{\Delta(i \mid A)}{c_i}$\;
+    $A.\text{push}(i_{\max})$\;
+    $B \gets B - c_{i_{\max}}$\;
+    $\mathcal{S} \gets \mathcal{S} \setminus \{i_{\max}\}$\;
+  }
+  \If{$B < 0\quad\quad$ \# this guarantees feasibility}{
+    $i' \gets A.\text{top}()$\;
+    $A.\text{pop}()$\;
+    \Return{$\arg\max_{x \in \{A, \{i'\}\}}(F(x))$}\;
+  }
+  \Return $F(A)$;
+\end{algorithm}
+\subsubsection*{Approximation factor proof}
+Suppose the greedily chosen sequence of routes to be 
+\[i_1, i_2, \dots i_{t-1}, i_{t}\]
+Given the budget constraint
+$A = \{i_j \mid j \in [1, t-1]\}$ will have 
+\[\sum_{i \in A} c_i \leq B < \left(\sum_{i \in A} c_i\right) + c_{t}\]
+as $i_{t}$ will be the route that causes the budget overflow. 
+
+
+
+as there can be overlaps between $A$ and any $i$ to be added, 
+\[F(A \cup \{i\}) \leq F(A) + F(\{i\})\]
+\section{ECS}
+\subsubsection*{Goal}
+Minimize 
+\[\sum_{i \text{ activated}} c_i + \sum_{j \text{ not reached}} p_j\]
+\subsection{Integer linear programming formulation}
+Define relations $S(i)$ as site $i$ is activated; $R(j)$ as community $j$ is not reached.\\
+Define selection indicator variable $x_i$ as 
+\[x_i = \begin{cases}
+  1, \quad S(i)\\
+  0, \quad \neg S(i)
+\end{cases}\quad\quad y_j = \begin{cases}
+  1, \quad R(j) \\
+  0, \quad \neg R(j)
+\end{cases}\]
+For every $j$, 
+\begin{align*}
+(\forall i \in N(j) \neg S(i)) \rightarrow R(j)
+&\equiv \bigwedge_{i \in N(j)} \neg S(i) \rightarrow R(j)\\ 
+&\equiv \sum_{i \in N(j)} (1 - x_i) - y_j \leq |N(j)| - 1\\
+&\equiv |N(j)| - \sum_{i\in N(j)} x_i - y_j \leq |N(j)| - 1\\
+&\equiv \sum_{i \in N(j)} x_i + y_j \geq 1
+\end{align*}
+Integer constraint: for every $x_i, y_j$:
+\[  x_i \in \{0, 1\}\quad\quad
+  y_j \in \{0, 1\}
+\]
+\subsubsection*{Goal}
+Minimize 
+\[\sum_{i} c_i x_i + \sum_{j} p_j y_j\]
+\subsection{Determinstic rounding} 
+Let the optimal solution of the relaxed LP be $x^*_i$ for $i$, $y_j^*$ for $j$, 
+Define a rounding threshold$k \in [0, 1]$:
+\[x_i = \begin{cases}
+  1, \quad x^*_i \geq k\\
+  0, \quad \text{ otherwise}
+\end{cases}\]
+This rounding is clearly polynomial, linear to the size of site set. \\
+\subsection{Approximation factor proof}
+Using this deterministic rounding, in our result $\forall i, S(i) \rightarrow$
+\begin{align*}
+x_i^* &\geq k\\
+\frac{x_i^*}{k} &\geq 1  \\
+\frac{1}{k}c_i x_i^* &\geq c_i x_i \quad (x_i \leq 1)\\ 
+\implies \frac{1}{k} \sum_i c_i x_i^* &\geq \sum_i c_i x_i
+\end{align*}
+For each $j$ that is unreached, we need to have 
+\begin{align*}
+\forall i \in N(j) (\neg S(i) ) \implies \forall i \in N(j) (x^*_i < k)\\
+\implies \sum_{i \in N(j)} x^*_i < k|N(j)| \leq fk
+\end{align*}
+From constraint, 
+\begin{align*}
+  y_j^* &\geq 1 - \sum_{i\in N(j)} x_i \\
+  y^*_j &> 1 - fk\\
+  \frac{1}{1 - fk}\cdot y^*_j&> 1\\
+  \frac{1}{1 - fk}\cdot p_j y^*_j &> p_j y_j \quad (y_j \leq 1)\\
+  \frac{1}{1 - fk}\sum_j p_j y^*_j &> \sum_j p_j y_j\\
+\end{align*}
+Combining 2 parts, we have 
+\[LP = \sum_i c_i x_i^* + \sum_j p_j y_j^*\]
+\[ALG = \sum_i c_i x_i + \sum_j p_j y_j 
+\leq \frac{1}{k} \sum_i c_i x_i^* + \frac{1}{1 - fk}\sum_j p_j y_j^* 
+\leq \max\left\{\frac{1}{k}, \frac{1}{1 - fk}\right\} LP\]
+($ALG \leq LP$ as the strict $<$ unreached community term may be 0)
+\subsubsection*{Find $k$ to minimize $\max\left\{\frac{1}{k}, \frac{1}{1 - fk}\right\}$}
+Notice that $g_1(k) = \frac{1}{k}$ is strictly decreasing, $g_2(k) = \frac{1}{1 - fk}$ is strictly increasing over $k \in (0, 1]$ ($k=0$ case is trivially impossible), for $f \geq 1$, 
+$\max\left\{\frac{1}{k}, \frac{1}{1 - fk}\right\} $ occurs at the intersection when 
+\begin{align*}
+\frac{1}{k} &= \frac{1}{1 - fk}\\
+k &= \frac{1}{f + 1}
+\end{align*}
+Given 
+\[ALG \leq \max\left\{\frac{1}{k}, \frac{1}{1 - fk}\right\} LP\]
+\[ALG \leq (f + 1) \cdot LP \leq (f + 1) \cdot OPT\]
 \end{document}

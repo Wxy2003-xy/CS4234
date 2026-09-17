@@ -138,6 +138,7 @@ CMakeFiles/dp.dir/src/main.cpp.o
  /Library/Developer/CommandLineTools/SDKs/MacOSX26.sdk/usr/include/time.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX26.sdk/usr/include/wchar.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX26.sdk/usr/include/wctype.h
+ /Users/wxy/Desktop/CS4234/programs/DP/include/distinctSubsequenceCounter.hpp
  /Users/wxy/Desktop/CS4234/programs/DP/include/knapsack.hpp
  /Users/wxy/Desktop/CS4234/programs/DP/include/regexMatch.hpp
  /opt/homebrew/Cellar/gcc/15.2.0/include/c++/15/aarch64-apple-darwin25/bits/atomic_word.h

@@ -137,6 +137,7 @@ CMakeFiles/dp.dir/src/main.cpp.o: /Users/wxy/Desktop/CS4234/programs/DP/src/main
   /Library/Developer/CommandLineTools/SDKs/MacOSX26.sdk/usr/include/time.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX26.sdk/usr/include/wchar.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX26.sdk/usr/include/wctype.h \
+  /Users/wxy/Desktop/CS4234/programs/DP/include/distinctSubsequenceCounter.hpp \
   /Users/wxy/Desktop/CS4234/programs/DP/include/knapsack.hpp \
   /Users/wxy/Desktop/CS4234/programs/DP/include/regexMatch.hpp \
   /opt/homebrew/Cellar/gcc/15.2.0/include/c++/15/aarch64-apple-darwin25/bits/atomic_word.h \
@@ -508,6 +509,8 @@ CMakeFiles/dp.dir/src/main.cpp.o: /Users/wxy/Desktop/CS4234/programs/DP/src/main
 /opt/homebrew/Cellar/gcc/15.2.0/include/c++/15/semaphore:
 
 /opt/homebrew/Cellar/gcc/15.2.0/include/c++/15/scoped_allocator:
+
+/opt/homebrew/Cellar/gcc/15.2.0/include/c++/15/regex:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX26.sdk/usr/include/pthread/pthread_impl.h:
 
@@ -921,10 +924,6 @@ CMakeFiles/dp.dir/src/main.cpp.o: /Users/wxy/Desktop/CS4234/programs/DP/src/main
 
 /opt/homebrew/Cellar/gcc/15.2.0/include/c++/15/array:
 
-/Library/Developer/CommandLineTools/SDKs/MacOSX26.sdk/usr/include/arm/types.h:
-
-/opt/homebrew/Cellar/gcc/15.2.0/include/c++/15/bits/fs_fwd.h:
-
 /Library/Developer/CommandLineTools/SDKs/MacOSX26.sdk/usr/include/_types/_uint32_t.h:
 
 /opt/homebrew/Cellar/gcc/15.2.0/include/c++/15/algorithm:
@@ -950,8 +949,6 @@ CMakeFiles/dp.dir/src/main.cpp.o: /Users/wxy/Desktop/CS4234/programs/DP/src/main
 /opt/homebrew/Cellar/gcc/15.2.0/include/c++/15/aarch64-apple-darwin25/bits/ctype_base.h:
 
 /opt/homebrew/Cellar/gcc/15.2.0/include/c++/15/aarch64-apple-darwin25/bits/os_defines.h:
-
-/opt/homebrew/Cellar/gcc/15.2.0/include/c++/15/regex:
 
 /opt/homebrew/Cellar/gcc/15.2.0/include/c++/15/bits/codecvt.h:
 
@@ -988,6 +985,10 @@ CMakeFiles/dp.dir/src/main.cpp.o: /Users/wxy/Desktop/CS4234/programs/DP/src/main
 /opt/homebrew/Cellar/gcc/15.2.0/include/c++/15/aarch64-apple-darwin25/bits/c++io.h:
 
 /Users/wxy/Desktop/CS4234/programs/DP/include/knapsack.hpp:
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX26.sdk/usr/include/_string.h:
+
+/Users/wxy/Desktop/CS4234/programs/DP/include/distinctSubsequenceCounter.hpp:
 
 /opt/homebrew/Cellar/gcc/15.2.0/include/c++/15/backward/binders.h:
 
@@ -1191,6 +1192,10 @@ CMakeFiles/dp.dir/src/main.cpp.o: /Users/wxy/Desktop/CS4234/programs/DP/src/main
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX26.sdk/usr/include/math.h:
 
+/opt/homebrew/Cellar/gcc/15.2.0/include/c++/15/bits/fs_fwd.h:
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX26.sdk/usr/include/arm/types.h:
+
 /Library/Developer/CommandLineTools/SDKs/MacOSX26.sdk/usr/include/machine/_endian.h:
 
 /opt/homebrew/Cellar/gcc/15.2.0/include/c++/15/bits/enable_special_members.h:
@@ -1244,8 +1249,6 @@ CMakeFiles/dp.dir/src/main.cpp.o: /Users/wxy/Desktop/CS4234/programs/DP/src/main
 /opt/homebrew/Cellar/gcc/15.2.0/include/c++/15/new:
 
 /opt/homebrew/Cellar/gcc/15.2.0/include/c++/15/bits/atomic_timed_wait.h:
-
-/Library/Developer/CommandLineTools/SDKs/MacOSX26.sdk/usr/include/_string.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX26.sdk/usr/include/___wctype.h:
 

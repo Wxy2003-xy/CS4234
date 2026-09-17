@@ -1,2 +1,7 @@
 \contentsline {section}{\numberline {1}MAX-CFSU}{2}{section.1}%
-\contentsline {subsection}{\numberline {1.1}weighted MAX-SAT $\leq _p$ MAX-CFSU}{2}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.1}Approximation factor}{2}{subsection.1.1}%
+\contentsline {section}{\numberline {2}PBS}{3}{section.2}%
+\contentsline {section}{\numberline {3}ECS}{3}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Integer linear programming formulation}{3}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Determinstic rounding}{4}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Approximation factor proof}{4}{subsection.3.3}%

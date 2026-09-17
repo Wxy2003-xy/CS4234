@@ -5,6 +5,7 @@
 file(GLOB NEW_GLOB LIST_DIRECTORIES true "/Users/wxy/Desktop/CS4234/programs/DP/include/*.hpp")
 set(OLD_GLOB
   "/Users/wxy/Desktop/CS4234/programs/DP/include/_graph.hpp"
+  "/Users/wxy/Desktop/CS4234/programs/DP/include/distinctSubsequenceCounter.hpp"
   "/Users/wxy/Desktop/CS4234/programs/DP/include/knapsack.hpp"
   "/Users/wxy/Desktop/CS4234/programs/DP/include/regexMatch.hpp"
   "/Users/wxy/Desktop/CS4234/programs/DP/include/tsp.hpp"

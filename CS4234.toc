@@ -1,23 +1,23 @@
 \contentsline {subsection}{\numberline {0.1}Prerequisite map}{2}{subsection.0.1}%
 \contentsline {subsection}{\numberline {0.2}The optimization viewpoint}{2}{subsection.0.2}%
 \contentsline {paragraph}{A standard model.}{2}{section*.3}%
-\contentsline {subsection}{\numberline {0.3}Asymptotics, input size, and cost models}{2}{subsection.0.3}%
+\contentsline {subsection}{\numberline {0.3}Asymptotics, input size, and cost models}{3}{subsection.0.3}%
 \contentsline {paragraph}{Bit complexity.}{3}{section*.4}%
 \contentsline {paragraph}{Cost accounting.}{3}{section*.5}%
 \contentsline {subsection}{\numberline {0.4}Proof obligations for algorithms}{3}{subsection.0.4}%
 \contentsline {paragraph}{Reusable proof patterns.}{3}{section*.6}%
-\contentsline {subsection}{\numberline {0.5}Algorithm-design tools retained from CS3230}{3}{subsection.0.5}%
-\contentsline {paragraph}{Dynamic programming.}{3}{section*.7}%
+\contentsline {subsection}{\numberline {0.5}Algorithm-design tools retained from CS3230}{4}{subsection.0.5}%
+\contentsline {paragraph}{Dynamic programming.}{4}{section*.7}%
 \contentsline {paragraph}{Greedy algorithms.}{4}{section*.8}%
 \contentsline {paragraph}{Graph subroutines.}{4}{section*.9}%
 \contentsline {subsection}{\numberline {0.6}Probability toolkit for randomized optimization}{4}{subsection.0.6}%
 \contentsline {subsection}{\numberline {0.7}Logic and constraint modelling from CS4269}{4}{subsection.0.7}%
-\contentsline {paragraph}{Constraint-encoding recipe.}{4}{section*.10}%
+\contentsline {paragraph}{Constraint-encoding recipe.}{5}{section*.10}%
 \contentsline {subsection}{\numberline {0.8}From Boolean constraints to binary optimization}{5}{subsection.0.8}%
 \contentsline {paragraph}{Example: minimum vertex cover.}{5}{section*.11}%
 \contentsline {subsection}{\numberline {0.9}Complexity classes and reductions}{5}{subsection.0.9}%
-\contentsline {paragraph}{Decision versus optimization hardness.}{5}{section*.12}%
-\contentsline {subsection}{\numberline {0.10}A checklist for the rest of CS4234}{5}{subsection.0.10}%
+\contentsline {paragraph}{Decision versus optimization hardness.}{6}{section*.12}%
+\contentsline {subsection}{\numberline {0.10}A checklist for the rest of CS4234}{6}{subsection.0.10}%
 \contentsline {section}{\numberline {1}Lecture 1: Approximation Algorithm}{6}{section.1}%
 \contentsline {subsection}{\numberline {1.1}Definiton}{6}{subsection.1.1}%
 \contentsline {subsection}{\numberline {1.2}General Approach}{6}{subsection.1.2}%
@@ -29,9 +29,13 @@
 \contentsline {subsection}{\numberline {1.8}Vertex Cover as a special case of Set cover}{12}{subsection.1.8}%
 \contentsline {subsection}{\numberline {1.9}Fully polynomial-time approximation scheme}{14}{subsection.1.9}%
 \contentsline {subsubsection}{\numberline {1.9.1}Woeginger FPTAS}{14}{subsubsection.1.9.1}%
-\contentsline {subsection}{\numberline {1.10}Randomized approximation algorithm}{14}{subsection.1.10}%
-\contentsline {subsection}{\numberline {1.11}Example: (Minimum) Vertex Cover}{14}{subsection.1.11}%
-\contentsline {subsubsection}{\numberline {1.11.1}Greedy approach}{14}{subsubsection.1.11.1}%
-\contentsline {subsection}{\numberline {1.12}Example: weighted MAX-SAT}{15}{subsection.1.12}%
-\contentsline {subsection}{\numberline {1.13}LP relaxation}{16}{subsection.1.13}%
-\contentsline {subsection}{\numberline {1.14}Inapproximability}{17}{subsection.1.14}%
+\contentsline {subsection}{\numberline {1.10}Randomized approximation algorithm}{15}{subsection.1.10}%
+\contentsline {subsection}{\numberline {1.11}Example: (Minimum) Vertex Cover}{15}{subsection.1.11}%
+\contentsline {subsubsection}{\numberline {1.11.1}Greedy approach}{15}{subsubsection.1.11.1}%
+\contentsline {subsection}{\numberline {1.12}Example: weighted MAX-SAT}{16}{subsection.1.12}%
+\contentsline {subsection}{\numberline {1.13}LP relaxation}{17}{subsection.1.13}%
+\contentsline {subsection}{\numberline {1.14}Inapproximability}{18}{subsection.1.14}%
+\contentsline {section}{\numberline {2}Linear programming and integer programming}{18}{section.2}%
+\contentsline {subsection}{\numberline {2.1}ILP formulation from finite space FOL}{18}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Randomized Rounding}{19}{subsection.2.2}%
+\contentsline {section}{\numberline {3}Network flow}{20}{section.3}%

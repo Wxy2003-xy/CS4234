@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.11.22)  4 SEP 2026 16:16
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.11.22)  16 SEP 2026 20:17
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -355,13 +355,20 @@ Document Style algorithmicx 1.2 - a greatly improved `algorithmic' style
 \ALG@tmplength=\skip63
 )
 Document Style - pseudocode environments for use with the `algorithmicx' style
+) (/usr/local/texlive/2023/texmf-dist/tex/latex/float/float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count299
+\float@exts=\toks35
+\float@box=\box56
+\@float@everytoks=\toks36
+\@floatcapt=\box57
 ) (/usr/local/texlive/2023/texmf-dist/tex/latex/algorithm2e/algorithm2e.sty
 Package: algorithm2e 2017/07/18 v5.2 algorithms environments
-\c@AlgoLine=\count299
+\c@AlgoLine=\count300
 \algocf@hangindent=\skip64
  (/usr/local/texlive/2023/texmf-dist/tex/latex/ifoddpage/ifoddpage.sty
 Package: ifoddpage 2022/10/18 v1.2 Conditionals for odd/even page detection
-\c@checkoddpage=\count300
+\c@checkoddpage=\count301
 ) (/usr/local/texlive/2023/texmf-dist/tex/latex/tools/xspace.sty
 Package: xspace 2014/10/28 v1.13 Space after command names (DPC,MH)
 ) (/usr/local/texlive/2023/texmf-dist/tex/latex/relsize/relsize.sty
@@ -382,32 +389,32 @@ Package: relsize 2013/03/29 ver 4.1
 \interspacealgoruled=\dimen182
 \interspacetitleboxruled=\dimen183
 \algocf@ruledwidth=\skip73
-\algocf@inoutbox=\box56
-\algocf@inputbox=\box57
+\algocf@inoutbox=\box58
+\algocf@inputbox=\box59
 \AlCapSkip=\skip74
 \AlCapHSkip=\skip75
 \algoskipindent=\skip76
-\algocf@nlbox=\box58
-\algocf@hangingbox=\box59
-\algocf@untilbox=\box60
+\algocf@nlbox=\box60
+\algocf@hangingbox=\box61
+\algocf@untilbox=\box62
 \algocf@skipuntil=\skip77
-\algocf@capbox=\box61
+\algocf@capbox=\box63
 \algocf@lcaptionbox=\skip78
 \algoheightruledefault=\skip79
 \algoheightrule=\skip80
 \algotitleheightruledefault=\skip81
 \algotitleheightrule=\skip82
-\c@algocfline=\count301
-\c@algocfproc=\count302
-\c@algocf=\count303
-\algocf@algoframe=\box62
-\algocf@algobox=\box63
+\c@algocfline=\count302
+\c@algocfproc=\count303
+\c@algocf=\count304
+\algocf@algoframe=\box64
+\algocf@algobox=\box65
 ) (/usr/local/texlive/2023/texmf-dist/tex/latex/pgf/frontendlayer/tikz.sty (/usr/local/texlive/2023/texmf-dist/tex/latex/pgf/basiclayer/pgf.sty (/usr/local/texlive/2023/texmf-dist/tex/latex/pgf/utilities/pgfrcs.sty (/usr/local/texlive/2023/texmf-dist/tex/generic/pgf/utilities/pgfutil-common.tex
-\pgfutil@everybye=\toks35
+\pgfutil@everybye=\toks37
 \pgfutil@tempdima=\dimen184
 \pgfutil@tempdimb=\dimen185
 ) (/usr/local/texlive/2023/texmf-dist/tex/generic/pgf/utilities/pgfutil-latex.def
-\pgfutil@abb=\box64
+\pgfutil@abb=\box66
 ) (/usr/local/texlive/2023/texmf-dist/tex/generic/pgf/utilities/pgfrcs.code.tex (/usr/local/texlive/2023/texmf-dist/tex/generic/pgf/pgf.revision.tex)
 Package: pgfrcs 2023-01-15 v3.1.10 (3.1.10)
 ))
@@ -428,10 +435,10 @@ Package graphics Info: Driver file: pdftex.def on input line 107.
 ) (/usr/local/texlive/2023/texmf-dist/tex/latex/pgf/systemlayer/pgfsys.sty (/usr/local/texlive/2023/texmf-dist/tex/generic/pgf/systemlayer/pgfsys.code.tex
 Package: pgfsys 2023-01-15 v3.1.10 (3.1.10)
  (/usr/local/texlive/2023/texmf-dist/tex/generic/pgf/utilities/pgfkeys.code.tex
-\pgfkeys@pathtoks=\toks36
-\pgfkeys@temptoks=\toks37
+\pgfkeys@pathtoks=\toks38
+\pgfkeys@temptoks=\toks39
  (/usr/local/texlive/2023/texmf-dist/tex/generic/pgf/utilities/pgfkeyslibraryfiltered.code.tex
-\pgfkeys@tmptoks=\toks38
+\pgfkeys@tmptoks=\toks40
 ))
 \pgf@x=\dimen188
 \pgf@y=\dimen189
@@ -445,14 +452,14 @@ Package: pgfsys 2023-01-15 v3.1.10 (3.1.10)
 \pgf@yd=\dimen197
 \w@pgf@writea=\write3
 \r@pgf@reada=\read2
-\c@pgf@counta=\count304
-\c@pgf@countb=\count305
-\c@pgf@countc=\count306
-\c@pgf@countd=\count307
-\t@pgf@toka=\toks39
-\t@pgf@tokb=\toks40
-\t@pgf@tokc=\toks41
-\pgf@sys@id@count=\count308
+\c@pgf@counta=\count305
+\c@pgf@countb=\count306
+\c@pgf@countc=\count307
+\c@pgf@countd=\count308
+\t@pgf@toka=\toks41
+\t@pgf@tokb=\toks42
+\t@pgf@tokc=\toks43
+\pgf@sys@id@count=\count309
  (/usr/local/texlive/2023/texmf-dist/tex/generic/pgf/systemlayer/pgf.cfg
 File: pgf.cfg 2023-01-15 v3.1.10 (3.1.10)
 )
@@ -463,21 +470,21 @@ File: pgfsys-pdftex.def 2023-01-15 v3.1.10 (3.1.10)
 File: pgfsys-common-pdf.def 2023-01-15 v3.1.10 (3.1.10)
 ))) (/usr/local/texlive/2023/texmf-dist/tex/generic/pgf/systemlayer/pgfsyssoftpath.code.tex
 File: pgfsyssoftpath.code.tex 2023-01-15 v3.1.10 (3.1.10)
-\pgfsyssoftpath@smallbuffer@items=\count309
-\pgfsyssoftpath@bigbuffer@items=\count310
+\pgfsyssoftpath@smallbuffer@items=\count310
+\pgfsyssoftpath@bigbuffer@items=\count311
 ) (/usr/local/texlive/2023/texmf-dist/tex/generic/pgf/systemlayer/pgfsysprotocol.code.tex
 File: pgfsysprotocol.code.tex 2023-01-15 v3.1.10 (3.1.10)
 )) (/usr/local/texlive/2023/texmf-dist/tex/generic/pgf/basiclayer/pgfcore.code.tex
 Package: pgfcore 2023-01-15 v3.1.10 (3.1.10)
  (/usr/local/texlive/2023/texmf-dist/tex/generic/pgf/math/pgfmath.code.tex (/usr/local/texlive/2023/texmf-dist/tex/generic/pgf/math/pgfmathutil.code.tex) (/usr/local/texlive/2023/texmf-dist/tex/generic/pgf/math/pgfmathparser.code.tex
 \pgfmath@dimen=\dimen198
-\pgfmath@count=\count311
-\pgfmath@box=\box65
-\pgfmath@toks=\toks42
-\pgfmath@stack@operand=\toks43
-\pgfmath@stack@operation=\toks44
+\pgfmath@count=\count312
+\pgfmath@box=\box67
+\pgfmath@toks=\toks44
+\pgfmath@stack@operand=\toks45
+\pgfmath@stack@operation=\toks46
 ) (/usr/local/texlive/2023/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.code.tex) (/usr/local/texlive/2023/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.basic.code.tex) (/usr/local/texlive/2023/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.trigonometric.code.tex) (/usr/local/texlive/2023/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.random.code.tex) (/usr/local/texlive/2023/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.comparison.code.tex) (/usr/local/texlive/2023/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.base.code.tex) (/usr/local/texlive/2023/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.round.code.tex) (/usr/local/texlive/2023/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.misc.code.tex) (/usr/local/texlive/2023/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.integerarithmetics.code.tex) (/usr/local/texlive/2023/texmf-dist/tex/generic/pgf/math/pgfmathcalc.code.tex) (/usr/local/texlive/2023/texmf-dist/tex/generic/pgf/math/pgfmathfloat.code.tex
-\c@pgfmathroundto@lastzeros=\count312
+\c@pgfmathroundto@lastzeros=\count313
 )) (/usr/local/texlive/2023/texmf-dist/tex/generic/pgf/math/pgfint.code.tex) (/usr/local/texlive/2023/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepoints.code.tex
 File: pgfcorepoints.code.tex 2023-01-15 v3.1.10 (3.1.10)
 \pgf@picminx=\dimen199
@@ -504,10 +511,10 @@ File: pgfcorepathusage.code.tex 2023-01-15 v3.1.10 (3.1.10)
 \pgf@shorten@start@additional=\dimen272
 ) (/usr/local/texlive/2023/texmf-dist/tex/generic/pgf/basiclayer/pgfcorescopes.code.tex
 File: pgfcorescopes.code.tex 2023-01-15 v3.1.10 (3.1.10)
-\pgfpic=\box66
-\pgf@hbox=\box67
-\pgf@layerbox@main=\box68
-\pgf@picture@serial@count=\count313
+\pgfpic=\box68
+\pgf@hbox=\box69
+\pgf@layerbox@main=\box70
+\pgf@picture@serial@count=\count314
 ) (/usr/local/texlive/2023/texmf-dist/tex/generic/pgf/basiclayer/pgfcoregraphicstate.code.tex
 File: pgfcoregraphicstate.code.tex 2023-01-15 v3.1.10 (3.1.10)
 \pgflinewidth=\dimen273
@@ -528,13 +535,13 @@ File: pgfcorearrows.code.tex 2023-01-15 v3.1.10 (3.1.10)
 ) (/usr/local/texlive/2023/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreshade.code.tex
 File: pgfcoreshade.code.tex 2023-01-15 v3.1.10 (3.1.10)
 \pgf@max=\dimen278
-\pgf@sys@shading@range@num=\count314
-\pgf@shadingcount=\count315
+\pgf@sys@shading@range@num=\count315
+\pgf@shadingcount=\count316
 ) (/usr/local/texlive/2023/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreimage.code.tex
 File: pgfcoreimage.code.tex 2023-01-15 v3.1.10 (3.1.10)
 ) (/usr/local/texlive/2023/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreexternal.code.tex
 File: pgfcoreexternal.code.tex 2023-01-15 v3.1.10 (3.1.10)
-\pgfexternal@startupbox=\box69
+\pgfexternal@startupbox=\box71
 ) (/usr/local/texlive/2023/texmf-dist/tex/generic/pgf/basiclayer/pgfcorelayers.code.tex
 File: pgfcorelayers.code.tex 2023-01-15 v3.1.10 (3.1.10)
 ) (/usr/local/texlive/2023/texmf-dist/tex/generic/pgf/basiclayer/pgfcoretransparency.code.tex
@@ -545,7 +552,7 @@ File: pgfcorepatterns.code.tex 2023-01-15 v3.1.10 (3.1.10)
 File: pgfcorerdf.code.tex 2023-01-15 v3.1.10 (3.1.10)
 ))) (/usr/local/texlive/2023/texmf-dist/tex/generic/pgf/modules/pgfmoduleshapes.code.tex
 File: pgfmoduleshapes.code.tex 2023-01-15 v3.1.10 (3.1.10)
-\pgfnodeparttextbox=\box70
+\pgfnodeparttextbox=\box72
 ) (/usr/local/texlive/2023/texmf-dist/tex/generic/pgf/modules/pgfmoduleplot.code.tex
 File: pgfmoduleplot.code.tex 2023-01-15 v3.1.10 (3.1.10)
 ) (/usr/local/texlive/2023/texmf-dist/tex/latex/pgf/compatibility/pgfcomp-version-0-65.sty
@@ -558,13 +565,13 @@ Package: pgfcomp-version-1-18 2023-01-15 v3.1.10 (3.1.10)
 Package: pgffor 2023-01-15 v3.1.10 (3.1.10)
 \pgffor@iter=\dimen281
 \pgffor@skip=\dimen282
-\pgffor@stack=\toks45
-\pgffor@toks=\toks46
+\pgffor@stack=\toks47
+\pgffor@toks=\toks48
 )) (/usr/local/texlive/2023/texmf-dist/tex/generic/pgf/frontendlayer/tikz/tikz.code.tex
 Package: tikz 2023-01-15 v3.1.10 (3.1.10)
  (/usr/local/texlive/2023/texmf-dist/tex/generic/pgf/libraries/pgflibraryplothandlers.code.tex
 File: pgflibraryplothandlers.code.tex 2023-01-15 v3.1.10 (3.1.10)
-\pgf@plot@mark@count=\count316
+\pgf@plot@mark@count=\count317
 \pgfplotmarksize=\dimen283
 )
 \tikz@lastx=\dimen284
@@ -575,67 +582,67 @@ File: pgflibraryplothandlers.code.tex 2023-01-15 v3.1.10 (3.1.10)
 \tikz@lastmovetoy=\dimen289
 \tikzleveldistance=\dimen290
 \tikzsiblingdistance=\dimen291
-\tikz@figbox=\box71
-\tikz@figbox@bg=\box72
-\tikz@tempbox=\box73
-\tikz@tempbox@bg=\box74
-\tikztreelevel=\count317
-\tikznumberofchildren=\count318
-\tikznumberofcurrentchild=\count319
-\tikz@fig@count=\count320
+\tikz@figbox=\box73
+\tikz@figbox@bg=\box74
+\tikz@tempbox=\box75
+\tikz@tempbox@bg=\box76
+\tikztreelevel=\count318
+\tikznumberofchildren=\count319
+\tikznumberofcurrentchild=\count320
+\tikz@fig@count=\count321
  (/usr/local/texlive/2023/texmf-dist/tex/generic/pgf/modules/pgfmodulematrix.code.tex
 File: pgfmodulematrix.code.tex 2023-01-15 v3.1.10 (3.1.10)
-\pgfmatrixcurrentrow=\count321
-\pgfmatrixcurrentcolumn=\count322
-\pgf@matrix@numberofcolumns=\count323
+\pgfmatrixcurrentrow=\count322
+\pgfmatrixcurrentcolumn=\count323
+\pgf@matrix@numberofcolumns=\count324
 )
-\tikz@expandcount=\count324
+\tikz@expandcount=\count325
  (/usr/local/texlive/2023/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tikzlibrarytopaths.code.tex
 File: tikzlibrarytopaths.code.tex 2023-01-15 v3.1.10 (3.1.10)
 )))
-Package hyperref Info: Option `colorlinks' set `true' on input line 21.
-\c@definition=\count325
-LaTeX Font Info:    Trying to load font information for T1+lmr on input line 51.
+Package hyperref Info: Option `colorlinks' set `true' on input line 22.
+\c@definition=\count326
+LaTeX Font Info:    Trying to load font information for T1+lmr on input line 52.
  (/usr/local/texlive/2023/texmf-dist/tex/latex/lm/t1lmr.fd
 File: t1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 ) (/usr/local/texlive/2023/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
 File: l3backend-pdftex.def 2023-01-16 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count326
-\l__pdf_internal_box=\box75
+\l__color_backend_stack_int=\count327
+\l__pdf_internal_box=\box77
 ) (./CS4234.aux)
 \openout1 = `CS4234.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 51.
-LaTeX Font Info:    ... okay on input line 51.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 51.
-LaTeX Font Info:    ... okay on input line 51.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 51.
-LaTeX Font Info:    ... okay on input line 51.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 51.
-LaTeX Font Info:    ... okay on input line 51.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 51.
-LaTeX Font Info:    ... okay on input line 51.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 51.
-LaTeX Font Info:    ... okay on input line 51.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 51.
-LaTeX Font Info:    ... okay on input line 51.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 51.
-LaTeX Font Info:    ... okay on input line 51.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 51.
-LaTeX Font Info:    ... okay on input line 51.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 52.
+LaTeX Font Info:    ... okay on input line 52.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 52.
+LaTeX Font Info:    ... okay on input line 52.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 52.
+LaTeX Font Info:    ... okay on input line 52.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 52.
+LaTeX Font Info:    ... okay on input line 52.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 52.
+LaTeX Font Info:    ... okay on input line 52.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 52.
+LaTeX Font Info:    ... okay on input line 52.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 52.
+LaTeX Font Info:    ... okay on input line 52.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 52.
+LaTeX Font Info:    ... okay on input line 52.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 52.
+LaTeX Font Info:    ... okay on input line 52.
  (/usr/local/texlive/2023/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count327
+\scratchcounter=\count328
 \scratchdimen=\dimen292
-\scratchbox=\box76
-\nofMPsegments=\count328
-\nofMParguments=\count329
-\everyMPshowfont=\toks47
-\MPscratchCnt=\count330
+\scratchbox=\box78
+\nofMPsegments=\count329
+\nofMParguments=\count330
+\everyMPshowfont=\toks49
+\MPscratchCnt=\count331
 \MPscratchDim=\dimen293
-\MPnumerator=\count331
-\makeMPintoPDFobject=\count332
-\everyMPtoPDFconversion=\toks48
+\MPnumerator=\count332
+\makeMPintoPDFobject=\count333
+\everyMPtoPDFconversion=\toks50
 ) (/usr/local/texlive/2023/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 485.
@@ -650,14 +657,14 @@ File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
 * layout: <same size as paper>
 * layoutoffset:(h,v)=(0.0pt,0.0pt)
 * modes: 
-* h-part:(L,W,R)=(50.58878pt, 513.11745pt, 50.58878pt)
+* h-part:(L,W,R)=(86.72377pt, 440.84746pt, 86.72377pt)
 * v-part:(T,H,B)=(46.97505pt, 701.01988pt, 46.97505pt)
 * \paperwidth=614.295pt
 * \paperheight=794.96999pt
-* \textwidth=513.11745pt
+* \textwidth=440.84746pt
 * \textheight=701.01988pt
-* \oddsidemargin=-21.68121pt
-* \evensidemargin=-21.68121pt
+* \oddsidemargin=14.45378pt
+* \evensidemargin=14.45378pt
 * \topmargin=-62.29494pt
 * \headheight=12.0pt
 * \headsep=25.0pt
@@ -676,38 +683,38 @@ File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-Package hyperref Info: Link coloring ON on input line 51.
+Package hyperref Info: Link coloring ON on input line 52.
 (./CS4234.out) (./CS4234.out)
 \@outlinefile=\write4
 \openout4 = `CS4234.out'.
 
-LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 54.
+LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 55.
  (/usr/local/texlive/2023/texmf-dist/tex/latex/lm/ot1lmr.fd
 File: ot1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OML+lmm on input line 54.
+LaTeX Font Info:    Trying to load font information for OML+lmm on input line 55.
  (/usr/local/texlive/2023/texmf-dist/tex/latex/lm/omllmm.fd
 File: omllmm.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 54.
+LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 55.
  (/usr/local/texlive/2023/texmf-dist/tex/latex/lm/omslmsy.fd
 File: omslmsy.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 54.
+LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 55.
  (/usr/local/texlive/2023/texmf-dist/tex/latex/lm/omxlmex.fd
 File: omxlmex.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <12> on input line 54.
+(Font)              <12> on input line 55.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 54.
+(Font)              <8> on input line 55.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 54.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 54.
+(Font)              <6> on input line 55.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 55.
  (/usr/local/texlive/2023/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 54.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 55.
  (/usr/local/texlive/2023/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) (./CS4234.toc
@@ -724,30 +731,59 @@ LaTeX Font Info:    External font `lmex10' loaded for size
  [1
 
 {/usr/local/texlive/2023/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/usr/local/texlive/2023/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}]
-LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 109.
- (/usr/local/texlive/2023/texmf-dist/tex/latex/lm/ts1lmr.fd
+Overfull \hbox (10.60265pt too wide) in paragraph at lines 76--77
+[]|\T1/lmr/bx/n/10 CS3230/CS4269|  
+ []
+
+LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 110.
+(/usr/local/texlive/2023/texmf-dist/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OT1+lmss on input line 123.
+LaTeX Font Info:    Trying to load font information for OT1+lmss on input line 124.
  (/usr/local/texlive/2023/texmf-dist/tex/latex/lm/ot1lmss.fd
 File: ot1lmss.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-) [2{/usr/local/texlive/2023/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/usr/local/texlive/2023/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/local/texlive/2023/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}{/usr/local/texlive/2023/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}] [3] [4{/usr/local/texlive/2023/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc}] [5] [6] [7] [8] [9] [10] [11] [12] [13] [14] [15] [16] [17] (./CS4234.aux)
+) [2{/usr/local/texlive/2023/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/usr/local/texlive/2023/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/local/texlive/2023/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}{/usr/local/texlive/2023/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}] [3] [4{/usr/local/texlive/2023/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc}] [5] [6] [7
+pdfTeX warning (ext4): destination with the same identifier (name{algocf.1}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.497 \]
+        
+pdfTeX warning (ext4): destination with the same identifier (name{algocf.2}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.497 \]
+        ] [8
+pdfTeX warning (ext4): destination with the same identifier (name{algocf.3}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.549     \[ALG\geq \frac{OPT}{n}\]
+                                   ] [9] [10] [11] [12]
+Overfull \hbox (47.22162pt too wide) in paragraph at lines 883--901
+\T1/lmr/m/n/10 mial time: []$[]$ 
+ []
+
+[13] [14] [15] [16] [17] [18
+pdfTeX warning (ext4): destination with the same identifier (name{table.1}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1192 \[\forall (u, v) \in E, S(u) \lor S(v)\]
+                                               ] [19] [20] (./CS4234.aux)
 Package rerunfilecheck Info: File `CS4234.out' has not changed.
-(rerunfilecheck)             Checksum: DE230304DCEF695E6AD4D0E483AD3479;5668.
+(rerunfilecheck)             Checksum: 6DE3D9217DA02C9389B480C26538EC37;6455.
  ) 
 Here is how much of TeX's memory you used:
- 23209 strings out of 476025
- 427535 string characters out of 5790016
- 1869388 words of memory out of 5000000
- 43101 multiletter control sequences out of 15000+600000
+ 23307 strings out of 476025
+ 428997 string characters out of 5790016
+ 1872388 words of memory out of 5000000
+ 43175 multiletter control sequences out of 15000+600000
  588712 words of font info for 82 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 102i,20n,104p,467b,566s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 102i,20n,104p,467b,572s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2023/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/lm/lmcsc10.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/lm/lmex10.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/lm/lmmi5.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/lm/lmmi7.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/lm/lmr10.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/lm/lmr12.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/lm/lmr17.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/lm/lmr5.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/lm/lmr7.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/lm/lmri10.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/lm/lmss10.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/lm/lmss8.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/lm/lmsy5.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/lm/lmsy7.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on CS4234.pdf (17 pages, 379070 bytes).
+Output written on CS4234.pdf (20 pages, 393858 bytes).
 PDF statistics:
- 474 PDF objects out of 1000 (max. 8388607)
- 408 compressed objects within 5 object streams
- 130 named destinations out of 1000 (max. 500000)
- 229 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 528 PDF objects out of 1000 (max. 8388607)
+ 459 compressed objects within 5 object streams
+ 150 named destinations out of 1000 (max. 500000)
+ 261 words of extra memory for PDF output out of 10000 (max. 10000000)
 
