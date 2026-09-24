@@ -12,7 +12,7 @@
 \usepackage{algpseudocode}
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.18}
-\usepackage[ruled, vlined, algoruled]{algorithm2e} % Options for styling
+\usepackage[ruled, vlined, algoruled]{algorithm2e}
 \usepackage{tikz}
 \geometry{top=0.65in,bottom=0.65in,left=0.7in,right=0.7in}
 \hypersetup{
@@ -41,13 +41,12 @@
 \newcommand{\PTIME}{\mathsf{P}}
 \newcommand{\NPC}{\mathsf{NP\text{-}complete}}
 
-% Colours used to separate the three layers of approximation proofs.
 \definecolor{algblue}{RGB}{0,82,155}
 \definecolor{optred}{RGB}{180,45,45}
 \definecolor{bridgepurple}{RGB}{105,55,145}
 
-\title{CS4234: Optimization Algorithms}
-\author{@Wxy2003-xy}
+\title{Assignment 1}
+\author{Wang Xiyu (A0282500R)}
 \date{}
 
 \begin{document}
@@ -57,15 +56,43 @@
 \newpage
 
 \section{MAX-CFSU}
+% BEGIN ORIGINAL QUESTION 1
+\subsection*{Question 1: A Collision-Free Sensor Upload [10 marks]}
+
+A network of remote environmental sensors shares a collection of wireless gateways. During a short
+emergency-upload window, the system must choose a subset of the sensors to transmit. Every
+gateway $j$ can hear exactly $k\geq 2$ distinct sensors; let $B_j$ denote the set of such sensors for gateway
+$j$. (Note the sets $B_j$ may overlap, i.e., for any two gateways $j\neq j'$, $B_j\cap B_{j'}$ need not be empty.)
+
+Gateway $j$ successfully decodes a packet if \textbf{exactly one} sensor in $B_j$ transmits. If none transmits,
+the gateway receives no packet; if two or more transmit, their packets collide. Successfully serving
+gateway $j$ has importance $p_j\geq 0$.
+
+The objective is to choose a set of transmitting sensors that maximizes the total importance of the
+gateways that successfully decode a packet. Let $\mathrm{OPT}$ denote the maximum possible importance.
+
+Design a randomized polynomial-time algorithm whose expected value is at least $\mathrm{OPT}/e$. Your
+solution should determine and justify the transmission probability used by the algorithm, prove the
+approximation guarantee, and state the running time.
+
+\subsection*{Answer}
+% END ORIGINAL QUESTION 1
+Let $I$ be the sensor set and $J$ the gateway set,
+For each $j\in J$, let $B_j\subseteq I$ be the sensors
+it can haer, where $|B_j|=k\geq 2$,and $p_j\geq 0$ be the importance of gateway $j$.
+
 \begin{algorithm}[H]
-  \KwIn{Gateway set $J$, importance set $P$, $q \in [0, 1]$}
-  \KwOut{Transmitting gateway set $J^+ \subseteq J$}
-  $J^+ \gets \emptyset$\;
-  \ForEach{$j \in J$}{
-    At probability $q$,\\
-    $J^+ \gets J^+ \cup \{j\}$\;
+  \KwIn{Sensor set $I$, gateway sets $(B_j)_{j\in J}$,
+        importance weights $(p_j)_{j\in J}$, probability $q$}
+  \KwOut{Transmitting sensor set $X\subseteq I$}
+  $X\gets\emptyset$\;
+  \ForEach{$s\in I$}{
+    Independently set $Z_s \gets 1$ at proabability $q$\;
+    \If{$Z_s=1$}{
+      $X\gets X\cup\{s\}$\;
+    }
   }
-  \Return {$J^+$}
+  \Return{$X$}\;
 \end{algorithm}
 \subsection{Approximation factor}
 \begin{proof}
@@ -77,45 +104,77 @@
   For each gateway, the probability of successful transmission can be expressed as 
   \[P(j) = q \cdot (1 - q)^{k - 1} \cdot k\]
   Expectation of the importance from gateway $j$ as
-  \[\mathbb{E}[\text{importance}(\tau(j))] = p_j \cdot kq(1-q)^{k-1}\]
+  \[\mathbb{E}[p_j\tau(j)] = p_j \cdot kq(1-q)^{k-1}\]
   and the total importance of all successfully transmitted gateway as 
   \[\mathbb{E}[\text{importance}(\tau)] = \mathbb{E}[\sum_j \text{importance}(\tau(j))] = 
   \sum_j p_j\cdot kq(1-q)^{k-1}\]
-  As we can define $q$ arbitrarily over $[0, 1]$, we will maximize the total expectation by finding the optimal $q$. 
-  Notice that $f(q) = kq(1-q)^{k-1}$ is concave for $k \geq 2$, 
-
+Define $f(q)=kq(1-q)^{k-1}$ for $q\in[0,1]$.
+Since
   \begin{align*}
   f'(q) &= k[(1 - q)^{k-1} - q(k-1)(1-q)^{k - 2}]\\
     &= k(1-kq)(1-q)^{k-2}
   \end{align*}
-  When $f'(q) = 0, q = 1$ or $q = \frac{1}{k}$. 
+$f'(q)>0$ for $0<q<1/k$, and $f'(q)<0$
+for $1/k<q<1$, and $f(0)=f(1)=0$, thus
+the maximum occurs at $q=1/k$.\\  
   substitute $q$ with $\frac{1}{k}$, 
   \[f(q)_{\max} = (1 - \frac{1}{k})^{k - 1}\]
-  \[(1 - \frac{1}{k})^{k-1} \geq (1 - \frac{1}{k})^{k} \geq \frac{1}{e}\]
+  \[(1 - \frac{1}{k})^{k-1} = \left(\frac{1}{1 + \frac{1}{k - 1}}\right)^{k-1} \geq \frac{1}{e}\]
   We have 
   \[\mathbb{E}[\text{importance}(\tau)] \geq \frac{1}{e} \sum_j p_j \geq \frac{1}{e} OPT\]
 \end{proof}
+\subsection{Algorithm}
 Thus the algorithm is \\
 \begin{algorithm}[H]
-  \KwIn{Gateway set $J$, importance set $P$, }
-  \KwOut{Transmitting gateway set $J^+ \subseteq J$}
-  $k \gets |J[0]|$
-  $J^+ \gets \emptyset$\;
-  \ForEach{$j \in J$}{
-    At probability $\frac{1}{k}$,\\
-    $J^+ \gets J^+ \cup \{j\}$\;
+  \KwIn{Sensor set $I$, gateway sets $(B_j)_{j\in J}$,
+        importance weights $(p_j)_{j\in J}$}
+  \KwOut{Transmitting sensor set $X\subseteq I$}
+  $X\gets\emptyset$\;
+  \ForEach{$s\in I$}{
+    Independently set $Z_s \gets 1$ at proabability $\frac{1}{k}$\;
+    \If{$Z_s=1$}{
+      $X\gets X\cup\{s\}$\;
+    }
   }
-  \Return {$J^+$}
+  \Return{$X$}\;
 \end{algorithm}
-
+\subsection{Running time}
+Let 
+\[n=|I|, \qquad g=|J|\]
+The algorithm makes $n$ independent random choices and takes
+$O(n)$ time, 
+including reading the gateway sets gives
+$O(n+gk)$ 
 \section{PBS}
+% BEGIN ORIGINAL QUESTION 2
+\subsection*{Question 2: Planning a Biodiversity Survey [10 marks]}
+
+A conservation agency is choosing field-survey routes. Let $U$ be the set of species that might be
+observed, and let $a_u\geq 0$ be the conservation importance of species $u\in U$. Suppose there are $m$
+routes. Route $i$ costs $c_i$, observes a subset $S_i\subseteq U$, and may overlap with other routes. The agency
+has budget $B$, and every route satisfies $0<c_i\leq B$. A species contributes its importance at most
+once, regardless of how many chosen routes observe it.
+
+For a set $A$ of routes, define its \textbf{value} as follows:
+\[
+F(A)=\sum_{u\in\bigcup_{i\in A}S_i}a_u.
+\]
+The goal is to maximize $F(A)$ subject to $\sum_{i\in A}c_i\leq B$.
+
+Design a deterministic polynomial-time algorithm that returns a feasible subset of routes with value
+at least $\frac12\left(1-\frac1e\right)\mathrm{OPT}$, where $\mathrm{OPT}$ is the value of an optimal budget-feasible subset. Prove the
+approximation guarantee and state the running time of your algorithm.
+
+\subsection*{Answer}
+% END ORIGINAL QUESTION 2
 Define marginal value of adding a new route $i$ to the collection of routes $A$  
 \[\Delta(i\mid A) = F(A \cup \{i\}) - F(A)\]
 and the value density per cost of route $i$ when being added to $A$ as
 \[\delta(i\mid A) = \frac{\Delta (i \mid A)}{c_i}\]
+\subsection{Algorithm}
 \begin{algorithm}[H]
   \KwIn{Species set $U = \{u_1, u_2, \dots\}$, route set $\mathcal{S}$, budget $B$}
-  \KwOut{Total importance}
+  \KwOut{Route collection $A$}
   Stack $A \gets \emptyset$\;
   \While{$B \geq 0 \land \mathcal{S} \neq \emptyset$ }{
     $i_{\max} = \arg\max_{i \in \mathcal{S}}\frac{\Delta(i \mid A)}{c_i}$\;
@@ -128,21 +187,119 @@ and the value density per cost of route $i$ when being added to $A$ as
     $A.\text{pop}()$\;
     \Return{$\arg\max_{x \in \{A, \{i'\}\}}(F(x))$}\;
   }
-  \Return $F(A)$;
+  \Return $A$;
 \end{algorithm}
-\subsubsection*{Approximation factor proof}
-Suppose the greedily chosen sequence of routes to be 
-\[i_1, i_2, \dots i_{t-1}, i_{t}\]
-Given the budget constraint
-$A = \{i_j \mid j \in [1, t-1]\}$ will have 
-\[\sum_{i \in A} c_i \leq B < \left(\sum_{i \in A} c_i\right) + c_{t}\]
-as $i_{t}$ will be the route that causes the budget overflow. 
-
-
-
-as there can be overlaps between $A$ and any $i$ to be added, 
-\[F(A \cup \{i\}) \leq F(A) + F(\{i\})\]
+\subsection{Approximation factor proof}
+Define the following:
+\begin{itemize}
+  \item $\mathcal{S}$: the set of routes, $|\mathcal{S}| = m$
+  \item $S_i \subseteq U$: species contaned in route $i$
+  \item $A \subseteq \mathcal{S}$: chosen collection of routes
+  \item $T(A) = \bigcup_{i \in A} S_i$: the set of species observed in A
+  \item $F(A) = \sum_{u \in \bigcup_{i \in A}S_i} a_u$: total importance of A
+  \item $c(A) = \sum_{i \in A} c_i$: total cost of A
+  \item $A^*$: one optimal collection
+\end{itemize}
+As all importance is non negative, adding new routes never decreases total importance, meaning $F$ is 
+\[OPT = F(A^*) \leq F(A \cup A^*)\]
+Define the number of routes in $A^* \setminus A$ that contains some $u$ as $x_u$:
+\[x_u = |\{i \in A^* \setminus A, u \in S_i\}|\]
+\[u \in T(A^*) \land u \notin T(A) \implies x_u \geq 1\]
+\begin{align*}
+\sum_{i \in A^* \setminus A} \Delta (i \mid A) &= \sum_{i \in A^* \setminus A} [F(A\cup \{i\}) - F(A)]  \\
+&= \sum_{i \in A^* \setminus A} \left[ \sum_{u \in T(A) \cup S_i} a_u - \sum_{u \in T(A)} a_u \right]\\
+&= \sum_{i \in A^* \setminus A} \sum_{u \in S_i \setminus T(A)} a_u\\
+&= \sum_{u \in T(A^*) \setminus T(A)} x_u a_u\\
+F(A\cup A^*) - F(A) &= \sum_{u \in T(A) \cup T(A^*)} a_u - \sum_{u \in T(A)} a_u\\
+&= \sum_{u \in T(A^*) \setminus T(A)} a_u\\
+F(A\cup A^*) - F(A) &\leq \sum_{i \in A^* \setminus A} \Delta (i \mid A)
+\end{align*}
+Consider at iteration $j$, $i_j$ is selected, 
+\[A_j = \{i_1, i_2, \dots, i_j\}\]
+as we pick in order of the highest density, 
+\[\forall i \in \mathcal{S}, \delta(i \mid A_{j-1}) \leq \delta(i_j\mid A_{j-1}) \]
+corollarily 
+\[\forall i \in A^* \setminus A_{j-1}, \delta(i \mid A_{j-1}) \leq \delta(i_j\mid A_{j-1}) \]
+Using previous result, 
+\begin{align*}
+  F(A^*) - F(A_{j-1}) &\leq \sum_{i \in A^* \setminus A_{j-1}} \Delta(i \mid A_{j-1})\\
+  &= \sum_{i \in A^* \setminus A_{j-1}} \frac{\Delta(i \mid A_{j-1})}{c_i} \cdot c_i\\
+  &\leq \sum_{i \in A^* \setminus A_{j-1}} \frac{\Delta(i_j \mid A_{j - 1})}{c_{i_j}} \cdot c_i\\
+  &= \frac{\Delta(i_j \mid A_{j - 1})}{c_{i_j}} \sum_{i \in A^* \setminus A_{j-1}} c_i
+\end{align*}
+From the budget constraint, 
+\[\sum_{i \in A^* \setminus A} c_i \leq \sum_{i \in A^*} c_i \leq B\]
+we have 
+\begin{align*}
+F(A^*) - F(A_{j-1}) &\leq B \cdot \frac{\Delta(i_j \mid A_{j-1})}{c_{i_j}}  \\
+\Delta(i_j \mid A_{j-1}) &\geq \frac{c_{i_j}}{B}[F(A^*) - F(A_{j-1})]\\
+F(A_{j}) - F(A_{j-1}) &\geq \frac{c_{i_j}}{B}[F(A^*) - F(A_{j-1})]
+\end{align*}
+From the definition of $\Delta$
+\[F(A_j) = F(A_{j-1}) + \Delta(i_j \mid A_{j-1})\]
+\begin{align*}
+  F(A^*) - F(A_j) &= \left[F(A^*) - F(A_{j-1})\right] - [F(A_j) - F(A_{j-1})]\\
+  &\leq \left[F(A^*) - F(A_{j-1})\right] - \frac{c_{i_j}}{B}[F(A^*) - F(A_{j-1})]\\
+  &= (1 - \frac{c_{i_j}}{B})[F(A^*) - F(A_{j-1})]
+\end{align*}
+Let the route that causes budget overflow be $i_t$, 
+Apply previous result up to $t$, and $\forall c_i, c_i \leq B$
+\begin{align*}
+  F(A^*) - F(A_t) &\leq (1 - \frac{c_{i_t}}{B})[F(A^*) - F(A_{t-1})]\\
+  &\leq \left(1 - \frac{c_{i_t}}{B}\right)\left(1 - \frac{c_{i_{t-1}}}{B}\right) [F(A^*) - F(A_{t-2})]\\
+  &\dots \\
+  &\leq F(A^*)\cdot \prod_{k = 1}^t \left(1 - \frac{c_{i_k}}{B}\right)\\
+  &\leq F(A^*)\cdot \prod_{k = 1}^t (e^{\frac{-c_{i_k}}{B}})\\
+  &= F(A^*)\cdot e^{\left( \frac{-\sum_{k=1}^{t} c_{i_k}}{B} \right)}
+\end{align*}
+Since with the route added in interation $t$ included, budget constraint is violated,
+\begin{align*}
+\sum_{k = 1}^{t-1} c_{i_k} &\leq B < \sum_{k = 1}^{t} c_{i_k}, \quad \frac{-\sum_{k=1}^{t} c_{i_k}}{B} < -1\\ 
+F(A^*) - F(A_t) &\leq F(A^*)\cdot e^{\left( \frac{-\sum_{k=1}^{t} c_{i_k}}{B} \right)} \leq F(A^*) \cdot e^{-1}\\
+F(A_t) &\geq \left(1 - \frac{1}{e}\right)\cdot OPT
+\end{align*}
+but $F(A_t)$ is not a feasible solution, as the budget is exceeded. We will discard either the entire greedy prefix 
+to keep the $i_t$ as a singleton collection, or discard $i_t$ to keep $A_{t-1}$
+\[
+\begin{aligned}
+\mathrm{ALG}
+&= \max\{F(A_{t-1}),F(\{i_t\})\} \\
+&\geq \frac{1}{2}\left(F(A_{t-1})+F(\{i_t\})\right)\\
+&\geq \frac{1}{2} F(A_{t-1}\cup\{i_t\}) \\
+&= \frac{1}{2} F(A_t) \\
+&\geq \frac{1}{2}\left(1-\frac{1}{e}\right)OPT
+\end{aligned}
+\]
+\subsubsection*{Edge case}
+If no route causes budget overflow, all routes are selected, $ALG = OPT$
+\subsection{Running time}
+Outer loop runs at most $|\mathcal{S}|$ times, in each iteration compute $\Delta$ takes $|U|$, finding the max among available route takes $|\mathcal{S}|$, overall
+$O(|\mathcal{S}|^2|U|)$
 \section{ECS}
+% BEGIN ORIGINAL QUESTION 3
+\subsection*{Question 3: Emergency Communication after a Storm [10 marks]}
+
+Following a coastal storm, an emergency team may activate temporary communication relays at
+candidate sites. Activating site $i$ costs $c_i\geq 0$. A community $j$ can be reached only from sites in
+a specified set $N(j)$. If no activated relay reaches community $j$, the team incurs a penalty $p_j\geq 0$
+for arranging a slower alternative. Each community can be reached from at most $f$ candidate sites,
+where $f\geq 1$ is given; that is, $|N(j)|\leq f$ for every community $j$.
+
+The goal is to minimize
+\[
+\sum_{i\text{ activated}}c_i+
+\sum_{j\text{ not reached by an activated site}}p_j.
+\]
+
+\begin{enumerate}[label=(\alph*)]
+  \item Formulate this problem as an integer linear program and write its natural LP relaxation. [3 marks]
+  \item Using an optimal solution to the LP relaxation, give a deterministic polynomial-time rounding
+  algorithm. [3 marks]
+  \item Prove that your algorithm is an $(f+1)$-approximation algorithm. [4 marks]
+\end{enumerate}
+
+\subsection*{Answer}
+% END ORIGINAL QUESTION 3
 \subsubsection*{Goal}
 Minimize 
 \[\sum_{i \text{ activated}} c_i + \sum_{j \text{ not reached}} p_j\]
@@ -171,9 +328,17 @@ Integer constraint: for every $x_i, y_j$:
 \subsubsection*{Goal}
 Minimize 
 \[\sum_{i} c_i x_i + \sum_{j} p_j y_j\]
+\subsection{LP relaxation}
+Keep the same objective and covering constraints, and replace
+the binary constraints by
+\[
+0\leq x_i\leq 1,\qquad 0\leq y_j\leq 1.
+\]
+Every feasible integer solution is feasible for this relaxation,
+so $LP\leq OPT$.
 \subsection{Determinstic rounding} 
 Let the optimal solution of the relaxed LP be $x^*_i$ for $i$, $y_j^*$ for $j$, 
-Define a rounding threshold$k \in [0, 1]$:
+Define a rounding threshold $k \in (0, \frac{1}{f})$:
 \[x_i = \begin{cases}
   1, \quad x^*_i \geq k\\
   0, \quad \text{ otherwise}
@@ -190,24 +355,23 @@ x_i^* &\geq k\\
 For each $j$ that is unreached, we need to have 
 \begin{align*}
 \forall i \in N(j) (\neg S(i) ) \implies \forall i \in N(j) (x^*_i < k)\\
-\implies \sum_{i \in N(j)} x^*_i < k|N(j)| \leq fk
+\implies \sum_{i \in N(j)} x^*_i \leq k|N(j)| \leq fk
 \end{align*}
 From constraint, 
 \begin{align*}
-  y_j^* &\geq 1 - \sum_{i\in N(j)} x_i \\
-  y^*_j &> 1 - fk\\
-  \frac{1}{1 - fk}\cdot y^*_j&> 1\\
-  \frac{1}{1 - fk}\cdot p_j y^*_j &> p_j y_j \quad (y_j \leq 1)\\
-  \frac{1}{1 - fk}\sum_j p_j y^*_j &> \sum_j p_j y_j\\
+  y_j^* &\geq 1 - \sum_{i\in N(j)} x_i^* \\
+  y^*_j &\geq 1 - fk\\
+  \frac{1}{1 - fk}\cdot y^*_j&\geq 1\\
+  \frac{1}{1 - fk}\cdot p_j y^*_j &\geq p_j y_j \quad (y_j \leq 1)\\
+  \frac{1}{1 - fk}\sum_j p_j y^*_j &\geq \sum_j p_j y_j\\
 \end{align*}
 Combining 2 parts, we have 
 \[LP = \sum_i c_i x_i^* + \sum_j p_j y_j^*\]
 \[ALG = \sum_i c_i x_i + \sum_j p_j y_j 
 \leq \frac{1}{k} \sum_i c_i x_i^* + \frac{1}{1 - fk}\sum_j p_j y_j^* 
 \leq \max\left\{\frac{1}{k}, \frac{1}{1 - fk}\right\} LP\]
-($ALG \leq LP$ as the strict $<$ unreached community term may be 0)
 \subsubsection*{Find $k$ to minimize $\max\left\{\frac{1}{k}, \frac{1}{1 - fk}\right\}$}
-Notice that $g_1(k) = \frac{1}{k}$ is strictly decreasing, $g_2(k) = \frac{1}{1 - fk}$ is strictly increasing over $k \in (0, 1]$ ($k=0$ case is trivially impossible), for $f \geq 1$, 
+Notice that $g_1(k) = \frac{1}{k}$ is strictly decreasing, $g_2(k) = \frac{1}{1 - fk}$ is strictly increasing over $k \in (0, \frac{1}{f})$ ($k=0$ case is trivially impossible), for $f \geq 1$, 
 $\max\left\{\frac{1}{k}, \frac{1}{1 - fk}\right\} $ occurs at the intersection when 
 \begin{align*}
 \frac{1}{k} &= \frac{1}{1 - fk}\\
@@ -216,4 +380,12 @@ k &= \frac{1}{f + 1}
 Given 
 \[ALG \leq \max\left\{\frac{1}{k}, \frac{1}{1 - fk}\right\} LP\]
 \[ALG \leq (f + 1) \cdot LP \leq (f + 1) \cdot OPT\]
+\subsection{Running time}
+Let $n$ denote the total input size, suppose the relaxed LP is solved in $O(n^a)$ time,
+where $a\geq 1$ is a constant, rounding all site variables and checking which communities
+are reached takes
+\[O\left(|I|+|J|+\sum_{j\in J}|N(j)|\right)=O(n)\]
+additional time.
+Therefore, the overall running time is
+$O(n^a)$, determined by the LP solver
 \end{document}

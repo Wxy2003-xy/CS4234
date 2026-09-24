@@ -29,6 +29,7 @@
 \newtheorem{theorem}[definition]{Theorem}
 \newtheorem{lemma}[definition]{Lemma}
 \newtheorem{remark}[definition]{Remark}
+\newtheorem{corollary}[definition]{Corollary}
 
 \newcommand{\OPT}{\operatorname{OPT}}
 \newcommand{\ALG}{\operatorname{ALG}}
@@ -1199,9 +1200,30 @@ Use the encoding, we have
 \[\forall (u, v ) \in E, \quad x_u + x_v \geq 1\]
 The goal becomes to find 
 \[\min(\sum_{v \in V} x_v )\]
-
-
-
+\subsection{Encoding decision variables and facts}
+\subsubsection*{Se cover}
+given a set of elements $U = \{u_1, u_2, \dots, u_n\}$, and a set of sets $\mathcal{S} = \{S_1, S_2, \dots, S_m\}$, assuming 
+$\bigcup_{S\in \mathcal{S}} = U$, find a set cover to minimize
+\[\sum_{S \in S' \subseteq \mathcal{S}'} w_S\]
+\subsubsection*{Decision variable}
+We will need to use a decision variable to encode 
+\begin{itemize}
+  \item the coverage of an element: $x_i$
+  \item the choice of sets: $y_j$
+\end{itemize}
+Define unary relation $S(u_i)$ to denote that $u_i$ is covered, and $R(S_j)$ as set $S_j$ is chosen 
+\[x_i = \begin{cases}
+  1, S(u_i)\\
+  0, \text{ otherwise}
+\end{cases}
+\qquad
+y_j = \begin{cases}
+    1, R(S_j)\\
+    0, \text{ otherwise}
+  \end{cases}\]
+Beside we can also define more relations to describe the structures, for example 
+$T(u_i, S_j)$ to represent $u_i \in S_j$. Then we can express the constriants as 
+\[\forall u_i (\exists S_j (T(u_i, S_j) \land R(S_j)))\]
 \subsection{Randomized Rounding}
 To map LP result in $[0, 1]$ back to $\{0, 1\}$ rounding is needed. The most naive rounding scheme would be
 to assign $x$ with 1 at probability of $x^*$
@@ -1269,8 +1291,339 @@ Let
   \mathbb{E}[ALG] \geq \frac{L^2}{W} &= \alpha L\\
   \alpha &= \frac{L}{W}
 \end{align*}
+\subsubsection*{Fidning optimal linear expression of $p$ in $x$}
+Let the probability of assignment $p$ be 
+\[p_i = a + bx_i\]
+Using the same relaxation result, the probability of an edge to be admitted is 
+From $z_{ij} \leq x_i$ and $z_{ij} \leq 1-x_j$, we have
+\begin{align*}
+P[(i \in U) \land (j \in W)]
+&= p_i(1-p_j)\\
+&= (a+bx_i)(1-a-bx_j)\\
+&= (a+bx_i)\bigl((1-a-b)+b(1-x_j)\bigr)\\
+&\geq (a+bz_{ij})(1-a-b+bz_{ij}).
+\end{align*}
+To force a square term, let $c = 1 - a - b$, such that 
+\begin{align*}
+P[(i \in U) \land (j \in W)] &\geq (a + bz_{ij})(c + bz_{ij})  \\
+&= ac + b(a+c)z_{ij} + b^2 z_{ij}^2\\
+&= ac + b(1-b)z_{ij} + b^2 z_{ij}^2\\
+\end{align*}
+Since how the value of $1-b$ splits betweeen $a$ and $c$ now only depends on $ac$, and we have
+\[ac \leq \left(\frac{a + c}{2}\right)^2\]
+We want to maximize $ac$, as the difference square term will minus some factor of $z_{ij}$ term: $\gamma \cdot z_{ij}$, and the remaining $z_{ij}$ term will be
+$[b (1 - b) + \gamma ] z_{ij} = \alpha z_{ij}$, where $\alpha$ is the approximation factor which we want to minimize. According to the 
+inequality, $ac$ is maximized when we have 
+\[a=c \implies a = 1 - a - b, \qquad a = \frac{1-b}{2}\] 
+Then we subsetitute $c$, the original probability bound gives us
+\begin{align*}
+P[(i\in U)\land(j\in W)]
+&\geq (a+bz_{ij})^2\\
+&= 4abz_{ij} + (a-bz_{ij})^2\\
+&\geq 4abz_{ij}\\
+\alpha &= 4ab
+\end{align*}
+Substitute $a$ with $b$, 
+\begin{align*}
+  \alpha &= 4ab\\
+  &= 2b(1-b)\\
+  &= -2(b^2 - b + \frac{1}{4}) + \frac{1}{2}\\
+  &\geq \frac{1}{2}
+\end{align*}
+
+
+
+
+
+
+
 
 \section{Network flow}
+\subsection{Integer Network flow}
+\subsubsection{Ford--Fulkerson Algorithm}
+Constraints:
+\begin{itemize}
+  \item Capacity constraint: 
+  \[\forall (u, v) \in E, f(u, v) \leq c(u, v)\]
+  \item Conservation constraint:
+  \[\forall v \in V \setminus \{s, t\}, \sum_{(u, v) \in E} f(u, v) = \sum_{(v, z) \in E} f(v, z)\]
+  \item Goal: maximize $value(f)$, flow leaving $s$:
+  \[\sum_{(s, v) \in E} f(s, v)\]
+\end{itemize}
+
+\begin{algorithm}[H]
+  \KwIn{Flow network $G=(V,E)$, capacities $c:E\to\mathbb{Z}_{\ge 0}$,
+        source $s$, sink $t$}
+  \KwOut{Maximum flow $f$}
+
+  \ForEach{$e\in E$}{
+    $f(e)\gets 0$\;
+  }
+
+  Construct residual graph $G_f$\;
+
+  \While{$\exists s$--$t$ path $P$ in $G_f$}{
+    
+    Choose any $s$--$t$ path $P$ in $G_f$\;
+
+    $\Delta \gets \displaystyle\min_{(u,v)\in P} c_f(u,v)$\;
+
+    \ForEach{$(u,v)\in P$}{
+      \eIf{$(u,v)\in E$}{
+        $f(u,v)\gets f(u,v)+\Delta$\;
+      }{
+        $f(v,u)\gets f(v,u)-\Delta$\;
+      }
+    }
+
+    Update residual graph $G_f$\;
+  }
+
+  \Return $f$\;
+\end{algorithm}
+\paragraph{Explanation.}
+Ford--Fulkerson starts with the zero flow and repeatedly searches for an
+arbitrary augmenting path from the source $s$ to the sink $t$ in the
+residual graph $G_f$.
+
+For a current flow $f$, the residual capacity is defined by
+\[
+c_f(u,v)=
+\begin{cases}
+c(u,v)-f(u,v), & (u,v)\in E,\\[2mm]
+f(v,u), & (v,u)\in E,\\[2mm]
+0, & \text{otherwise}.
+\end{cases}
+\]
+
+Hence, the residual graph is
+\[
+G_f=(V,E_f),
+\qquad
+E_f=\{(u,v)\mid c_f(u,v)>0\}.
+\]
+
+If an $s$--$t$ augmenting path $P$ exists, let
+\[
+\Delta
+=
+\min_{(u,v)\in P} c_f(u,v)
+\]
+be the bottleneck residual capacity of the path.
+
+The flow is augmented by $\Delta$ along $P$. For a forward edge
+$(u,v)\in E$, we increase the flow:
+\[
+f(u,v)\gets f(u,v)+\Delta.
+\]
+
+For a backward residual edge $(u,v)$ corresponding to an original edge
+$(v,u)\in E$, we decrease the original flow:
+\[
+f(v,u)\gets f(v,u)-\Delta.
+\]
+
+After each augmentation, the residual graph is updated. The algorithm
+terminates when no $s$--$t$ path exists in the residual graph. By the
+Max-Flow Min-Cut Theorem, the resulting flow is a maximum flow.
+
+For integer capacities, every residual capacity and every bottleneck
+value $\Delta$ is integral. Therefore, each augmentation increases the
+flow value by at least $1$. Hence Ford--Fulkerson performs at most
+$|f^*|$ augmentations, where $|f^*|$ is the value of a maximum flow.
+
+If finding an arbitrary augmenting path and updating the flow takes
+$O(|E|)$ time, the total running time is
+\[
+O(|E|\cdot |f^*|).
+\]
+
+Thus, Ford--Fulkerson is pseudo-polynomial for integer capacities, since
+$|f^*|$ may be exponentially large in the number of bits required to
+encode the capacities.
+
+\subsection{$s-t$ cut}
+Given $G = (V, E)$ and $s, t \in {V}$ a s-t cut is defined as 
+\[\{(u, v)\mid u \in A, v \in bar{A}\}\]
+where 
+\[A \subseteq V, s\in A, t \in \bar{A} \]
+
+\subsubsection*{Capacity of a cut}
+Define the capacity of the cut as the sum of the capacity of edges
+\[c(A, \bar{A}) = \sum_{(u, v) \in E, u \in A, v \in \bar{A}} c(u, v)\]
+\subsubsection*{Generalized conservation constraint}
+Consider any $s-t$ cut, $\forall v\in V$ 
+\[f_{out}(v) - f_{in}(v) = \begin{cases}
+    0, u \in V \setminus \{s, t\}\\
+    value(f), u = s\\
+    -value(f), u = t
+\end{cases}\]
+Using the constraint we can define the in/outflow of $A$ in a $s-t$ cut:
+\begin{align*}
+  f_{out}(A) &= \sum_{(u, v) \in E, u \in A, v \in \bar{A}} f(u, v)\\
+  f_{in}(A) &= \sum_{(v, u) \in E, u \in A, v \in \bar{A}} f(u, v)
+\end{align*}
+\begin{lemma}
+  \[f_{out}(A) - f_{in}(A) = value(f)\]
+\end{lemma}
+\begin{proof}
+  \begin{align*}
+    f_{out}(A) - f_{in}(A)&= \sum_{u \in A} \sum_{(u, x) \in E} f(u, x) - \sum_{u \in A} \sum_{(x, u)\in E} f(x, u)\\
+    &=\sum_{u\in A}\left( \sum_{(u, x) \in E} f(u, x) - \sum_{(x, u) \in E} f(x, u)\right)\\
+    &= \sum_{u\in A} \left( f_{out}(u) - f_{in}(u) \right)\\
+    s\in A \implies \\
+    \sum_{u\in A} \left( f_{out}(u) - f_{in}(u) \right) &= \sum_{u \in A \setminus \{s\}} 0 + (f_{out}(s) - f_{in}(s))\\
+    &= value(f)
+  \end{align*}
+\end{proof}
+\begin{corollary}
+  $f_{out}(A) - f_{in}(A) \leq c(A, \bar{A})$
+\end{corollary}
+\subsection{Max-flow and min-cut}
+\subsubsection*{Max-flow $\leq$ min-cut}
+We will be proving an equall strong statement: any valid flow $\leq$ any valid cut
+\begin{proof}
+  Consider any arbitrary cut, $(A, \bar{A})$, 
+  from lemma 3.1, we have 
+  \begin{align*}
+  value(f) &= f_{out}(A) - f_{in}(A)\\    
+  &\leq f_{out}(f)\\
+  &= \sum_{(u,v) \in E, u \in A, v\in \bar{A}} f(u, v)\\
+  &\leq \sum_{(u,v) \in E, u \in A, v\in \bar{A}} c(u, v)
+  \end{align*}
+  Since the partition is arbitrary, any flow through is upper bounded by any cut.
+\end{proof}
+\subsubsection*{Max-flow $\geq$ min-cut}
+Here we will prove that upon FF termination, for partiton $s \in S, t \in T$ 
+\[c(S, T) = value(f)\]
+\begin{proof}
+Using the FF algorithm, at termination stage, the residual graph has no path from $s$ to $t$.     
+Suppose otherwise, 
+\subsubsection*{If $\exists (u, v)\in E, u\in S, v\in T, f(u, v) < c(u, v)$}
+Not all edges from $S$ to $T$ are saturated in $G$, meaning exists residual edges will appear in $G_f$, contradiction to the termination condition.
+And by capacity constraint, 
+\[\forall u \in S, v\in T, f(u, v) = c(u, v)\]
+Similarly, we can show that 
+\[\forall u \in S, v\in T, f(v, u) = 0\]
+As otherwise, there exist such a residual edge $(u, v)$ in $G_f$, $t$ becomes reachable from $s$, contradicting to the termination condition.
+\begin{align*}
+  value(f) &= \sum_{(u,v) \in E, u \in S, v\in T} f(u, v) - \sum_{(v, u) \in E, u \in S, v\in T} f(v, u)\\
+  &= \sum_{(u,v) \in E, u \in S, v\in T} c(u, v) - 0\\
+  &= c(S, T)
+\end{align*}
+Since upon termination of FF, a valid flow that has the same value as a valid cut are produced, we have 
+\[\text{min-cut} \leq c(S, T) = value(f) \leq \text{max-flow}\]
+\end{proof}
+
+\subsection{Pathological example of naive FF}
+FF may not terminate when edge capacity are real, when a particular pathological path choices are made. Consider the following graph:
+\usetikzlibrary{arrows.meta,positioning}
+
+\begin{figure}[H]
+\centering
+
+\begin{tikzpicture}[
+    >=Stealth,
+    node/.style={
+        circle,
+        draw,
+        minimum size=7mm,
+        inner sep=0pt
+    },
+    edge/.style={
+        ->,
+        thick
+    }
+]
+
+% Vertices
+\node[node] (s) at (-3,0) {$s$};
+
+\node[node] (a) at (0, 2.4) {};
+\node[node] (b) at (0, 0.8) {};
+\node[node] (c) at (0,-0.8) {};
+\node[node] (d) at (0,-2.4) {};
+
+\node[node] (t) at (3,0) {$t$};
+
+% ------------------------------------------------
+% Special edges
+% e_2 : capacity r
+\draw[edge]
+    (a) -- node[left] {$e_2:r$} (b);
+
+% e_3 : capacity 1, directed upward
+\draw[edge]
+    (c) -- node[left] {$e_3:1$} (b);
+
+% e_1 : capacity 1
+\draw[edge]
+    (c) -- node[left] {$e_1:1$} (d);
+
+% ------------------------------------------------
+% Remaining edges, all capacity M
+
+\draw[edge]
+    (s) to[bend left=25]
+    node[above left] {$M$} (a);
+
+\draw[edge]
+    (s) --
+    node[above] {$M$} (c);
+
+\draw[edge]
+    (s) to[bend right=25]
+    node[below left] {$M$} (d);
+
+\draw[edge]
+    (a) to[bend left=25]
+    node[above right] {$M$} (t);
+
+\draw[edge]
+    (b) --
+    node[above] {$M$} (t);
+
+\draw[edge]
+    (d) to[bend right=25]
+    node[below right] {$M$} (t);
+
+\end{tikzpicture}
+
+\caption{
+Zwick's network $N_1$, where
+$r=(\sqrt{5}-1)/2$ and $M\geq 4$.
+}
+\end{figure}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 \end{document}

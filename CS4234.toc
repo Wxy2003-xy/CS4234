@@ -37,5 +37,12 @@
 \contentsline {subsection}{\numberline {1.14}Inapproximability}{18}{subsection.1.14}%
 \contentsline {section}{\numberline {2}Linear programming and integer programming}{18}{section.2}%
 \contentsline {subsection}{\numberline {2.1}ILP formulation from finite space FOL}{18}{subsection.2.1}%
-\contentsline {subsection}{\numberline {2.2}Randomized Rounding}{19}{subsection.2.2}%
-\contentsline {section}{\numberline {3}Network flow}{20}{section.3}%
+\contentsline {subsection}{\numberline {2.2}Encoding decision variables and facts}{19}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Randomized Rounding}{19}{subsection.2.3}%
+\contentsline {section}{\numberline {3}Network flow}{22}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Integer Network flow}{22}{subsection.3.1}%
+\contentsline {subsubsection}{\numberline {3.1.1}Ford--Fulkerson Algorithm}{22}{subsubsection.3.1.1}%
+\contentsline {paragraph}{Explanation.}{22}{section*.50}%
+\contentsline {subsection}{\numberline {3.2}$s-t$ cut}{23}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Max-flow and min-cut}{24}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Pathological example of naive FF}{25}{subsection.3.4}%
