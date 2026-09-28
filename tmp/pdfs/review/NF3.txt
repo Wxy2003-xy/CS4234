@@ -1,0 +1,933 @@
+===== PDF PAGE 1 =====
+Optimization Algorithms
+Diptarka Chakraborty
+Week 6 
+Network Flow (III)
+CS
+4234
+
+===== PDF PAGE 2 =====
+Formal Description of Flow (Recap)
+2
+𝒔
+𝒗
+𝒖
+𝒙
+𝒚
+2
+17
+5
+68
+7
+4
+𝒕
+𝑮=(𝑽, 𝑬) : a directed graph with
+𝒔: source, 
+𝒕: sink
+𝒄: 𝑬 → 𝐑+
+𝒄(𝒙,𝒚) = capacity of edge (𝒙,𝒚)
+Flow 𝒇: 𝑬 → 𝐑+ such that 
+• For each edge (𝒙,𝒚) ∈ 𝑬
+𝒇(𝒙,𝒚) ≤ 𝒄(𝒙,𝒚)
+• For each vertex 𝒗 ∈ 𝑽\{𝒔, 𝒕}
+෍
+𝒖,𝒗 ∈ 𝑬
+𝒇(𝒖,𝒗) = ෍
+𝒗,𝒛 ∈ 𝑬
+𝒇(𝒗 , 𝒛)
+156
+714
+Capacity constraint
+Conservation constraint
+
+===== PDF PAGE 3 =====
+Formal Description of Flow (Recap)
+value(𝒇)= flow leaving 𝒔
+= ෍
+𝒔,𝒗 ∈ 𝑬
+𝒇(𝒔, 𝒗)
+3
+𝒔
+𝒗
+𝒖
+𝒙
+𝒚
+2
+17
+5
+7
+4
+𝒕
+𝑮=(𝑽, 𝑬) : a directed graph with
+𝒔: source, 
+𝒕: sink
+𝒄: 𝑬 → 𝐑+
+𝒄(𝒙,𝒚) = capacity of edge (𝒙,𝒚)
+Max-Flow Problem:
+Given a network 𝑮=(𝑽,𝑬), and two vertices 
+𝒔,𝒕 ∈ 𝑽, compute a flow from 𝒔 to 𝒕 of 
+maximum value.
+156
+714
+68
+
+===== PDF PAGE 4 =====
+Residual network (Recap)
+Let 𝑮=(𝑽, 𝑬) be a network with source 𝒔, sink 𝒕, and capacities 𝝎: 𝑬 → 𝐑+
+Let 𝒇 be any valid 𝒔-𝒕 flow.
+The residual network 𝑮𝒇 is constructed as follows:
+Vertices of 𝑮𝒇 = 𝑽
+Edges of 𝑮𝒇 = 𝑬𝒇 defined as follows
+For each edge (𝒙,𝒚) ∈ 𝑬
+• If 𝒇(𝒙,𝒚) < 𝒄(𝒙,𝒚), 
+➔ edge (𝒙,𝒚) ∈ 𝑬𝒇 with capacity 𝒄𝒇 = 𝒄(𝒙,𝒚) - 𝒇(𝒙,𝒚)
+• If 𝒇(𝒙,𝒚) > 𝟎
+➔ edge (𝒚,𝒙) ∈ 𝑬𝒇 with capacity 𝒄𝒇 = 𝒇(𝒙,𝒚) 
+4
+Forward edge
+Backward edge
+
+===== PDF PAGE 5 =====
+Recall
+Theorem: 
+There are networks with integer edge capacities on which Ford-Fulkerson algo
+may take 𝚯(𝒎 𝑪) iterations, where 𝑪 is the max-capacity of an edge. 
+No. of bits required to store capacity 𝑪 = ?
+➔ Ford-Fulkerson algorithm is not a polynomial time algorithm even for 
+networks with integer edge capacities!
+5
+log2𝑪
+
+===== PDF PAGE 6 =====
+Polynomial Time 
+algorithms for max-flow
+Algorithm 1
+For Networks with integer capacities
+6
+
+===== PDF PAGE 7 =====
+Algorithm 1
+Ford-Fulkerson-algo(𝑮,𝒔,𝒕) {
+𝒇 𝟎;
+While (there is 𝒔-𝒕 path in 𝑮𝒇) do
+{   Let 𝑷 be an 𝒔-𝒕 path in 𝑮𝒇
+Let 𝒄′be bottleneck capacity of 𝑷;   
+For each (𝒙,𝒚) ∈ 𝑷 do
+{    If (𝒙,𝒚) is a forward edge then
+𝒇(𝒙,𝒚)  𝒇(𝒙,𝒚) + 𝒄′;   
+Else
+𝒇(𝒚,𝒙)  𝒇(𝒚,𝒙) - 𝒄′; 
+}
+}  return 𝒇;  
+}
+In order to show that this algorithm takes 
+polynomial time, we shall reformulate this 
+algorithm. 
+This will help in the analysis as well.
+7
+Let 𝑷 be the max-capacity 𝒔-𝒕 path in 𝑮𝒇;
+Algorithm-1(𝑮,𝒔,𝒕) {               
+
+===== PDF PAGE 8 =====
+Algorithm 1 
+Algorithm-1(𝑮,𝒔,𝒕){
+𝒇 𝟎; 
+While (𝒌 ≥ 𝟏) do
+{   While (∃ any 𝒔-𝒕 path in 𝑮𝒇 with capacity ≥ 𝒌) do
+{     Pick any such path 𝑷;
+For each (𝒙,𝒚) ∈ 𝑷 do
+{    If (𝒙,𝒚) is a forward edge then
+𝒇(𝒙,𝒚)  𝒇(𝒙,𝒚) + 𝒄′;   
+Else
+𝒇(𝒚,𝒙)  𝒇(𝒚,𝒙) - 𝒄′; 
+}
+} 
+𝒌
+𝒌
+𝟐 ;
+} 
+return 𝒇;
+8
+𝒌 max-capacity(𝑬);
+log2 𝒄𝐦𝐚𝐱 iterations
+How many iterations of 
+this loop for a given 𝒌? 
+
+===== PDF PAGE 9 =====
+Bounding the number of flow-augmentation
+of amount ∈ [𝒌, 𝟐𝒌]
+Consider the flow 𝒇 when there is no 𝒔-𝒕 path in 𝑮𝒇 with capacity ≥ 𝒌. 
+𝑨: set of vertices reachable from 𝒔 with edges of residual capacity ≥ 𝒌 in 𝑮𝒇
+Question: How much flow is being carried on edges of (𝑨, ഥ𝑨) at this stage? 
+9
+𝒔 𝒕
+𝑮𝑨 ഥ𝑨
+𝒔 𝒕
+𝑮𝒇
+𝑨 ഥ𝑨
+
+===== PDF PAGE 10 =====
+Bounding the number of flow-augmentation
+of amount ∈ [𝒌, 𝟐𝒌]
+Consider the flow 𝒇 when there is no 𝒔-𝒕 path in 𝑮𝒇 with capacity ≥ 𝒌. 
+𝑨: set of vertices reachable from 𝒔 with edges of residual capacity ≥ 𝒌 in 𝑮𝒇
+Consider any edge 𝒙, 𝒚 , 𝒙 ∈ 𝑨, 𝒚 ∈ ഥ𝑨
+If 𝒇(𝒙, 𝒚) ≤ 𝒄 𝒙, 𝒚 − 𝒌
+➔ 𝒙, 𝒚 must appear as forward edge with 𝒄𝒇 ≥ 𝒌 in 𝑮𝒇.
+➔𝒚 is reachable from 𝒔 using edges of capacity ≥ 𝒌 in 𝑮𝒇.  A contradiction.
+10
+𝒔 𝒕
+𝑮
+𝑨 ഥ𝑨
+𝒔 𝒕
+𝑮𝒇
+𝑨 ഥ𝑨
+𝒙 𝒚 𝒙 𝒚
+How large could 
+𝒄 𝒙, 𝒚 − 𝒇(𝒙, 𝒚) be ?
+
+===== PDF PAGE 11 =====
+Bounding the number of flow-augmentation
+of amount ∈ [𝒌, 𝟐𝒌]
+Consider the flow 𝒇 when there is no 𝒔-𝒕 path in 𝑮𝒇 with capacity ≥ 𝒌. 
+𝑨: set of vertices reachable from 𝒔 with edges of residual capacity ≥ 𝒌 in 𝑮𝒇
+Consider any edge 𝒙, 𝒚 , 𝒙 ∈ ഥ𝑨, 𝒚 ∈ 𝑨
+If 𝒇(𝒙, 𝒚) ≥ 𝒌
+➔ 𝒚, 𝒙 appears as a backward edge with 𝒄𝒇 ≥ 𝒌 in 𝑮𝒇.
+➔𝒙 is reachable from 𝒔 using edges of residual capacity ≥ 𝒌 in 𝑮𝒇.  A contradiction. 11
+𝒔 𝒕
+𝑮
+𝑨 ഥ𝑨
+𝒔 𝒕
+𝑮𝒇
+𝑨 ഥ𝑨
+𝒚 𝒙
+𝒚 𝒙
+How large could 
+𝒇(𝒙, 𝒚) be ?
+
+===== PDF PAGE 12 =====
+Bounding the number of flow-augmentation
+of amount ∈ [𝒌, 𝟐𝒌]
+Consider the flow 𝒇 when there is no 𝒔-𝒕 path in 𝑮𝒇 with capacity ≥ 𝒌. 
+𝑨: set of vertices reachable from 𝒔 with edges of residual capacity ≥ 𝒌 in 𝑮𝒇
+Every edge 𝒙, 𝒚 from 𝑨 →ഥ𝑨 carries flow  > 𝒄 𝒙, 𝒚 − 𝒌
+Every edge from ഥ𝑨 → 𝑨 carries flow less than < 𝒌
+𝐯𝐚𝐥𝐮𝐞(𝒇) =
+𝒇𝒐𝒖𝒕 𝑨 − 𝒇𝒊𝒏(𝑨) > ? 12
+𝒔 𝒕
+𝑮
+𝑨 ഥ𝑨
+𝒔 𝒕
+𝑮𝒇
+𝑨 ഥ𝑨
+𝒄 𝑨, ഥ𝑨 − 𝒎𝒌 > 𝒇𝐦𝐚𝐱 − 𝒎𝒌
+
+===== PDF PAGE 13 =====
+Algorithm 1 
+Algorithm-1(𝑮,𝒔,𝒕){
+𝒇 𝟎;  𝒌 max-capacity(𝑬);
+While (𝒌 ≥ 𝟏) do
+{   While (∃ any 𝒔-𝒕 path in 𝑮𝒇 with capacity ≥ 𝒌) do
+{     Pick any such path 𝑷;
+For each (𝒙,𝒚) ∈ 𝑷 do
+{    If (𝒙,𝒚) is a forward edge then
+𝒇(𝒙,𝒚)  𝒇(𝒙,𝒚) + 𝒄′;   
+Else
+𝒇(𝒚,𝒙)  𝒇(𝒚,𝒙) - 𝒄′; 
+}
+} 
+𝒌
+𝒌
+𝟐 ;
+} 
+return 𝒇;
+13
+log2 𝒄𝐦𝐚𝐱 iterations
+How many iterations of 
+this while loop for a 
+given value of 𝒌 ? 
+𝐯𝐚𝐥𝐮𝐞(𝒇) > 𝒇𝐦𝐚𝐱 − 𝟐𝒎𝒌
+Each iteration 
+increases flow by at 
+least 𝒌.
+
+===== PDF PAGE 14 =====
+Algorithm 1 
+Algorithm-1(𝑮,𝒔,𝒕){
+𝒇 𝟎;  𝒌 max-capacity(𝑬);
+While (𝒌 ≥ 𝟏) do
+{   While (∃ any 𝒔-𝒕 path in 𝑮𝒇 with capacity ≥ 𝒌) do
+{     Pick any such path 𝑷;
+For each (𝒙,𝒚) ∈ 𝑷 do
+{    If (𝒙,𝒚) is a forward edge then
+𝒇(𝒙,𝒚)  𝒇(𝒙,𝒚) + 𝒄′;   
+Else
+𝒇(𝒚,𝒙)  𝒇(𝒚,𝒙) - 𝒄′; 
+}
+} 
+𝒌
+𝒌
+𝟐 ;
+} 
+return 𝒇;
+14
+log2 𝒄𝐦𝐚𝐱 iterations
+No. of flow 
+augmentations within a 
+loop   ≤ 2𝒎
+𝐯𝐚𝐥𝐮𝐞(𝒇) > 𝒇𝐦𝐚𝐱 − 𝟐𝒎𝒌
+Each iteration 
+increases flow by at 
+least 𝒌.
+
+===== PDF PAGE 15 =====
+Algorithm 1 (Edmonds-Karp) 
+Theorem: Given a flow network 𝑮 = (𝑽, 𝑬), where edge capacities are 
+integers, Algorithm 1 runs in O(𝒎𝟐 log2 𝒄𝐦𝐚𝐱) time to compute max 𝒔-𝒕 flow, 
+where 𝒄𝐦𝐚𝐱 is the maximum capacity of any edge. 
+15
+
+===== PDF PAGE 16 =====
+Polynomial Time 
+algorithms for max-flow
+Algorithm 2
+For Networks with edge capacities ∈ 𝑹+
+16
+
+===== PDF PAGE 17 =====
+Algorithm 2
+Ford-Fulkerson-algo(𝑮,𝒔,𝒕) {
+𝒇 𝟎;
+While (there is 𝒔-𝒕 path in 𝑮𝒇) do
+{   Let 𝑷 be an 𝒔-𝒕 path in 𝑮𝒇
+Let 𝒄′be bottleneck capacity of 𝑷;   
+For each (𝒙,𝒚) ∈ 𝑷 do
+{    If (𝒙,𝒚) is a forward edge then
+𝒇(𝒙,𝒚)  𝒇(𝒙,𝒚) + 𝒄′;   
+Else
+𝒇(𝒚,𝒙)  𝒇(𝒚,𝒙) - 𝒄′; 
+}
+}  return 𝒇;  
+}
+17
+Let 𝑷 be the shortest 𝒔-𝒕 path in 𝑮𝒇;
+Algorithm-2(𝑮,𝒔,𝒕) {               
+
+===== PDF PAGE 18 =====
+Overview of analysis
+In each iteration, at least one edge disappears from 𝑮𝒇.
+Unfortunately, an edge may re-appear after some later iteration. 
+Consider any edge (𝒙,𝒚).
+𝜹𝒊(𝒔, 𝒙)= distance from 𝒔 to 𝒙 in 𝑮𝒇 after 𝒊th iteration
+Suppose (𝒙,𝒚) disappears just after 𝒊 + 𝟏th iteration and then reappears 
+again just after 𝒋th iteration,
+➔ 𝜹𝒋(𝒔, 𝒙)> 𝜹𝒊(𝒔, 𝒙)
+➔Since distance is always < 𝒏, an edge may re-appear less than 𝒏 times
+➔ Total running time O(𝒎𝟐𝒏) 18
+𝒙 𝒚
+𝑮𝒇
+𝒕𝒔 𝒙 𝒚𝜹𝒊(𝒔, 𝒙)
+𝜹𝒋(𝒔, 𝒙)
+
+===== PDF PAGE 19 =====
+The entire analysis relies on the answer to the following Questions
+Suppose (𝒙,𝒚) disappears just after 𝒊th iteration and then reappears again just after 𝒋th iteration. 
+• What must have happened during 𝒊th iteration ?
+• What must have happened during 𝒋th iteration ?
+Try to find the answer to this question. It requires nothing but the understanding of the Ford-
+Fulkerson algorithm.
+19
+
+===== PDF PAGE 20 =====
+Investigating 
+the Disappearing of an edge
+20
+
+===== PDF PAGE 21 =====
+Disappearing of a forward edge
+Flow must have increased along edge (𝒙,𝒚) up to 𝒄(𝒙,𝒚). 
+➔ (𝒙,𝒚) must belong to the path 𝑷 selected during 𝒊th Iteration.
+21
+𝒊th Iteration
+𝒕𝒔 𝒙 𝒚
+𝒕𝒔 𝒙 𝒚
+𝑮𝒇
+𝑮𝒇′
+
+===== PDF PAGE 22 =====
+Disappearing of a backward edge
+Flow must have decreased along edge (𝒚,𝒙) to 0. 
+➔ (𝒙,𝒚) must belong to the path 𝑷 selected during 𝒊th Iteration.
+22
+𝒊th Iteration
+𝒕𝒔 𝒙 𝒚
+𝒕𝒔 𝒙 𝒚
+𝑮𝒇
+𝑮𝒇′
+
+===== PDF PAGE 23 =====
+Investigating 
+the (RE-)appearing of an edge
+23
+
+===== PDF PAGE 24 =====
+(Re)-Appearing of a forward edge
+Flow must have reduced along edge (𝒙,𝒚) to less than 𝒄(𝒙,𝒚). 
+➔ (𝒚,𝒙) must belong to the path 𝑷 selected during 𝒊th Iteration.
+24
+𝒊th Iteration
+𝒕𝒔 𝒙 𝒚 𝑮𝒇
+𝑮𝒇′𝒕𝒔 𝒙 𝒚
+
+===== PDF PAGE 25 =====
+(Re)-appearing of a backward edge
+Flow must have increased along edge (𝒚,𝒙). 
+➔ (𝒚,𝒙) must belong to the path 𝑷 selected during 𝒊th Iteration.
+25
+𝒊th Iteration
+𝒕𝒔 𝒙 𝒚
+𝒕𝒔 𝒙 𝒚
+𝑮𝒇
+𝑮𝒇′
+
+===== PDF PAGE 26 =====
+Disappearance/Reappearanceof an edge in residual network
+If an edge (𝒙,𝒚) disappears from the residual network during an iteration,
+➔(𝒙,𝒚) must belong to path 𝑷 selected during 𝒊th Iteration.
+If an edge (𝒙,𝒚) (re)-appears in the residual network during an iteration,
+➔(𝒚,𝒙) must belong to path 𝑷 selected during 𝒋th Iteration.
+26
+
+===== PDF PAGE 27 =====
+Algorithm 2
+Ford-Fulkerson-algo(𝑮,𝒔,𝒕) {
+𝒇 𝟎;
+While (there is 𝒔-𝒕 path in 𝑮𝒇) do
+{   Let 𝑷 be an 𝒔-𝒕 path in 𝑮𝒇
+Let 𝒄′be bottleneck capacity of 𝑷;   
+For each (𝒙,𝒚) ∈ 𝑷 do
+{    If (𝒙,𝒚) is a forward edge then
+𝒇(𝒙,𝒚)  𝒇(𝒙,𝒚) + 𝒄′;   
+Else
+𝒇(𝒚,𝒙)  𝒇(𝒚,𝒙) - 𝒄′; 
+}
+}  return 𝒇;  
+}
+27
+Let 𝑷 be the shortest 𝒔-𝒕 path in 𝑮𝒇;
+Algorithm-2(𝑮,𝒔,𝒕) {               
+How to prove: 
+An edge can disappear
+and re-appear O(𝒏) 
+times.
+
+===== PDF PAGE 28 =====
+A crucial observation
+Lemma : Distance from 𝒔 to each vertex increases monotonically in the 
+residual network.
+𝜹𝒇 𝒔, 𝒙 ≤ 𝜹𝒇′ 𝒔, 𝒙
+28
+𝒊th Iteration
+𝒕𝒔 𝑮𝒇
+𝑮𝒇′𝒕𝒔
+𝜹𝒇(𝒔, 𝒙)
+𝜹𝒇′(𝒔, 𝒙)
+𝒙
+𝒙
+
+===== PDF PAGE 29 =====
+Bounding the disappearing/re-appearing
+of an edge
+➔ (𝒙,𝒚) must belong to the path 𝑷
+selected during 𝒊th Iteration.
+𝜹𝒇 𝒔, 𝒚 = 𝜹𝒇 𝒔, 𝒙 + 𝟏
+➔(𝒚,𝒙) must belong to the path 𝑷
+selected during 𝒋th Iteration.
+𝜹𝒇′ 𝒔, 𝒙 = 𝜹𝒇′ 𝒔, 𝒚 + 𝟏
+≥ 𝜹𝒇 𝒔, 𝒚 + 𝟏
+= 𝜹𝒇 𝒔, 𝒙 + 𝟐
+29
+𝒊th Iteration
+𝒕𝒔 𝒙 𝒚
+𝒕𝒔 𝒙 𝒚
+𝑮𝒇
+𝑮𝒇′ 𝒋th Iteration
+𝒕𝒔 𝒙 𝒚
+𝜹𝒇′ 𝒔, 𝒚 ≥ 𝜹𝒇 𝒔, 𝒚
+
+===== PDF PAGE 30 =====
+Analysis of Algorithm 2 (Dinitz)
+Lemma: Whenever an edge (𝒙,𝒚) re-appears in residual network, 
+distance of 𝒙 from 𝒔 increases by at least 𝟐 units.
+➔ Edge (𝒙,𝒚) can disappear/re-appear  ≤
+𝒏−1
+2 times in the algorithm.
+➔Number of iterations of While loop: O(𝒎𝒏)
+Time complexity of 𝟏 iteration: O(𝒎)     [BFS traversal in residual network]
+➔Time complexity of the algorithm : O(𝒎𝟐𝒏)
+30
+
+===== PDF PAGE 31 =====
+Proof of the monotonic increase of 
+distances in  residual network
+31
+
+===== PDF PAGE 32 =====
+Proof by contradiction
+𝜹𝒇′ 𝒔, 𝒙 < 𝜹𝒇 𝒔, 𝒙
+Let 𝒙 be the nearest “defaulter”.
+➔ For each vertex 𝒗 in 𝑮𝒇′ with 𝜹𝒇′ 𝒔, 𝒗 < 𝜹𝒇′(𝒔, 𝒙),
+𝜹𝒇 𝒔, 𝒗 ≤ 𝜹𝒇′ 𝒔, 𝒗
+32
+𝒊th Iteration
+𝒕𝒔 𝑮𝒇
+𝑮𝒇′𝒕𝒔
+𝜹𝒇(𝒔, 𝒙)
+𝜹𝒇′(𝒔, 𝒙)
+𝒙
+𝒙
+
+===== PDF PAGE 33 =====
+Proof by contradiction
+Definitely 𝜹𝒇 𝒔, 𝒖 ≤ 𝜹𝒇′ 𝒔, 𝒖
+➔Edge 𝒖, 𝒙 must have appeared in residual network after 𝒊th iteration.
+➔Edge 𝒙, 𝒖 ∈ 𝑷 (the path selected during 𝒊th Iteration)
+𝜹𝒇 𝒔, 𝒖 = 𝜹𝒇 𝒔, 𝒙 + 𝟏
+33
+𝒊th Iteration
+𝒕𝒔 𝑮𝒇
+𝑮𝒇′𝒕𝒔
+𝜹𝒇(𝒔, 𝒙)
+𝜹𝒇′(𝒔, 𝒙)
+𝒙
+𝒙
+𝒖
+𝜹𝒇 𝒔, 𝒖 > 𝜹𝒇′ 𝒔, 𝒖
+contradiction
+
+===== PDF PAGE 34 =====
+Well Known Algorithms for 
+Max-Flow
+34
+
+===== PDF PAGE 35 =====
+Well known algorithms for Max-Flow
+Inventor(s) Year Time complexity
+35
+2013
+Edmond and Karp/
+Dinitz 1972 O(𝒎𝟐𝒏)
+V .M. Malhotra,
+Pramodh Kumar,
+S.N. Maheshwari
+1978 O(𝒏𝟑)
+J. Orlin O(𝒎𝒏)
+Ford & Fulkerson 1955 O(− −)
+𝑶(𝒎𝟏+𝒐(𝟏))2022Chen et al.
+
+===== PDF PAGE 36 =====
+Announcements
+• Midterm on Week 7 Thursday (01 Oct)
+• Venue: LT15 (same as lecture)
+• Time: Arrive at the venue by 12:00
+• Syllabus: Everything covered until today (Week 6)
+• Open Book
+• Look for announcement at Canvas
+• No tutorial (neither on Tuesday nor on Thursday) in Week 7
+36
+
+===== PDF PAGE 37 =====
+Applications and Variants Of 
+Max-Flow
+37
+
+===== PDF PAGE 38 =====
+Multiple source  and multiple sinks
+Problem: Given multiple sources and multiple sinks, compute the maximum 
+flow we can send from  the sources to the sinks.
+38
+𝒔𝟐
+𝒔𝟏
+𝒔𝟑
+𝒔𝟒
+𝒕𝟏
+𝒕𝟐
+𝒕𝟑
+𝒔 𝒕∞
+∞
+∞
+∞ ∞
+∞
+∞
+
+===== PDF PAGE 39 =====
+Max flow when nodes also have capacity
+Problem: Given a flow network 𝑮 = (𝑽, 𝑬), where each node 𝒗 ∈ 𝑽 also has a capacity 
+𝒄(𝒗) : maximum flow that 𝒗 can allow to pass through it.
+Compute the maximum 𝒔-𝒕 flow.
+39
+𝒗
+𝒗𝒊𝒏 𝒗𝒐𝒖𝒕
+𝒄(𝒗)
+
+===== PDF PAGE 40 =====
+Other Variants
+• Each vertex has a positive/negative demand:
+𝒇𝑖𝑛 𝒗 − 𝒇𝑜𝑢𝑡 𝒗 = 𝒅(𝒗)
+• Each edge has a capacity as well as a lower bound on flow:
+ℓ(𝒙,𝒚) ≤ 𝒇(𝒙,𝒚) ≤ 𝒄(𝒙,𝒚)
+40
+
+===== PDF PAGE 41 =====
+Integrality of max-flow
+A useful tool for many applications of Max-Flow
+41
+
+===== PDF PAGE 42 =====
+Integrality of max-flow
+Theorem: Given a network 𝑮=(𝑽,𝑬), and two vertices 𝒔,𝒕 ∈ 𝑽, if edge capacities are integers, then 
+there exists a maximum 𝒔-𝒕 flow 𝒇 which is “integral”.
+42
+𝒔 𝒕1 1
+1 1
+1
+.67 .67
+.33.33
+1
+1 1
+00
+𝒇 𝒆 ∈ 𝒁 for each 𝒆 ∈ 𝑬
+
+===== PDF PAGE 43 =====
+Proof for Integrality theorem
+Ford-Fulkerson-algo(𝑮,𝒔,𝒕) {
+𝒇 𝟎;
+While (there is 𝒔-𝒕 path in 𝑮𝒇) do
+{   Let 𝑷 be an 𝒔-𝒕 path in 𝑮𝒇
+Let 𝒄′be bottleneck capacity of 𝑷;   
+For each (𝒙,𝒚) ∈ 𝑷 do
+{    If (𝒙,𝒚) is a forward edge then
+𝒇(𝒙,𝒚)  𝒇(𝒙,𝒚) + 𝒄′;   
+Else
+𝒇(𝒚,𝒙)  𝒇(𝒚,𝒙) - 𝒄′; 
+}
+}  return 𝒇;  
+}
+Claim:
+Ford Fulkerson algorithm computes a maximum 
+flow which is integral.
+Proof: (By induction on the no. of iteration)
+Inductive Assertion: 
+At the end of 𝒊th iteration, 𝒇 is integral.
+[It is a simple exercise to complete this proof].
+In fact, the statement can be shown to hold for 
+any flow (not necessary max flow) 𝒇 whose 
+value is an integer. 
+Hint: In each iteration send only 1 unit of flow 
+instead of 𝒄′.
+43
+
+===== PDF PAGE 44 =====
+Applications of Max-Flow
+44
+Bipartite Matching
+
+===== PDF PAGE 45 =====
+Bipartite matching
+45
+applicants jobs
+Matching of size 3
+
+===== PDF PAGE 46 =====
+Bipartite matching
+Problem: Given a bipartite graph 𝑮 = (𝑽, 𝑬), compute largest subset of edges such that each vertex has 
+at most one edge incident on it.  
+46
+applicants jobs
+Matching of size 3Matching of size 5
+
+===== PDF PAGE 47 =====
+Bipartite matching               Maximum Flow
+Question: How does the corresponding instance of max-flow look like ?
+47
+applicants jobs
+𝒕𝒔
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝑮′
+
+===== PDF PAGE 48 =====
+Bipartite matching               Maximum Flow
+Question: What is the relation between the two instances ?
+Theorem: There is a matching of size 𝒌 in 𝑮 if and only if
+there is an 𝒔-𝒕 flow of value 𝒌 in 𝑮′.
+48
+applicants jobs
+𝒕𝒔
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝑮′
+How to 
+prove it ?
+Split it into 
+two parts.
+Convince yourself that this 
+theorem would directly imply that 
+maxflow in 𝑮′= max matching in 𝑮
+
+===== PDF PAGE 49 =====
+Bipartite matching               Maximum Flow
+Question: What is the relation between the two instances ?
+Theorem (part 1): If there is a matching of size 𝒌 in 𝑮 then
+there is an 𝒔-𝒕 flow of value 𝒌 in 𝑮′.
+49
+applicants jobs
+𝒕𝒔
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝑮′
+
+===== PDF PAGE 50 =====
+Theorem (part 1): If there is a matching of size 𝒌 in 𝑮 then
+there is an 𝒔-𝒕 flow of value 𝒌 in 𝑮′.
+Proof: Let 𝑴 be a matching of size 𝒌 in 𝑮. 
+We shall construct a flow 𝒇 of value 𝒌 in 𝑮′.
+For each edge (𝒙,𝒚) ∈ 𝑴,  where 𝒙 is an applicant and 𝒚 is a job
+assign flow of value 1 to the following edges in 𝑮′: (𝒔,𝒙), (𝒙,𝒚), (𝒚,𝒕) 
+That is,  𝒇(𝒔,𝒙)  1 , 𝒇(𝒙,𝒚)  1 , 𝒇(𝒚,𝒕) 𝟏
+For all remaining edges of 𝑮′assign flow of value 𝟎.
+It is easy to verify (do it as an exercise) that conservation constraint as well 
+capacity constraints are satisfied by 𝒇. 
+Since 𝑴 = 𝒌, it follows from the above construction of 𝒇 that among all edges 
+that leave 𝒔, there are exactly 𝒌 edges that carry flow of value 1. 
+Hence value(𝒇)= 𝒌. 
+This completes the proof of part 1 of the theorem. 50
+
+===== PDF PAGE 51 =====
+Bipartite matching               Maximum Flow
+Question: What is the relation between the two instances ?
+Theorem (part 2): If there is an 𝒔-𝒕 flow of value 𝒌 in 𝑮′, then
+there is a matching of size 𝒌 in 𝑮.
+51
+applicants jobs
+𝒕𝒔
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝟏
+𝑮′
+
+===== PDF PAGE 52 =====
+Theorem (part 2): If there is an 𝒔-𝒕 flow of value 𝒌 in 𝑮′, then
+there is a matching of size 𝒌 in 𝑮.
+Proof: Let 𝒇 be an 𝒔-𝒕 flow of value 𝒌 in 𝑮′.
+We shall now construct a matching of size 𝒌 in 𝑮.
+Firstly, by integrality theorem, assume that 𝒇 is integral. 
+Consider the set 𝑨= {𝒔} ∪ Applicants
+So 𝒇𝒐𝒖𝒕 𝑨 − 𝒇𝒊𝒏(𝑨) = 𝒌
+Since there is no edge that enters 𝑨, so 𝒇𝒊𝒏(𝑨) = 𝟎,
+Hence 𝒇𝒐𝒖𝒕 𝑨 = 𝒌.
+Moreover, since capacity of each edge in 𝑮′is 𝟏, each edge in 𝑮′carries either no flow or a flow of 
+value 𝟏. 
+Therefore, there are exactly 𝒌 edges between Applicants and jobs that carry flow of value 𝟏. 
+Let 𝑴 denote the set of these 𝒌 edges.
+Since each edge leaving 𝒔 (and each edge entering 𝒕) has capacity 𝟏, there can be at most one edge 
+from 𝑴 incident on any  applicant (or any job).  
+It thus follows that the set 𝑴 is indeed a matching in 𝑮. 
+This completes the proof of part 2 of the theorem.
+52
+
+===== PDF PAGE 53 =====
+Application of max-flow
+Maximum no. of Edge Disjoint paths from 𝒔 to 𝒕
+53
+
+===== PDF PAGE 54 =====
+Maximum no. of Edge Disjoint paths from 𝒔 to 𝒕
+Definition: Two paths are said to be edge-disjoint if they do not share any edge.
+Problem: Given a directed graph 𝑮 = (𝑽, 𝑬) and two vertices 𝒔 and 𝒕, compute 
+the maximum number of edge disjoint paths from 𝒔 to 𝒕.
+54
+
+===== PDF PAGE 55 =====
+Maximum no. of Edge Disjoint paths from 𝒔 to 𝒕
+Intuition: View 𝑮 as a flow network, and compute max-flow from 𝒔 to 𝒕.
+Question: What will be capacities of edges ?
+Answer: unit capacity.
+Question: What relationship exists between the two instances ? 
+A natural guess/intuition➔
+Theorem: maximum no. of 𝒔-𝒕 edge-disjoint paths in 𝑮 = max-flow from 𝒔 to 𝒕 in the 
+corresponding flow network. 55
+𝑮
+𝒕𝒔
+
+===== PDF PAGE 56 =====
+Maximum no. of Edge Disjoint paths from 𝒔 to 𝒕
+Theorem: There are 𝒌 edge disjoint paths from 𝒔 to 𝒕 in 𝑮
+if and only if
+there is a flow of value 𝒌 from 𝒔 to 𝒕 in corresponding flow network 
+56
+𝑮
+𝒕𝒔
+
+===== PDF PAGE 57 =====
+Maximum no. of Edge Disjoint paths from 𝒔 to 𝒕
+Theorem (part 1) If there are 𝒌 edge disjoint paths from 𝒔 to 𝒕 in 𝑮
+then  there is a flow of value 𝒌 from 𝒔 to 𝒕 in corresponding flow network.
+Proof: 
+• Consider any given set of 𝒌 edge disjoint paths from 𝒔 to 𝒕 in 𝑮.
+• Send flow of 𝟏 unit along each path.
+• Capacity as well as conservation constraints are satisfied.
+• Value of flow = 𝒌 57
+𝑮
+𝒕𝒔
+
+===== PDF PAGE 58 =====
+Maximum no. of Edge Disjoint paths from 𝒔 to 𝒕
+Theorem (part 2) If there is a flow of value 𝒌 from 𝒔 to 𝒕 in the flow network 
+then there are 𝒌 edge disjoint paths from 𝒔 to 𝒕 in 𝑮.
+Proof:    Theorem of Integrality of flow, and
+unit capacity of each edge
+➔there exists a flow 𝒇 of value 𝒌 such that 𝒇 𝒆 = 𝟏 or 𝟎 for all 𝒆 ∈ 𝑬.
+Aim: To construct  𝒌 edge disjoint paths from 𝒔 to 𝒕 using edges carrying unit flow. 58
+𝑮
+𝒕𝒔
+
+===== PDF PAGE 59 =====
+Maximum no. of Edge Disjoint paths from 𝒔 to 𝒕
+Theorem (part 2) If there is a flow of value 𝒌 from 𝒔 to 𝒕 in the flow network 
+then there are 𝒌 edge disjoint paths from 𝒔 to 𝒕 in 𝑮.
+Proof: “Keep following any stream of flow originating from 𝒔 and terminating at 𝒕”.
+What if we get caught in a loop ?
+But is it possible in a flow ?
+Yes, INDEED. 59
+𝑮
+𝒕𝒔
+
+===== PDF PAGE 60 =====
+Maximum no. of Edge Disjoint paths from 𝒔 to 𝒕
+Theorem (part 2) If there is a flow of value 𝒌 from 𝒔 to 𝒕 in the flow network 
+then there are 𝒌 edge disjoint paths from 𝒔 to 𝒕 in 𝑮.
+Proof: “Keep following any stream of flow originating from 𝒔 and terminating at 𝒕”.
+What if we get caught in a loop ?
+But is it possible in a flow ?
+Yes, INDEED. 60
+𝑮
+𝒕𝒔
+
+===== PDF PAGE 61 =====
+Maximum no. of Edge Disjoint paths from 𝒔 to 𝒕
+Theorem (part 2) If there is a flow of value 𝒌 from 𝒔 to 𝒕 in the flow network 
+then there are 𝒌 edge disjoint paths from 𝒔 to 𝒕 in 𝑮.
+Proof: 
+“Keep following any stream of flow originating from 𝒔 and terminating at 𝒕”.
+• If we reach 𝒕, we get a path
+• Reduce the flow on all edges of the path to 𝟎.
+• The flow from 𝒔 to 𝒕 reduces to 𝒌 − 𝟏
+• If we get into a loop
+• Reduce the flow on all  edges of the loop to 𝟎.
+• The flow from 𝒔 to 𝒕 is still 𝒌. 
+Homework: 
+Based on the two cases, give a proof by induction. What will you induct on 
+(no. of edges in 𝑮 or 𝒌 or no. of edges in 𝑮 carrying unit flow) ? State the inductive 
+assertion precisely and then prove it rigorously.
+61
+
+===== PDF PAGE 62 =====
+References
+• Chapter 26 (Maximum Flow) of “Introduction to Algorithms”, Cormen, 
+Leiserson, Rivest and Stein
+• Chapter 7 (Network Flow) of “Algorithm Design”, Kleinberg and Tardos
+62
+
+===== PDF PAGE 63 =====
+Acknowledgement
+• Slides are taken from a course by Prof. Surender Baswana at IIT Kanpur
+63

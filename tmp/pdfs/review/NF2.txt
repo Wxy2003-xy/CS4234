@@ -1,0 +1,914 @@
+===== PDF PAGE 1 =====
+Optimization Algorithms
+Diptarka Chakraborty
+Week 5 
+Network Flow (II)
+CS4234
+
+===== PDF PAGE 2 =====
+Formal Description of Flow
+2
+𝒔
+𝒗
+𝒖
+𝒙
+𝒚
+2
+17
+5
+68
+7
+4
+𝒕
+𝑮=(𝑽, 𝑬) : a directed graph with
+𝒔: source, 
+𝒕: sink
+𝒄: 𝑬 → 𝐑+
+𝒄(𝒙,𝒚) = capacity of edge (𝒙,𝒚)
+Flow 𝒇: 𝑬 → 𝐑+ such that 
+• For each edge (𝒙,𝒚) ∈ 𝑬
+𝒇(𝒙,𝒚) ≤ 𝒄(𝒙,𝒚)
+• For each vertex 𝒗 ∈ 𝑽\{𝒔, 𝒕}
+෍
+𝒖,𝒗 ∈ 𝑬
+𝒇(𝒖,𝒗) = ෍
+𝒗,𝒛 ∈ 𝑬
+𝒇(𝒗 , 𝒛)
+156
+714
+Capacity constraint
+Conservation constraint
+
+===== PDF PAGE 3 =====
+Formal Description of Flow
+value(𝒇)= flow leaving 𝒔
+= ෍
+𝒔,𝒗 ∈ 𝑬
+𝒇(𝒖,𝒗)
+3
+𝒔
+𝒗
+𝒖
+𝒙
+𝒚
+2
+17
+5
+7
+4
+𝒕
+𝑮=(𝑽, 𝑬) : a directed graph with
+𝒔: source, 
+𝒕: sink
+𝒄: 𝑬 → 𝐑+
+𝒄(𝒙,𝒚) = capacity of edge (𝒙,𝒚)
+Flow 𝒇: 𝑬 → 𝐑+ such that 
+• For each edge (𝒙,𝒚) ∈ 𝑬
+𝒇(𝒙,𝒚) ≤ 𝒄(𝒙,𝒚)
+• For each vertex 𝒗 ∈ 𝑽\{𝒔, 𝒕}
+෍
+𝒖,𝒗 ∈ 𝑬
+𝒇(𝒖,𝒗) = ෍
+𝒗,𝒛 ∈ 𝑬
+𝒇(𝒗 , 𝒛)
+156
+714
+5
+7
+7
+1
+4
+11
+1
+68
+
+===== PDF PAGE 4 =====
+Formal Description of Flow
+value(𝒇)= flow leaving 𝒔
+= ෍
+𝒔,𝒗 ∈ 𝑬
+𝒇(𝒖,𝒗)
+4
+𝒔
+𝒗
+𝒖
+𝒙
+𝒚
+2
+17
+5
+7
+4
+𝒕
+𝑮=(𝑽, 𝑬) : a directed graph with
+𝒔: source, 
+𝒕: sink
+𝒄: 𝑬 → 𝐑+
+𝒄(𝒙,𝒚) = capacity of edge (𝒙,𝒚)
+Max-Flow Problem:
+Given a network 𝑮=(𝑽,𝑬), and two vertices 
+𝒔,𝒕 ∈ 𝑽, compute a flow from 𝒔 to 𝒕 of 
+maximum value.
+156
+714
+68
+
+===== PDF PAGE 5 =====
+Towards designing max flow algorithm
+First-attempt-algo(𝑮,𝒔,𝒕)
+{  𝒇 𝟎;
+While (there is 𝒔-𝒕 path in 𝑮) do
+{   Let 𝑷 be any 𝒔-𝒕 path in 𝑮
+Let 𝒄𝒃 be bottleneck capacity of 𝑷;   
+For each (𝒙,𝒚) ∈ 𝑷 do
+{       
+𝒇(𝒙,𝒚)  𝒇(𝒙,𝒚) + 𝒄𝒃;   
+𝒄(𝒙,𝒚)  𝒄(𝒙,𝒚) - 𝒄𝒃; 
+If (𝒄(𝒙,𝒚) = 𝟎) remove (𝒙,𝒚) from 𝑮
+}
+}
+return 𝒇;  
+}  
+Question: Is the algorithm correct ?
+5
+
+===== PDF PAGE 6 =====
+A counterexample 
+for
+First-attempt-algo
+6
+
+===== PDF PAGE 7 =====
+Question: What is the maximum flow from 𝒔 to 
+𝒕 ?
+Answer: 30
+7
+𝒔
+𝒙
+𝒚
+𝒕
+2010
+50
+20 10
+
+===== PDF PAGE 8 =====
+Executing our first attempt algorithm
+8
+𝒔
+10
+2010
+50
+20
+𝒙
+𝒚
+𝒕
+10
+10
+30
+𝒙
+𝒚
+𝒕𝒔
+20
+20
+20
+No 𝒔 − 𝒕 path
+
+===== PDF PAGE 9 =====
+Finding a solution with scientific spirit
+Patience and perseverance paid ☺
+9
+𝒔
+2010
+50
+𝒙
+𝒚
+𝒕
+20
+2010
+How to send 
+extra 10 units of 
+flow from 𝒔 to 𝒕 ?
+Conservation violated at 𝒚
+Conservation violated at 𝒙
+10
+10
+20
+20
+10
+
+===== PDF PAGE 10 =====
+Insight into max-flow 
+gained from the example
+Redistribution of existing flow may allow 
+additional flow.
+Need a structure which may facilitate 
+this redistribution
+• Increasing flow along an edge (if the 
+current flow is less than capacity)
+• Reducing flow along an edge (if it is 
+carrying some positive flow.)
+10
+𝒔
+2010
+50
+𝒙
+𝒚
+𝒕
+2010
+10
+10
+1020
+20
+
+===== PDF PAGE 11 =====
+Residual network
+Let 𝑮=(𝑽, 𝑬) be a network with source 𝒔, sink 𝒕, and capacities 𝝎: 𝑬 → 𝐑+
+Let 𝒇 be any valid 𝒔-𝒕 flow.
+The residual network 𝑮𝒇 is constructed as follows:
+Vertices of 𝑮𝒇 = 𝑽
+Edges of 𝑮𝒇 = 𝑬𝒇 defined as follows
+For each edge (𝒙,𝒚) ∈ 𝑬
+• If 𝒇(𝒙,𝒚) < 𝒄(𝒙,𝒚), 
+➔ edge (𝒙,𝒚) ∈ 𝑬𝒇 with capacity 𝒄𝒇 = 𝒄(𝒙,𝒚) - 𝒇(𝒙,𝒚)
+• If 𝒇(𝒙,𝒚) > 𝟎
+➔ edge (𝒚,𝒙) ∈ 𝑬𝒇 with capacity 𝒄𝒇 = 𝒇(𝒙,𝒚) 
+11
+Forward edge
+Backward edge
+
+===== PDF PAGE 12 =====
+Example of Residual Network
+12
+𝒔
+10
+2010
+50
+20
+𝒙
+𝒚
+𝒕
+10
+10
+𝒙
+𝒚
+𝒕𝒔
+20
+20
+20
+20
+20
+20
+30
+𝑮 𝑮𝒇
+Can you translate our 
+exercise of achieving 
+max flow of 30 in 
+terms of 𝑮𝒇?
+
+===== PDF PAGE 13 =====
+Example of Residual Network
+13
+𝒔
+10
+2010
+50
+20
+𝒙
+𝒚
+𝒕
+10
+10
+𝒙
+𝒚
+𝒕𝒔
+20
+20
+20
+20
+20
+20
+30
+𝑮 𝑮𝒇
+We found a 𝒔 − 𝒕 path 
+in 𝑮𝒇, and updated flow 
+in 𝑮 suitably ?
+
+===== PDF PAGE 14 =====
+A generic step of increasing flow
+Find a 𝒔 − 𝒕 path 𝑷 in 𝑮𝒇; 
+If edge (𝒙, 𝒚) on the path is a forward edge
+➔ Increase flow along (𝒙, 𝒚) by 𝒄′ in 𝑮.
+14
+𝒕𝒔 𝒙 𝒚
+𝒔 𝒕
+𝑮
+𝑮𝒇
+≥ 𝒄′≥ 𝒄′ ≥ 𝒄′
+𝒙 𝒚
+𝑷
+
+===== PDF PAGE 15 =====
+A generic step of increasing flow
+Find a 𝒔 − 𝒕 path 𝑷 in 𝑮𝒇; 
+If edge (𝒙, 𝒚) on the path is a backward edge 
+➔ Decrease flow along (𝒚,𝒙) in 𝑮 by 𝒄′
+15
+𝒕𝒔 𝒙 𝒚
+𝒔 𝒕
+𝑮
+𝑮𝒇
+≥ 𝒄′≥ 𝒄′ ≥ 𝒄′
+𝒙 𝒚
+𝑷
+This reduction of flow along (𝒚,𝒙) is a part of redistribution: we divert a part of 𝒇(𝒚,𝒙) along some 
+other outgoing edge of 𝒚, and increase flow along some edge entering 𝒙. Recall our example.
+
+===== PDF PAGE 16 =====
+Ford Fulkerson algorithm
+Ford-Fulkerson-algo(𝑮,𝒔,𝒕)
+{  𝒇 𝟎;
+While (there is 𝒔-𝒕 path in 𝑮𝒇) do
+{   Let 𝑷 be an 𝒔-𝒕 path in 𝑮𝒇
+Let 𝒄′ be bottleneck capacity of 𝑷;   
+For each (𝒙,𝒚) ∈ 𝑷 do
+{    If (𝒙,𝒚) is a forward edge then
+𝒇(𝒙,𝒚)  𝒇(𝒙,𝒚) + 𝒄′;   
+Else
+𝒇(𝒚,𝒙)  𝒇(𝒚,𝒙) - 𝒄′; 
+}
+}  return 𝒇;  
+}
+Question: Does the algorithm compute a valid 
+flow ?
+➢ Capacity constraint is satisfied
+➢ Conservation ?
+𝒙 ∈ 𝑷
+We increase flow on both edges by same amount, 
+so flow is conserved at 𝒙.
+16
+𝒙𝒖 𝒚
+𝒙𝒖 𝒚 𝑮
+𝑮𝒇
+
+===== PDF PAGE 17 =====
+Ford Fulkerson algorithm
+Ford-Fulkerson-algo(𝑮,𝒔,𝒕)
+{  𝒇 𝟎;
+While (there is 𝒔-𝒕 path in 𝑮𝒇) do
+{   Let 𝑷 be an 𝒔-𝒕 path in 𝑮𝒇
+Let 𝒄′ be bottleneck capacity of 𝑷;   
+For each (𝒙,𝒚) ∈ 𝑷 do
+{    If (𝒙,𝒚) is a forward edge then
+𝒇(𝒙,𝒚)  𝒇(𝒙,𝒚) + 𝒄′;   
+Else
+𝒇(𝒚,𝒙)  𝒇(𝒚,𝒙) - 𝒄′; 
+}
+}  return 𝒇;  
+}
+Question: Does the algorithm compute a valid 
+flow ?
+➢ Capacity constraint is satisfied
+➢ Conservation ?
+𝒙 ∈ 𝑷
+We increase flow along (𝒖,𝒙) by the same amount we 
+decrease along (𝒚,𝒙). So net flow entering 𝒙 remains 
+unchanged.
+17
+𝒖 𝒚𝒙 𝑮
+𝒙𝒖 𝒚 𝑮𝒇
+
+===== PDF PAGE 18 =====
+Ford Fulkerson algorithm
+Ford-Fulkerson-algo(𝑮,𝒔,𝒕)
+{  𝒇 𝟎;
+While (there is 𝒔-𝒕 path in 𝑮𝒇) do
+{   Let 𝑷 be an 𝒔-𝒕 path in 𝑮𝒇
+Let 𝒄′ be bottleneck capacity of 𝑷;   
+For each (𝒙,𝒚) ∈ 𝑷 do
+{    If (𝒙,𝒚) is a forward edge then
+𝒇(𝒙,𝒚)  𝒇(𝒙,𝒚) + 𝒄′;   
+Else
+𝒇(𝒚,𝒙)  𝒇(𝒚,𝒙) - 𝒄′; 
+}
+}  return 𝒇;  
+}
+Question: Does the algorithm compute a valid 
+flow ?
+➢Capacity constraint is satisfied
+➢Conservation ?
+𝒙 ∈ 𝑷
+Analyze the remaining 2 cases yourself.
+18
+𝒙𝒖 𝒚 𝑮𝒇
+𝒙𝒖 𝒚 𝑮𝒇
+
+===== PDF PAGE 19 =====
+Ford Fulkerson algorithm
+Ford-Fulkerson-algo(𝑮,𝒔,𝒕)
+{  𝒇 𝟎;
+While (there is 𝒔-𝒕 path in 𝑮𝒇) do
+{   Let 𝑷 be an 𝒔-𝒕 path in 𝑮𝒇
+Let 𝒄′ be bottleneck capacity of 𝑷;   
+For each (𝒙,𝒚) ∈ 𝑷 do
+{    If (𝒙,𝒚) is a forward edge then
+𝒇(𝒙,𝒚)  𝒇(𝒙,𝒚) + 𝒄′;   
+Else
+𝒇(𝒚,𝒙)  𝒇(𝒚,𝒙) - 𝒄′; 
+}
+}  return 𝒇;  
+}
+Question: Does the value of flow 
+increase in every iteration ?
+Answer: Yes, indeed.
+Observe that there is no flow that 
+enters 𝒔.
+➔There is never a backward edge 
+leaving 𝒔 in 𝑮𝒇.
+➔The edge leaving 𝒔 in 𝑷 has to be  a 
+forward edge only.
+➔The value of flow increases by 
+amount 𝒄′ in the iteration.
+19
+
+===== PDF PAGE 20 =====
+Ford Fulkerson algorithm
+Ford-Fulkerson-algo(𝑮,𝒔,𝒕)
+{  𝒇 𝟎;
+While (there is 𝒔-𝒕 path in 𝑮𝒇) do
+{   Let 𝑷 be an 𝒔-𝒕 path in 𝑮𝒇
+Let 𝒄′ be bottleneck capacity of 𝑷;   
+For each (𝒙,𝒚) ∈ 𝑷 do
+{    If (𝒙,𝒚) is a forward edge then
+𝒇(𝒙,𝒚)  𝒇(𝒙,𝒚) + 𝒄′;   
+Else
+𝒇(𝒚,𝒙)  𝒇(𝒚,𝒙) - 𝒄′; 
+}
+}  return 𝒇;  
+}
+Question: What is time complexity of 
+algorithm ?
+Question: What is the proof that the 
+algorithm, if terminates, computes max-
+flow ?
+The answers to these questions are not 
+simple.
+20
+
+===== PDF PAGE 21 =====
+Key points of Ford-Fulkerson algorithm 
+that you must fully realize 
+• The residual network 𝑮𝒇 is just a tool for manipulating flow in actual network 𝑮.   So
+statements like “Sending flow along a path in 𝑮𝒇” DON’T MAKE SENSE.
+• The algorithm shuttles back and forth between 𝑮 and 𝑮𝒇 :
+- Compute a path in 𝑮𝒇
+- manipulate flow in 𝑮 suitably
+- Update 𝑮𝒇 accordingly; Compute a path in 𝑮𝒇
+- manipulate flow in 𝑮 suitably …. 
+• Reducing a flow along an edge in 𝑮 is actually a part of re-distribution exercise which pumps more flow 
+from 𝒔 to 𝒕.  
+Work on the following exercise to realize this.         
+21
+
+===== PDF PAGE 22 =====
+A useful exercise
+Execute Ford Fulkersion algorithm on this 
+example when
+• The first path selected for sending the flow is 
+<𝒔, 𝒙, 𝒗, 𝒕>.
+Show the execution of the iterations of the 
+algorithm
+• What if the first path selected is <𝒔, 𝒚, 𝒗, 𝒕>.
+Internalize the entire algorithm fully through 
+this example.
+22
+𝒔
+𝒙
+𝒚
+𝒕
+65
+310
+5
+9
+3
+8 10 10
+3
+𝒖 𝒗
+
+===== PDF PAGE 23 =====
+𝒔-𝒕 Cuts
+23
+
+===== PDF PAGE 24 =====
+𝒔-𝒕 cut
+𝑨 ⊂ 𝑽, with
+𝒔 ∈ 𝑨, 𝒕 ∈ ഥ𝑨
+24
+𝒔 𝒕
+𝑮
+𝑨 ഥ𝑨
+
+===== PDF PAGE 25 =====
+𝒔-𝒕 cut
+𝑨 ⊂ 𝑽, with
+𝒔 ∈ 𝑨, 𝒕 ∈ ഥ𝑨
+𝑪𝒖𝒕(𝑨, ഥ𝑨)= 
+{ 𝒙, 𝒚 ∈ 𝑬 |𝒙 ∈ 𝑨, 𝒚 ∈ ഥ𝑨 or 𝒚 ∈ 𝑨, 𝒙 ∈ ഥ𝑨}
+Capacity of a cut:
+𝒄(𝑨, ഥ𝑨)= 
+෍
+𝒖,𝒗 ∈𝑬,𝒖∈𝑨,𝒗∈ഥ𝑨
+𝒄(𝒖, 𝒗)
+25
+𝒔 𝒕
+𝑮
+𝑨 ഥ𝑨
+Note: capacity of only outgoing 
+edges is considered in capacity of 
+a cut.
+
+===== PDF PAGE 26 =====
+Cuts and Flows
+26
+
+===== PDF PAGE 27 =====
+Useful Generalizations
+Let us revisit conservation constraint:
+For each vertex 𝒗 ∈ 𝑽\{𝒔, 𝒕}
+Mathematically,
+෍
+𝒛,𝒖 ∈ 𝑬
+𝒇(𝒛,𝒖) = ෍
+𝒖,𝒗 ∈ 𝑬
+𝒇(𝒖 , 𝒗)
+𝒇𝒐𝒖𝒕 𝒖 − 𝒇𝒊𝒏(𝒖) =  ?
+27
+𝒇𝒊𝒏(𝒖) 𝒇𝒐𝒖𝒕(𝒖)
+𝒖
+𝒇𝒐𝒖𝒕(𝒖)𝒇𝒊𝒏(𝒖)
+
+===== PDF PAGE 28 =====
+Useful Generalizations
+Let us revisit conservation constraint:
+For each vertex 𝒗 ∈ 𝑽\{𝒔, 𝒕}
+Lemma:  𝒇𝒐𝒖𝒕 𝒖 − 𝒇𝒊𝒏(𝒖) =  
+28
+𝒖
+𝒇𝒐𝒖𝒕(𝒖)𝒇𝒊𝒏(𝒖)
+0                     if 𝒖 ∈ 𝑽\{𝒔, 𝒕}
+𝐯𝐚𝐥𝐮𝐞(𝒇) if 𝒖 = 𝒔
+−𝐯𝐚𝐥𝐮𝐞(𝒇) if 𝒖 = 𝒕
+
+===== PDF PAGE 29 =====
+Useful Generalizations
+Consider any valid flow 𝒇.
+Question: How would you define 𝒇𝒐𝒖𝒕 𝑨 ?
+𝒇𝒐𝒖𝒕 𝑨 = ෍
+𝒙,𝒚 ∈ 𝑬, 𝒙∈𝑨,𝒚∈ഥ𝑨
+𝒇(𝒙, 𝒚)
+𝒇𝒊𝒏 𝑨 = ෍
+𝒙,𝒚 ∈ 𝑬, 𝒚∈𝑨,𝒙∈ഥ𝑨
+𝒇(𝒙, 𝒚)
+Question: What would be 𝒇𝒐𝒖𝒕 𝑨 − 𝒇𝒊𝒏 𝑨 ?
+Answer: 𝐯𝐚𝐥𝐮𝐞(𝒇)
+Proof ?
+29
+𝒔
+𝑨
+
+===== PDF PAGE 30 =====
+Proof  for  𝒇𝒐𝒖𝒕 𝑨 − 𝒇𝒊𝒏 𝑨 = 𝐯𝐚𝐥𝐮𝐞(𝒇)
+Consider any valid flow 𝒇.
+Proof :
+𝐯𝐚𝐥𝐮𝐞(𝒇)= 𝒇𝒐𝒖𝒕 𝒔 − 𝒇𝒊𝒏 𝒔
+= ෍
+𝒙∈𝑨
+(𝒇𝒐𝒖𝒕 𝒙 − 𝒇𝒊𝒏 𝒙 )
+= ෍
+𝒙∈𝑨
+෍
+𝒙,𝒚 ∈𝑬
+𝒇 𝒙, 𝒚 − ෍
+𝒖,𝒙 ∈𝑬
+𝒇(𝒖, 𝒙)
+= ෍
+𝒙∈𝑨
+෍
+𝒙,𝒚 ∈𝑬
+𝒇 𝒙, 𝒚 − ෍
+𝒙∈𝑨
+෍
+𝒖,𝒙 ∈𝑬
+𝒇 𝒖, 𝒙
+= 𝒇𝒐𝒖𝒕 𝑨 − 𝒇𝒊𝒏 𝑨
+30
+𝒔
+𝑨
+𝒙
+
+===== PDF PAGE 31 =====
+A simple Relation between 
+Flows and capacity of cuts
+31
+
+===== PDF PAGE 32 =====
+Flows and capacity of cuts
+Consider any valid flow 𝒇.
+Lemma: 𝒇𝒐𝒖𝒕 𝑨 − 𝒇𝒊𝒏 𝑨 ≤ 𝒄(𝑨, ഥ𝑨).
+Proof: 
+𝒇𝒐𝒖𝒕 𝑨 − 𝒇𝒊𝒏 𝑨 ≤ 𝒇𝒐𝒖𝒕 𝑨
+= ෍
+𝒖,𝒗 ∈𝑬,𝒖∈𝑨,𝒗∈ഥ𝑨
+𝒇(𝒖, 𝒗)
+≤ ෍
+𝒖,𝒗 ∈𝑬,𝒖∈𝑨,𝒗∈ഥ𝑨
+𝒄(𝒖, 𝒗)
+= 𝒄(𝑨, ഥ𝑨).
+Theorem: Consider any network 𝑮 = (𝑽, 𝑬)
+with source 𝒔 and sink 𝒕.
+the maximum value of 𝒔-𝒕 flow is bounded by 
+the capacity of every 𝒔-𝒕 cut.
+32
+𝒔 𝒕
+𝑮
+𝑨 ഥ𝑨
+
+===== PDF PAGE 33 =====
+A deep Relation between 
+Flows and capacity of cuts
+33
+
+===== PDF PAGE 34 =====
+Max-Flow Min-Cut Theorem
+Theorem: Consider any network 𝑮 = (𝑽, 𝑬) with source 𝒔 and sink 𝒕.
+the maximum value of 𝒔-𝒕 flow is equal to the capacity of min-cut.
+Question: How to prove this theorem ?
+Answer: We shall prove the following:
+• Let 𝒇 be the 𝒔-𝒕 flow computed using Ford Fulkerson algorithm (assume it terminates).
+• Then there is an 𝒔-𝒕 cut whose capacity is equal to 𝐯𝐚𝐥𝐮𝐞(𝒇).
+• Try to realize that if we show this, then we have not only proved correctness of the Ford-
+Fulkerson algorithm, but also the max-flow min-cut theorem also.
+34
+
+===== PDF PAGE 35 =====
+Max-Flow Min-Cut Theorem
+Theorem: Consider any network 𝑮 = (𝑽, 𝑬) with source 𝒔 and sink 𝒕.
+the maximum value of 𝒔-𝒕 flow is equal to the capacity of min-cut.
+Question: How to prove this theorem ?
+Answer: We shall prove the following:
+• Let 𝒇 be the 𝒔-𝒕 flow computed using Ford Fulkerson algorithm (assume it terminates).
+• Then there is a 𝒔-𝒕 cut whose capacity is equal to 𝐯𝐚𝐥𝐮𝐞(𝒇).
+• Try to realize that if we show this, then we have not only proved correctness of the Ford-
+Fulkerson algorithm, but also the max-flow min-cut theorem also.
+35
+Get ready to  prove this milestone 
+result. Try it yourself before seeing 
+the next slides. It requires nothing 
+more than a basic understanding of 
+the algorithm. ☺
+
+===== PDF PAGE 36 =====
+Proof of max-flow min-cut Theorem
+Consider the flow 𝒇computed by Ford-Fulkerson algorithm. 
+How will 𝑮𝒇 look like ?
+𝑨: set of vertices reachable from 𝒔 in 𝑮𝒇
+Claim: 𝐯𝐚𝐥𝐮𝐞(𝒇) = 𝒄(𝑨, ഥ𝑨).
+36
+𝒔 𝒕
+𝑮𝑨 ഥ𝑨
+𝒔 𝒕
+𝑮𝒇
+𝑨 ഥ𝑨
+
+===== PDF PAGE 37 =====
+Proof of max-flow min-cut Theorem
+Consider the flow 𝒇computed by Ford-Fulkerson algorithm.
+𝐯𝐚𝐥𝐮𝐞(𝒇) = 𝒇𝒐𝒖𝒕 𝑨 − 𝒇𝒊𝒏 𝑨
+Question: For 𝐯𝐚𝐥𝐮𝐞(𝒇) to be equal to = 𝒄(𝑨, ഥ𝑨), what must happen ?
+Answer: 1.  All out going edges must be fully saturated.
+2. Every incoming edge must have zero flow. 37
+𝒔 𝒕
+𝑮𝑨 ഥ𝑨
+𝒔 𝒕
+𝑮𝒇
+𝑨 ഥ𝑨
+How will you 
+show this  ?
+
+===== PDF PAGE 38 =====
+Proof of max-flow min-cut Theorem
+Consider the flow 𝒇computed by Ford-Fulkerson algorithm.
+If 𝒇(𝒙, 𝒚) < 𝒄(𝒙, 𝒚)
+➔ 𝒙, 𝒚 must appear as forward edge in 𝑮𝒇.
+➔𝒚 is reachable from 𝒔.
+A contradiction. 38
+𝒔 𝒕
+𝑮𝑨 ഥ𝑨
+𝒔 𝒕
+𝑮𝒇
+𝑨 ഥ𝑨
+𝒙 𝒚 𝒙 𝒚
+
+===== PDF PAGE 39 =====
+Proof of max-flow min-cut Theorem
+Consider the flow 𝒇computed by Ford-Fulkerson algorithm.
+If 𝒇(𝒙, 𝒚) > 𝟎
+➔ 𝒚, 𝒙 appears as a backward edge in 𝑮𝒇.
+➔𝒙 is reachable from 𝒔.
+A contradiction. 39
+𝒔 𝒕
+𝑮𝑨 ഥ𝑨
+𝒔 𝒕
+𝑮𝒇
+𝑨 ഥ𝑨
+𝒚 𝒙
+𝒚 𝒙
+
+===== PDF PAGE 40 =====
+Ford Fulkerson algorithm
+Ford-Fulkerson-algo(𝑮,𝒔,𝒕)
+{  𝒇 𝟎;
+While (there is 𝒔-𝒕 path in 𝑮𝒇) do
+{   Let 𝑷 be an 𝒔-𝒕 path in 𝑮𝒇
+Let 𝒄′ be bottleneck capacity of 𝑷;   
+For each (𝒙,𝒚) ∈ 𝑷 do
+{    If (𝒙,𝒚) is a forward edge then
+𝒇(𝒙,𝒚)  𝒇(𝒙,𝒚) + 𝒄′;   
+Else
+𝒇(𝒚,𝒙)  𝒇(𝒚,𝒙) - 𝒄′; 
+}
+}  return 𝒇;  
+}
+This algorithm does not say anything about 
+the way 𝑷 has to be selected.
+Therefore, it is up to us (or the adversary) to 
+select 𝑷 so as to force the execution of the 
+algorithm take huge time ☺
+We shall first consider a simple network with 
+integer edge capacities.
+40
+
+===== PDF PAGE 41 =====
+A worst case examplefor
+networks with integer edge weights
+41
+1
+1000
+10001000
+1000
+𝒔
+𝒙
+𝒚
+𝒕
+𝑮 𝑮𝒇
+1000
+1000
+𝒙
+𝒚
+𝒕𝒔
+1
+1000
+1000
+1
+1
+1
+
+===== PDF PAGE 42 =====
+A worst case examplefor
+networks with integer edge weights
+42
+𝒔
+1000
+10001000
+1
+1000
+𝒙
+𝒚
+𝒕
+1000
+1000
+𝒙
+𝒚
+𝒕𝒔
+1
+1
+1
+1
+1
+1
+𝑮 𝑮𝒇
+999
+999
+1
+1
+
+===== PDF PAGE 43 =====
+A worst case examplefor
+networks with integer edge weights
+43
+𝒔
+1000
+10001000
+1
+1000
+𝒙
+𝒚
+𝒕
+𝒙
+𝒚
+𝒕𝒔
+1
+1
+1
+𝑮 𝑮𝒇
+1
+1
+1
+1
+1
+1
+1
+999
+999
+999
+999
+2
+2
+
+===== PDF PAGE 44 =====
+A worst case examplefor
+networks with integer edge weights
+44
+𝒔
+1000
+10001000
+1
+1000
+𝒙
+𝒚
+𝒕
+𝒙
+𝒚
+𝒕𝒔
+1
+1
+1
+𝑮 𝑮𝒇
+1
+1
+1
+1
+1
+1
+1
+999
+999
+999
+999
+2
+2
+The algorithm will run for 2000
+iterations to compute max-flow !
+
+===== PDF PAGE 45 =====
+Theorem: 
+There are networks with integer edge capacities on which Ford-Fulkerson algo
+may take 𝚯(𝒎 𝑪) time, where 𝑪 is max-edge capacity. 
+No. of bits required to store capacity 𝑪 = ?
+➔ Ford-Fulkerson algorithm is not a polynomial time algorithm even for 
+networks with integer edge capacities!
+45
+log2𝑪
+
+===== PDF PAGE 46 =====
+Ford Fulkerson algorithm
+Worst case running time on networks 
+with real edge weights
+46
+
+===== PDF PAGE 47 =====
+Theorem: 
+There exists a network with 6 nodes and 9 edges and  capacities ∈ 𝑹+ on which  
+Ford Fulkerson may never terminate !
+We might discuss the proof of this theorem on some later day.
+47
+
+===== PDF PAGE 48 =====
+Polynomial time algorithms for Max-Flow
+A natural question:
+Can we select the paths in Ford-Fulkerson algorithm cleverly to achieve polynomial running time ?
+➔
+A natural idea: 
+Select the path of maximum capacity.
+48
+
+===== PDF PAGE 49 =====
+References
+• Chapter 26 (Maximum Flow) of “Introduction to Algorithms”, Cormen, 
+Leiserson, Rivest and Stein
+• Chapter 7 (Network Flow) of “Algorithm Design”, Kleinberg and Tardos
+49
+
+===== PDF PAGE 50 =====
+Acknowledgement
+• Slides are taken from a course by Prof. Surender Baswana at IIT Kanpur
+50

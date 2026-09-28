@@ -1,0 +1,104 @@
+\section{Exam Reference and Proof Toolkit}
+\label{ref:toolkit}
+\textbf{Scope.} The supplied Week 6 slides state that the midterm covers material through
+Week 6. The main chapters follow that scope. General background and extra examples are
+in the appendices; targeted practice is in Appendix~\ref{prac:questions}.
+
+\subsection{Choose a technique}
+\begin{center}
+\small
+\begin{tabular}{P{0.25\textwidth}P{0.29\textwidth}P{0.35\textwidth}}
+\toprule
+\textbf{Problem cue} & \textbf{Method} & \textbf{Comparison with OPT}\\
+\midrule
+Knapsack, one blocked large item & Density prefix or best singleton & Fractional optimum $\le G+v_{\max}$\\
+Several nonnegative objectives & Best of component optimizers & $\OPT\le\sum_j f_j(x_j)\le k\ALG$\\
+Cost per newly covered element & Greedy weighted set cover & Element prices sum to $\ALG$; each optimal set pays at most $H_n$ times its cost\\
+Destroy fixed-size obstructions & Maximal disjoint packing & Each packed obstruction forces a distinct OPT action\\
+At most $k$ covering choices per element & LP threshold $1/k$ & Feasible by a covering constraint; cost $\le kLP^*\le k\OPT$\\
+Metric travel and parity & MST, Euler tour, matching & MST costs $\le\OPT$; odd-set matching costs $\le\OPT/2$\\
+Nonnegative local rewards & Random labels and indicators & $\OPT\le$ total available reward\\
+Deterministic guarantee required & Conditional expectation & Choose a branch whose expectation does not decrease\\
+Fractional decisions & LP rounding & Per-object bound, weighted sum, relaxation bound\\
+Compatibility and quotas & Layered network flow & Integral flow at a specified target value\\
+Vertex throughput or disjointness & Split each vertex & Capacity on $v_{\rm in}\to v_{\rm out}$\\
+Minimum cut, secondary objective & Integer capacity perturbation & $(m+1)c_e+1$ preserves capacity priority\\
+Large numeric DP coordinate & Scale values & Total rounding loss $\le nK$\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{What every solution must state}
+\begin{enumerate}
+\item \textbf{Model and assumptions:} feasible objects, objective direction, nonnegative
+weights, metric properties, integrality, and any special graph structure.
+\item \textbf{Algorithm:} explicit choices, stopping rule, and the actual output object.
+\item \textbf{Feasibility:} why all constraints hold. For a reduction, prove both directions
+and explain how to decode the solution.
+\item \textbf{Guarantee:} exhibit a lower bound on $\OPT$ for minimization, or an upper
+bound for maximization, then write the complete inequality chain.
+\item \textbf{Runtime:} construction plus iterations times work per iteration. Numeric
+capacity $C$ has $O(\log(C+1))$ bits; polynomial in $C$ need not mean polynomial in input size.
+\end{enumerate}
+
+\subsection{Guarantee conventions and relaxation directions}
+For $\rho\ge1$, minimization means $\OPT\le\ALG\le\rho\OPT$ and maximization means
+$\OPT/\rho\le\ALG\le\OPT$. Equivalently, a maximization algorithm retains a fraction
+$\alpha=1/\rho\le1$. State the inequality explicitly when different sources use different
+ratio conventions. For randomized algorithms replace $\ALG$ by $\mathbb E[\ALG]$ in the
+promised bound; an expectation guarantee is not a guarantee for every run.
+\[
+\begin{array}{ll}
+\text{Minimization relaxation:}&LP^*\le\OPT,\\
+\text{Maximization relaxation:}&LP^*\ge\OPT.
+\end{array}
+\]
+These compare \emph{optimal} relaxation values. An arbitrary fractional feasible objective
+does not automatically bound the integral optimum in the required direction. When $\OPT=0$,
+use inequalities instead of dividing by it.
+
+\subsection{Probability and inequalities used in the course}
+\begin{align*}
+\mathbb E[\mathbf1_A]&=\Pr[A], &
+\mathbb E\!\left[\sum_iw_iX_i\right]&=\sum_iw_i\mathbb E[X_i],\\
+\Pr\!\left[\bigcup_i A_i\right]&\le\sum_i\Pr[A_i], &
+\Pr[A\mid B]&=\frac{\Pr[A\cap B]}{\Pr[B]}\quad(\Pr[B]>0).
+\end{align*}
+Linearity and the union bound require no independence. Products of probabilities need
+the corresponding independence assumption. For a nonnegative random cost $Z$ and a success
+event $A$ of probability $q>0$,
+\[
+\mathbb E[Z\mid A]=\frac{\mathbb E[Z\mathbf1_A]}q\le\frac{\mathbb E[Z]}q.
+\]
+Independent trials with success probability $q$ have expected trial count $1/q$ and
+failure probability $(1-q)^t$ after $t$ trials. Cost and success within one trial may be correlated.
+\begin{align*}
+1-x&\le e^{-x}, &
+\prod_{i=1}^k a_i&\le\left(\frac1k\sum_{i=1}^k a_i\right)^k\quad(a_i\ge0),\\
+\left(\sum_i a_ib_i\right)^2&\le\left(\sum_i a_i^2\right)\left(\sum_i b_i^2\right), &
+H_n=\sum_{j=1}^n\frac1j&\le1+\ln n.
+\end{align*}
+If $g$ is concave on $[0,1]$, then
+$g(y)\ge(1-y)g(0)+yg(1)$. In particular, $g(0)=0$ implies $g(y)\ge yg(1)$.
+For candidate values, $\max_i A_i\ge\frac1k\sum_i A_i$; this holds pointwise, so it also
+holds after taking expectations, without independence between candidates.
+
+\subsection{Small counterexamples and quantifiers to remember}
+\begin{itemize}
+\item \textbf{Exact equivalence need not preserve approximation:} $q$ disjoint edges plus
+an isolated vertex give a maximal-matching cover whose complement has size 1, while
+maximum independent set has size $q+1$.
+\item \textbf{Maximizing satisfied versus minimizing unsatisfied clauses:} a satisfiable
+2-literal clause has optimum unsatisfied count 0, but fair assignment leaves it unsatisfied
+with probability $1/4$. A MAX-SAT guarantee does not transfer by subtraction.
+\item \textbf{Integral-flow theorem:} an integral maximum flow \emph{exists}; fractional
+maximum flows may also exist. Two parallel branches merging before a unit bottleneck can
+each carry $1/2$.
+\item \textbf{Vertex-cover LP gap:} on $K_n$, $\OPT=n-1$ and $LP^*=n/2$, so the
+worst-case gap is at least $2-2/n$. This is not a statement about every $n$-vertex graph.
+\item \textbf{Maximal versus maximum:} maximality is enough for the matching-based cover.
+Even a maximum matching's endpoints need not form a minimum cover (one edge suffices).
+\item \textbf{Numeric versus bit complexity:} $O(mC)$ may be exponential in $\log C$.
+Capacity-scaling phases must include threshold 1 for integer capacities.
+\end{itemize}
+

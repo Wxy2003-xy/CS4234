@@ -1,0 +1,105 @@
+\subsection{The best-of-candidates argument}
+\label{gre:best}
+Let $g(x)=\sum_{i=1}^k f_i(x)$ on a common feasible domain, with $f_i(x)\ge0$.
+Suppose $x_i$ is a \emph{global} maximizer of $f_i$. Return the candidate $x_j$ with
+largest $g(x_j)$. For an optimum $x^*$,
+\[
+\OPT=\sum_i f_i(x^*)\le\sum_i f_i(x_i)
+\le\sum_i g(x_i)\le k\max_i g(x_i)=k\ALG.
+\]
+Nonnegativity justifies the middle inequality. Feasibility follows because every candidate
+lies in the same domain. Evaluate all $k$ candidates in addition to the cost of finding them.
+
+For modified knapsack, the fractional optimum consists of a whole-item density prefix
+of value $G$ and at most one fractional item $\theta v_j$, $0\le\theta\le1$. All overweight
+items were discarded, so the best feasible singleton has value at least $v_j$. Therefore
+\[
+\OPT\le\OPT_{\rm frac}=G+\theta v_j\le G+v_{\max}
+\le2\max\{G,v_{\max}\}=2\ALG.
+\]
+If all items fit, the density prefix itself is optimal. Sorting dominates the running time,
+$O(n\log n)$.
+
+\subsection{Subset sum and group admission}
+\label{gre:subset}
+Given positive item sizes $a_i$ and capacity $B$, maximize the admitted total subject to
+the capacity. Groups must be accepted in full. Ignore items larger than $B$.
+\begin{algorithm}[H]
+\caption{Largest-first admission}
+\KwIn{Positive sizes $a_1,\ldots,a_n$; fixed capacity $B$}
+\KwOut{A feasible index set $S$}
+Sort indices in nonincreasing order of $a_i$\;
+$S\gets\varnothing$; $A\gets0$\;
+\ForEach{index $i$ in that order}{
+  \If{$A+a_i\le B$}{$S\gets S\cup\{i\}$; $A\gets A+a_i$\;}
+}
+\Return $S$\;
+\end{algorithm}
+\begin{proof}
+The admission test preserves $A\le B$. If the final total $A\ge B/2$, then
+$A\ge\OPT/2$. Otherwise the final remaining capacity exceeds $B/2$.
+There cannot have been a feasible item larger than $B/2$: the first such item in sorted
+order would have fitted into the initially empty solution, contradicting $A<B/2$.
+Every feasible item is therefore at most $B/2$ and fits whenever considered, because
+remaining capacity never falls below its final value. All feasible items were admitted,
+so $A=\OPT$. Sorting gives $O(n\log n)$ time.
+\end{proof}
+\textbf{Tight family:} capacity $2k$, sizes $k+1,k,k$. Greedy returns $k+1$, whereas
+$\OPT=2k$; the retained fraction tends to $1/2$.
+
+\paragraph{Read-only array and constant extra space.}
+Scan once for a largest individually feasible item, of size $M$. If none exists, return
+the empty solution. If $M\ge B/2$, return that item. Otherwise scan again in the original
+order, admitting each item when it fits. If the result is below $B/2$, every feasible item
+(all smaller than $B/2$) fitted, so it is optimal. Otherwise it is at least $\OPT/2$.
+Time is $O(n)$ and extra space is $O(1)$ when admissions can be output as a stream.
+
+\subsection{Knapsack FPTAS: value-indexed dynamic programming}
+\label{gre:fptas}
+An FPTAS returns a feasible value at least $(1-\epsilon)\OPT$ for $0<\epsilon<1$, with
+time polynomial in input length and $1/\epsilon$. Assume positive integer weights and
+nonnegative integer values. Discard items with $w_i>W$, redefine $n$ to count the remaining
+items, and let $V=\max_i v_i$. If no items remain or $V=0$, return the empty set.
+
+\paragraph{Exact pseudo-polynomial DP.}
+For $0\le i\le n$ and $0\le p\le nV$, define
+\[
+D[i,p]=\text{minimum weight using items }1,\ldots,i\text{ with total value exactly }p.
+\]
+Set $D[0,0]=0$ and other impossible states to $+\infty$. The recurrence is
+\[
+D[i,p]=
+\begin{cases}
+\min\{D[i-1,p],\ w_i+D[i-1,p-v_i]\},&p\ge v_i,\\
+D[i-1,p],&p<v_i.
+\end{cases}
+\]
+Compute rows in increasing $i$. Return the largest $p$ with $D[n,p]\le W$, and backtrack
+through minimizing choices to recover its subset. Every optimum either omits item $i$ or
+contains it, leaving value $p-v_i$ among earlier items; conversely both recurrence alternatives
+describe valid subsets. This proves the state invariant by induction. There are $O(n^2V)$
+states and constant work per state, giving $O(n^2V)$ time and space. Two rows give $O(nV)$
+space when only the optimum value is needed.
+
+\paragraph{Scale the value coordinate, not the weights.}
+Set $K=\epsilon V/n$ and $\hat v_i=\lfloor v_i/K\rfloor$. Run the value-indexed DP using
+$\hat v_i$ and the unchanged weights. Since $\hat v_i\le n/\epsilon$, the total scaled
+value is at most $n^2/\epsilon$ and the runtime is $O(n^3/\epsilon)$ arithmetic operations.
+Weights and arithmetic are represented with polynomially many bits; rational $\epsilon$
+can be handled by integer arithmetic in $\lfloor nv_i/(\epsilon V)\rfloor$.
+
+\begin{proof}[Approximation guarantee]
+Let $S$ maximize scaled value and let $S^*$ be an original optimum. For each item,
+$K\hat v_i\le v_i<K(\hat v_i+1)$. Feasibility is unchanged because weights were not rounded.
+Writing $v(S)=\sum_{i\in S}v_i$ and similarly for $\hat v(S)$,
+\begin{align*}
+v(S)&\ge K\hat v(S)\ge K\hat v(S^*)\\
+&\ge v(S^*)-K|S^*|\ge\OPT-nK\\
+&=\OPT-\epsilon V\ge(1-\epsilon)\OPT.
+\end{align*}
+The last step uses $V\le\OPT$: the largest remaining item fits by itself. This is why
+overweight items must be discarded \emph{before} defining $V$.
+\end{proof}
+Scaling values does not reduce the state space of a weight-indexed $O(nW)$ DP. Neither
+$V$ nor $W$ is a constant; the improvement comes from bounding the scaled coordinate.
+

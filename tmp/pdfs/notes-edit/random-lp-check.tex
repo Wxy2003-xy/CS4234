@@ -1,0 +1,472 @@
+\documentclass[10pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{array,booktabs}
+\usepackage[table]{xcolor}
+\usepackage{enumitem}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{algpseudocode}
+\usepackage{float}
+\usepackage[ruled, vlined, algoruled]{algorithm2e} % Options for styling
+\usepackage{tikz}
+\geometry{top=0.65in,bottom=0.65in,left=1.2in,right=1.2in}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!60!black,
+  urlcolor=cyan!50!black,
+  linktoc=all
+}
+\setlist{nosep,leftmargin=*}
+\renewcommand{\arraystretch}{1.2}
+\newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{theorem}[definition]{Theorem}
+\newtheorem{lemma}[definition]{Lemma}
+\newtheorem{remark}[definition]{Remark}
+\newtheorem{corollary}[definition]{Corollary}
+
+\newcommand{\OPT}{\operatorname{OPT}}
+\newcommand{\ALG}{\operatorname{ALG}}
+\newcommand{\poly}{\operatorname{poly}}
+\newcommand{\YES}{\textsc{Yes}}
+\newcommand{\NO}{\textsc{No}}
+\newcommand{\NP}{\mathsf{NP}}
+\newcommand{\coNP}{\mathsf{coNP}}
+\newcommand{\PTIME}{\mathsf{P}}
+\newcommand{\NPC}{\mathsf{NP\text{-}complete}}
+
+% Colours used to separate the three layers of approximation proofs.
+\definecolor{algblue}{RGB}{0,82,155}
+\definecolor{optred}{RGB}{180,45,45}
+\definecolor{bridgepurple}{RGB}{105,55,145}
+
+\title{CS4234: Optimization Algorithms}
+\author{@Wxy2003-xy}
+\date{}
+
+\begin{document}
+\section{Randomization and Derandomization}\label{ra:main}
+
+\subsection{The indicator-variable proof template}
+For a maximization objective with nonnegative local rewards, write
+\[
+  \ALG=\sum_i w_i I_i,\qquad
+  \mathbb E[\ALG]=\sum_i w_i\Pr[I_i=1].
+\]
+Linearity of expectation does \emph{not} require the indicators to be
+independent. Independence is needed only when a probability calculation
+multiplies probabilities of separate random choices. If every reward is
+collected with probability at least $\alpha$ and
+$W=\sum_iw_i\ge\OPT$, then $\mathbb E[\ALG]\ge\alpha\OPT$.
+This guarantees the existence of a good outcome, not that every run is good.
+An expected approximation bound alone is not a high-probability bound.
+
+\subsection{Weighted MAX-CUT, MAX-$k$-CUT, and MAX-DICUT}
+Assume nonnegative edge weights and remove self-loops, which can never cross
+a cut. For undirected MAX-$k$-CUT, independently label every vertex uniformly
+from $\{1,\ldots,k\}$, for $k\ge2$. Count edges whose endpoint labels differ.
+For every edge $e=\{u,v\}$,
+\[
+  \Pr[I_e=1]=1-\sum_{a=1}^k\Pr[u=a,v=a]=1-\frac1k.
+\]
+Consequently
+\[
+  \mathbb E[\ALG]=(1-1/k)W\ge(1-1/k)\OPT.
+\]
+The ordinary MAX-CUT case is $k=2$, giving $\OPT/2$; MAX-3-CUT gives
+$2\OPT/3$. A run takes $O(n+m)$ time including evaluation.
+
+For directed MAX-DICUT, select each vertex into $S$ independently with
+probability $1/2$, and count only arcs from $S$ to $V\setminus S$.
+Each arc $(u,v)$ is counted with probability $1/4$, so
+$\mathbb E[\ALG]=W/4\ge\OPT/4$.
+Do not count arcs in both directions: doing so changes the objective.
+LP rounding improves the retained fraction to $1/2$
+(Section~\ref{lp:dicut}).
+
+\subsection{Conditional expectation: how to remove randomness}\label{ra:conditional}
+Let $F$ be the expected final objective conditional on the decisions already
+fixed. If the next random variable has outcomes $a$ with probabilities $p_a$,
+then
+\[
+  F=\sum_a p_a F_a,\qquad
+  F_a=\mathbb E[\ALG\mid\text{fixed decisions},X=a].
+\]
+At least one positive-probability branch has $F_a\ge F$. Fix such a branch and
+repeat. The invariant is that the conditional expectation never decreases;
+after the last decision it equals the actual objective. Thus the deterministic
+output is at least the initial expectation. To claim a polynomial-time
+algorithm, show how to compute each $F_a$ in polynomial time.
+
+\subsubsection*{MAX-$k$-CUT: computable conditional contributions}
+Under a partial labelling, an edge with both endpoints fixed contributes its
+full weight if their labels differ and zero otherwise. An edge with at least
+one endpoint unfixed contributes $(1-1/k)w_e$. When assigning a vertex $v$,
+only edges to already fixed neighbors have label-dependent contributions.
+Choose a label $a$ maximizing
+\[
+  \sum_{u:\{u,v\}\in E,\;u\text{ fixed},\;\operatorname{label}(u)\ne a}w_{uv},
+\]
+equivalently minimizing the weight of fixed neighbors with label $a$.
+Process vertices in any order. This gives a deterministic
+$(1-1/k)$ retained-value approximation in $O(m+nk)$ time by accumulating
+neighbor weights in $k$ buckets at each vertex.
+
+\textbf{Worked MAX-CUT example.}
+For a unit-weight triangle the initial expectation is $3/2$. Fix the first
+vertex to side 0; the expectation remains $3/2$. Putting the second on side 1
+makes their edge contribute 1 and the two unresolved edges contribute $1/2$
+each, giving conditional expectation 2. Either choice for the third vertex
+then yields cut value 2.
+
+\subsubsection*{MAX-SAT: computable conditional contributions}
+First remove duplicate literals, discard empty clauses (always false), and
+separate tautologies (always true). Thus every remaining clause contains
+distinct variables and no variable together with its negation. Suppose an
+unfixed variable $x_j$ is independently true with probability $p_j$.
+For each clause $C_i$, its conditional expected contribution is
+\[
+  \begin{cases}
+    w_i, &\text{a fixed literal is already true},\\
+    0, &\text{all literals are fixed and false},\\
+    w_i\left(1-\displaystyle\prod_{\ell\text{ unfixed in }C_i}
+       q_\ell\right), &\text{otherwise},
+  \end{cases}
+\]
+where $q_{x_j}=1-p_j$ and $q_{\neg x_j}=p_j$ are literal-failure
+probabilities. For fair variables and $r$ unfixed literals, the last line is
+$w_i(1-2^{-r})$. Evaluate the total for setting the next variable to 0 and
+to 1, and keep the larger value. Scanning all $L$ literal occurrences for
+each of $n$ variables gives $O(nL)$ arithmetic operations. This works for
+fair, biased, and LP-derived independent probabilities.
+
+\textbf{Worked example.}
+For unit-weight clauses $(x)$ and $(\neg x\lor y)$ with fair variables,
+$F=1/2+3/4=5/4$. Setting $x=1$ gives $F_1=1+1/2=3/2$; setting $x=0$
+gives $F_0=0+1=1$. Choose $x=1$, then $y=1$, obtaining value 2.
+
+For a directed cut with arbitrary independent membership probabilities,
+an arc's conditional contribution is $w_{uv}p'_u(1-p'_v)$, where $p'_v$ is
+0 or 1 for a fixed vertex and its original probability otherwise.
+This also makes both MAX-DICUT rounding schemes below derandomizable.
+
+\subsection{Weighted MAX-SAT by fair and biased assignment}\label{ra:sat}
+Use the clause preprocessing above; handle tautological clauses as a constant
+reward added to every solution. All weights are nonnegative. For a remaining
+clause $C_i$ of length $\ell_i\ge1$, fair independent assignment gives
+\[
+  \Pr[C_i\text{ satisfied}]=1-2^{-\ell_i},\qquad
+  \mathbb E[\ALG]=\sum_iw_i(1-2^{-\ell_i})\ge W/2\ge\OPT/2.
+\]
+The satisfaction probability \emph{increases} with clause length. If every
+clause has at least $k$ literals, the guarantee strengthens to
+$(1-2^{-k})\OPT$. An assignment and its value can be computed in $O(n+L)$
+time, where $L$ is the number of literal occurrences.
+
+\subsubsection*{Biased assignment and the unit-clause issue}
+Merge repeated unit clauses by adding their weights. For each variable,
+rename it consistently throughout the formula if needed so that the total
+positive unit-clause weight is at least the negative one. Let $N$ be the sum
+of the negative unit-clause weights after this renaming. Every assignment
+loses at least the smaller weight in each opposing pair, so
+$\OPT\le W-N$.
+
+Set every renamed variable independently true with probability
+$p\in[1/2,1]$. A clause with $a$ positive and $b$ negative literals is
+satisfied with probability
+\[
+  1-(1-p)^a p^b\ge1-p^{a+b}.
+\]
+In a lower bound, ignore the negative unit clauses. Every remaining unit
+clause is satisfied with probability $p$, and every nonunit clause with
+probability at least $1-p^2$. Therefore
+\[
+  \mathbb E[\ALG]\ge\min\{p,1-p^2\}(W-N)
+    \ge\min\{p,1-p^2\}\OPT.
+\]
+The maximum occurs when $p=1-p^2$, giving
+\[
+  p=\frac{\sqrt5-1}{2},\qquad
+  \mathbb E[\ALG]\ge\frac{\sqrt5-1}{2}\OPT.
+\]
+If no negative unit clauses remain, this simplifies to $N=0$.
+Without the renaming/upper-bound argument, assuming all unit clauses are
+positive is not justified. Conditional expectation gives deterministic
+versions of these guarantees.
+
+\section{Linear Programming and Rounding}\label{lp:main}
+
+\subsection{Modelling, relaxation, and the direction of the bound}\label{lp:template}
+An ILP uses integer variables; a $0$--$1$ formulation uses binary decision
+variables. A relaxation replaces $x\in\{0,1\}$ by $0\le x\le1$ and keeps
+the linear constraints. Its feasible set contains all integral feasible
+points. Write $LP^*$ for the \emph{optimal} relaxed objective:
+\[
+  \begin{array}{c|c|c}
+    &\text{relaxation bound}&\text{target rounding proof}\\\hline
+    \text{minimization}&LP^*\le\OPT&\ALG\le\rho LP^*\le\rho\OPT\\
+    \text{maximization}&LP^*\ge\OPT&
+       \mathbb E[\ALG]\ge\alpha LP^*\ge\alpha\OPT
+  \end{array}
+\]
+An arbitrary feasible fractional objective is not necessarily a valid bound
+on $\OPT$ in the displayed direction. LP is solvable in polynomial time in
+its encoding length; general ILP is NP-hard. After rounding, prove
+\emph{feasibility} separately from the objective bound.
+
+\textbf{Proving a model is exact.}
+Show both (i) each original solution gives a feasible integral point of the
+same objective and (ii) an integral point decodes into a solution of at least
+its objective for maximization (at most for minimization). These establish
+equality of optimal values. An auxiliary reward variable often needs only
+upper bounds: maximizing a nonnegative weighted objective pushes it up when
+possible. Such constraints need not force its intended Boolean meaning at
+\emph{every feasible point}. If its coefficient is zero, it need not be
+pushed up even at an optimum; the decoded solution and optimal value remain
+correct. Add equivalence constraints if the variable's exact meaning is
+required independently of the objective.
+
+\subsection{Weighted vertex cover: threshold rounding}\label{lp:vc}
+For nonnegative vertex costs $c_v$, let $x_v$ indicate selection. The ILP is
+\[
+  \min\sum_{v\in V}c_vx_v
+  \quad\text{subject to}\quad
+  x_u+x_v\ge1\quad(\{u,v\}\in E),\qquad x_v\in\{0,1\}.
+\]
+Relax to $[0,1]$, obtain an optimum $x^*$, and return
+$C=\{v:x_v^*\ge1/2\}$. At least one endpoint of every edge reaches $1/2$,
+so $C$ is feasible. Also
+\[
+  c(C)=\sum_{v\in C}c_v
+    \le\sum_{v\in C}2c_vx_v^*
+    \le2LP^*\le2\OPT.
+\]
+The algorithm is polynomial time (LP plus a linear scan).
+On the unweighted complete graph $K_n$, $\OPT=n-1$ and $LP^*=n/2$:
+the all-$1/2$ point is feasible, and summing all edge constraints gives
+$(n-1)\sum_vx_v\ge n(n-1)/2$. Hence the worst-case integrality gap is
+at least $2-2/n$, approaching 2. This is a family of gap examples, not a
+claim that every $n$-vertex graph has this gap.
+
+\subsection{Set cover: bounded frequency}\label{lp:cover}
+Let $U$ be a universe, $S_1,\ldots,S_m$ candidate sets with
+$\bigcup_jS_j=U$, and costs $c_j\ge0$. One binary variable per set suffices:
+\[
+  \min\sum_{j=1}^m c_jx_j
+  \quad\text{subject to}\quad
+  \sum_{j:e\in S_j}x_j\ge1\quad(e\in U),\qquad x_j\in\{0,1\}.
+\]
+There is no need for an extra variable indicating coverage when every
+element must be covered. If each element belongs to at most $k$ sets,
+relax and select every set with $x_j^*\ge1/k$. Each covering constraint has
+at most $k$ terms, so at least one reaches the threshold. The cost satisfies
+\[
+  \ALG\le k\sum_jc_jx_j^*=kLP^*\le k\OPT.
+\]
+This generalizes vertex-cover rounding, where an edge has two endpoint
+choices. The hypothesis is bounded \emph{frequency}, not bounded set size.
+For example, with one element and two identical cost-1 singleton sets,
+$(1/2,1/2)$ is LP-optimal. Each set has size 1, but threshold 1 selects
+nothing. This disproves the corresponding threshold proof for bounded set
+size.
+
+\subsection{Weighted MAX-SAT: LP rounding}\label{lp:sat}
+For the preprocessed formula of Section~\ref{ra:sat}, use $x_j$ for a
+variable's truth value and $y_i$ for the reward of clause $C_i$:
+\[
+  \begin{aligned}
+    \max\quad &\sum_iw_i y_i\\
+    \text{subject to}\quad &
+      y_i\le\sum_{x_j\in C_i}x_j+
+             \sum_{\neg x_j\in C_i}(1-x_j)\quad\text{for every }i,\\
+    &x_j,y_i\in\{0,1\}.
+  \end{aligned}
+\]
+A false clause forces $y_i=0$; a true clause permits $y_i=1$.
+Nonnegative weights make the ILP optimal value exactly the maximum
+satisfied weight. Relax all variables to $[0,1]$ and write
+$LP^*=\sum_iw_i y_i^*\ge\OPT$.
+Independently set $x_j$ true with probability $x_j^*$.
+
+\subsubsection*{One-clause bound: product, AM--GM, then concavity}
+For a clause of length $\ell\ge1$, let $a_1,\ldots,a_\ell$ be its
+literal-success probabilities: $x_j^*$ for a positive literal and
+$1-x_j^*$ for a negative one. Its variables are distinct, and
+$\sum_h a_h\ge y_i^*$. Hence
+\[
+  \begin{aligned}
+    \Pr[C_i\text{ satisfied}]
+      &=1-\prod_{h=1}^{\ell}(1-a_h)\\
+      &\ge1-\left(1-\frac{\sum_h a_h}{\ell}\right)^{\ell}
+       \ge1-\left(1-\frac{y_i^*}{\ell}\right)^{\ell}.
+  \end{aligned}
+\]
+The exponent is $\ell$, \emph{not} $1/\ell$.
+Let $g_\ell(y)=1-(1-y/\ell)^\ell$. For $\ell=1$ it is linear; for
+$\ell\ge2$,
+\[
+  g_\ell''(y)=-\frac{\ell-1}{\ell}(1-y/\ell)^{\ell-2}\le0.
+\]
+Since $g_\ell(0)=0$, concavity on $[0,1]$ gives
+$g_\ell(y)\ge y g_\ell(1)$. Also
+$(1-1/\ell)^\ell\le e^{-1}$. Thus, with
+$b_\ell=1-(1-1/\ell)^\ell$,
+\[
+  \Pr[C_i\text{ satisfied}]
+    \ge b_\ell y_i^*\ge(1-1/e)y_i^*,\qquad
+  \mathbb E[\ALG]\ge(1-1/e)LP^*\ge(1-1/e)\OPT.
+\]
+The LP can be solved in polynomial time; sampling and evaluating the result
+takes $O(n+L)$ time. The conditional-product calculation in
+Section~\ref{ra:conditional} derandomizes the algorithm.
+
+\subsubsection*{Combine fair assignment and LP rounding: $3/4$}
+For a clause of length $\ell$, fair assignment satisfies it with probability
+$a_\ell=1-2^{-\ell}\ge a_\ell y_i^*$, since $0\le y_i^*\le1$.
+LP rounding gives probability at least $b_\ell y_i^*$. The useful comparison
+is clause by clause:
+\[
+  \begin{array}{c|c|c|c}
+    \ell&a_\ell&b_\ell&a_\ell+b_\ell\\\hline
+    1&1/2&1&3/2\\
+    2&3/4&3/4&3/2\\
+    \ell\ge3&\ge7/8&\ge1-1/e>5/8&>3/2
+  \end{array}
+\]
+Run both algorithms and return the better assignment. If their values are
+$A,B$, then pointwise $\max\{A,B\}\ge(A+B)/2$, so
+\[
+  \mathbb E[\max\{A,B\}]
+    \ge\tfrac12\sum_iw_i(a_{\ell_i}+b_{\ell_i})y_i^*
+    \ge\tfrac34LP^*\ge\tfrac34\OPT.
+\]
+The two outputs need not be independent. Averaging the global constants
+$1/2$ and $1-1/e$ would not prove $3/4$; the complementary clause-length
+bounds are essential. Alternatively derandomize each algorithm first and
+take the better: the same $3/4$ guarantee then holds deterministically.
+
+\subsection{MAX-DICUT: two $1/2$ rounding proofs}\label{lp:dicut}
+Let $G=(V,A)$ be a directed graph with nonnegative arc weights and no
+self-loops. Put $x_i=1$ when vertex $i$ is on the source side. For each arc,
+use a reward variable $z_{ij}$. The ILP and its relaxation are
+\[
+  \begin{aligned}
+    \max\quad&\sum_{(i,j)\in A}w_{ij}z_{ij}\\
+    \text{subject to}\quad&z_{ij}\le x_i,\qquad z_{ij}\le1-x_j,\\
+    &x_i,z_{ij}\in\{0,1\}\quad
+       \text{(replace by }[0,1]\text{ for the LP).}
+  \end{aligned}
+\]
+The upper bounds allow a positive reward only when $x_i=1,x_j=0$.
+For any fixed integral cut, setting $z_{ij}=1$ on its outgoing arcs attains
+the cut weight, so the ILP is exact. If exact equality
+$z_{ij}=x_i(1-x_j)$ is required at every integral feasible point, add
+$z_{ij}\ge x_i-x_j$; it is unnecessary for this nonnegative maximization
+objective. Below, $x,z$ denote an optimal solution of the displayed
+relaxation and $L=LP^*\ge\OPT$.
+
+\subsubsection*{Shifted probabilities: a per-arc comparison}
+Independently select vertex $i$ with probability $p_i=1/4+x_i/2$.
+For each arc,
+\[
+  \begin{aligned}
+    \Pr[i\in S,j\notin S]
+      &=(1/4+x_i/2)(1/4+(1-x_j)/2)\\
+      &\ge(1/4+z_{ij}/2)^2\\
+      &=z_{ij}/2+(2z_{ij}-1)^2/16\ge z_{ij}/2.
+  \end{aligned}
+\]
+Summing gives $\mathbb E[\ALG]\ge L/2\ge\OPT/2$.
+This per-arc inequality holds for any feasible LP point, though optimality
+(or another appropriate lower bound on its value) is needed to compare
+with $\OPT$.
+
+\subsubsection*{Direct probabilities: a global comparison}
+Rounding instead with $p_i=x_i$ also gives a $1/2$ guarantee for an
+\emph{optimal} solution of this LP. Let $W=\sum_{(i,j)\in A}w_{ij}$.
+If $W=0$, any cut is optimal. Otherwise,
+\[
+  \Pr[i\in S,j\notin S]=x_i(1-x_j)\ge z_{ij}^2.
+\]
+Weighted Cauchy--Schwarz gives
+\[
+  L^2=\left(\sum_{ij}\sqrt{w_{ij}}z_{ij}\sqrt{w_{ij}}\right)^2
+    \le\left(\sum_{ij}w_{ij}z_{ij}^2\right)W.
+\]
+The feasible point $x_i=1/2,z_{ij}=1/2$ has value $W/2$, so optimality
+implies $L\ge W/2$. Consequently
+\[
+  \mathbb E[\ALG]\ge\sum_{ij}w_{ij}z_{ij}^2
+    \ge L^2/W\ge L/2\ge\OPT/2.
+\]
+Direct rounding lacks the shifted scheme's per-arc bound $z_{ij}/2$,
+but its global analysis recovers the same factor. Both algorithms are
+polynomial time and can be derandomized using conditional expectation.
+
+\subsubsection*{Tuning an affine probability safely}
+Let $p_i=a+bx_i$, with $a,b\ge0$ and $a+b\le1$, so all probabilities and
+all factors below are nonnegative. Write $c=1-a-b\ge0$. Then
+\[
+  p_i(1-p_j)\ge(a+bz_{ij})(c+bz_{ij})
+    =ac+b(1-b)z_{ij}+b^2z_{ij}^2.
+\]
+For fixed $b$, $a+c=1-b$ and $ac$ is largest when
+$a=c=(1-b)/2$. For this symmetric choice,
+\[
+  (a+bz)^2=4abz+(a-bz)^2\ge4abz,
+  \qquad
+  \alpha=4ab=2b(1-b)=\tfrac12-2(b-\tfrac12)^2\le\tfrac12.
+\]
+Maximize the retained fraction $\alpha$: choose $b=1/2,a=1/4$, obtaining
+$1/2$. This optimizes this particular square-based lower bound. It does
+not by itself prove that every other analysis of affine rounding is
+incapable of a stronger guarantee.
+
+\subsection{Randomized set cover: repeat until feasible}\label{lp:random-cover}
+Use the set-cover LP in Section~\ref{lp:cover}, without a frequency bound.
+Let $n=|U|\ge1$, $m$ be the number of candidate sets, and
+$r=\lceil\ln(2n)\rceil$. (For $U=\varnothing$, return the empty cover.)
+Solve the LP once. A \emph{trial} performs $r$ independent rounds; in each
+round select each set $S_j$ independently with probability $x_j^*$, then
+take the union of all selected sets. Check coverage. Discard a failed trial
+and start a fresh independent trial until a cover is found.
+
+\textbf{Success probability.}
+For any element $e$, the probability it remains uncovered in one round is
+\[
+  \prod_{j:e\in S_j}(1-x_j^*)
+    \le\exp\left(-\sum_{j:e\in S_j}x_j^*\right)\le e^{-1}.
+\]
+After $r$ independent rounds its failure probability is at most
+$e^{-r}\le1/(2n)$. By the union bound, a trial succeeds with probability
+$q\ge1/2$. Element-failure events need not be independent.
+
+\textbf{Cost of a trial and cost of the returned trial.}
+A set is included in the union with probability
+$1-(1-x_j^*)^r\le r x_j^*$. Thus its nonnegative total cost $C$ satisfies
+$\mathbb E[C]\le rLP^*$. However, successful trials can cost more than
+typical trials. If $A$ is the success event, the returned trial has the
+distribution of one trial conditioned on $A$, and
+\[
+  \mathbb E[C_{\rm returned}]
+    =\mathbb E[C\mid A]
+    =\frac{\mathbb E[C\mathbf 1_A]}q
+    \le\frac{\mathbb E[C]}q
+    \le2rLP^*\le2r\OPT.
+\]
+Fresh independent trials have a geometric stopping time $T$ with
+$\Pr[T>t]=(1-q)^t$ and $\mathbb E[T]=1/q\le2$. Hence the algorithm
+terminates almost surely, always returns a checked feasible cover, and
+takes expected polynomial time. One trial uses $O(rm)$ random decisions
+and $O(n+\sum_j|S_j|)$ time to check coverage after marking selected sets.
+The cost guarantee is in expectation; it is not a bound on every returned
+cover. The factor $1/q$ cannot be dropped without an additional argument,
+because cost and success may be correlated.
+
+\end{document}

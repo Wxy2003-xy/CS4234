@@ -1,0 +1,630 @@
+\documentclass[10pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{array,booktabs}
+\usepackage[table]{xcolor}
+\usepackage{enumitem}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{algpseudocode}
+\usepackage{float}
+\usepackage[ruled, vlined, algoruled]{algorithm2e} % Options for styling
+\usepackage{tikz}
+\geometry{top=0.65in,bottom=0.65in,left=1.2in,right=1.2in}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!60!black,
+  urlcolor=cyan!50!black,
+  linktoc=all
+}
+\setlist{nosep,leftmargin=*}
+\renewcommand{\arraystretch}{1.2}
+\newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{theorem}[definition]{Theorem}
+\newtheorem{lemma}[definition]{Lemma}
+\newtheorem{remark}[definition]{Remark}
+\newtheorem{corollary}[definition]{Corollary}
+
+\newcommand{\OPT}{\operatorname{OPT}}
+\newcommand{\ALG}{\operatorname{ALG}}
+\newcommand{\poly}{\operatorname{poly}}
+\newcommand{\YES}{\textsc{Yes}}
+\newcommand{\NO}{\textsc{No}}
+\newcommand{\NP}{\mathsf{NP}}
+\newcommand{\coNP}{\mathsf{coNP}}
+\newcommand{\PTIME}{\mathsf{P}}
+\newcommand{\NPC}{\mathsf{NP\text{-}complete}}
+
+% Colours used to separate the three layers of approximation proofs.
+\definecolor{algblue}{RGB}{0,82,155}
+\definecolor{optred}{RGB}{180,45,45}
+\definecolor{bridgepurple}{RGB}{105,55,145}
+
+\title{CS4234: Optimization Algorithms}
+\author{@Wxy2003-xy}
+\date{}
+
+\begin{document}
+\section{Metric TSP and Eulerian Structure}\label{tsp:main}
+
+\subsection{General TSP, metric TSP, and the shortcut rule}
+The traveling salesperson problem asks for a minimum-cost Hamiltonian
+cycle: visit every vertex exactly once and return to the start.  Throughout
+the approximation algorithms below, the input is a complete undirected
+graph with nonnegative symmetric costs satisfying the triangle inequality
+\[
+c(u,w)\le c(u,v)+c(v,w).
+\]
+These are \emph{metric} costs.  Completeness supplies each shortcut edge;
+triangle inequality ensures that shortcutting a walk never increases its
+cost.  Repeatedly bypass already visited vertices, retaining the final
+return to the start, to turn a spanning closed walk into a Hamiltonian cycle.
+
+\paragraph{Why the metric assumption matters.}
+General TSP has no polynomial-time approximation with any fixed finite
+factor $\rho\ge1$, unless $\PTIME=\NP$.  Reduce Hamiltonian Cycle on an
+unweighted graph $G$ with $n$ vertices: complete the graph, give original
+edges cost $1$ and nonedges cost an integer $B>\rho n$.  A YES instance has
+$\OPT=n$, so a $\rho$-approximation returns cost at most $\rho n$.  In a NO
+instance every tour uses a nonedge, hence has cost at least $B>\rho n$.
+The algorithm would distinguish the two cases in polynomial time.  For
+fixed $\rho$, $B$ has polynomial encoding length.  These constructed costs
+need not satisfy triangle inequality; a cost-$B$ shortcut can replace a
+two-edge detour of cost $2$.
+
+Metric TSP remains NP-hard: assign costs $1$ to edges of a Hamiltonian Cycle
+instance and $2$ to nonedges.  Every triangle satisfies the metric inequality,
+and a tour of cost $n$ exists exactly when the original graph is Hamiltonian.
+This proves exact hardness, not the absence of constant-factor approximation.
+
+\subsection{Euler circuits, open trails, and orientation}\label{tsp:euler}
+An Euler trail uses every \emph{edge occurrence} exactly once; vertices may
+repeat.  Parallel edges are distinct occurrences.  An Euler circuit is a
+closed Euler trail.  A Hamiltonian cycle instead visits every vertex once.
+
+\begin{theorem}[Euler's criterion]
+An undirected multigraph with at least one edge has an Euler circuit iff
+all its nonisolated vertices are connected and every vertex has even degree.
+It has an Euler trail between distinct vertices $s,t$ iff all nonisolated
+vertices are connected and precisely $s,t$ have odd degree.
+\end{theorem}
+\begin{proof}
+In a closed traversal, each arrival at a vertex is paired with a departure,
+so every degree is even.  For an open traversal only the start and end have
+one unpaired incident edge.
+
+Conversely, start at any nonisolated vertex and keep following unused edges.
+An even-degree vertex other than the start cannot be the first place where
+this trail gets stuck: after arriving, an unused departure remains.  Thus
+the trail closes.  If edges remain, connectivity gives a vertex of the
+current circuit incident to unused edges.  The unused-edge degrees are
+still even, so construct another closed trail there and splice it into the
+first.  Repeat until every edge is used (Hierholzer's algorithm).
+For the open case add one extra $\{s,t\}$ edge, find an Euler circuit,
+rotate it to place that edge last, and delete the extra edge.
+\end{proof}
+Using adjacency lists and marking each edge occurrence, Hierholzer's
+algorithm runs in $O(|V|+|E|)$ time.  The handshaking identity
+$\sum_v\deg(v)=2|E|$ also shows that the number of odd-degree vertices is
+even.  Adding one edge toggles the parity of its two endpoints.
+
+\paragraph{Orienting an even-degree connected graph.}
+Find an Euler circuit and orient each edge in the direction in which the
+circuit traverses it.  The resulting directed graph is strongly connected:
+from any vertex $u$, follow the directed circuit cyclically until any desired
+vertex $v$ is reached.  Also $\deg^+(v)=\deg^-(v)$ at every vertex.
+This proof concerns the nonisolated vertices; a disconnected even-degree
+graph does not become strongly connected by orienting its components.
+
+\subsection{Double-tree: a 2-approximation}\label{tsp:doubletree}
+\begin{enumerate}
+  \item Compute a minimum spanning tree $T$.
+  \item Duplicate every edge of $T$, retaining both copies in a multigraph.
+  \item Find an Euler circuit in this connected even-degree multigraph.
+  \item Shortcut repeated vertex visits to obtain the output tour $H$.
+\end{enumerate}
+\textbf{Feasibility.} Doubling makes every degree even; the spanning tree
+ensures connectivity.  The Euler circuit visits all vertices, and
+shortcutting yields a Hamiltonian cycle in the complete graph.
+
+\textbf{Lower bound and guarantee.} Deleting any edge of an optimal tour
+leaves a spanning tree, so $c(T)\le\OPT$.  Therefore
+\[
+\boxed{\ c(H)\le 2c(T)\le2\OPT.\ }
+\]
+The first inequality uses triangle inequality; the second uses the MST lower
+bound.  Dense Prim takes $O(n^2)$ time on the complete graph; doubling,
+Euler traversal, and shortcutting take $O(n)$ further time.
+
+\paragraph{Four-vertex metric counterexample to optimality.}
+Use the shortest-path metric of the unit-cost cycle $A,B,D,C,A$:
+\[
+\begin{array}{c|rrrr}
+c & A&B&C&D\\\hline
+A&0&1&1&2\\
+B&1&0&2&1\\
+C&1&2&0&1\\
+D&2&1&1&0
+\end{array}
+\]
+The tree $\{AB,AC,CD\}$ is an MST of cost $3$.  The doubled tree admits
+Euler circuit $A,B,A,C,D,C,A$.  First-visit shortcutting gives
+$A,B,C,D,A$, of cost $1+2+1+2=6$.  The original cycle has cost $4$ and is
+optimal because every tour has four edges, each of cost at least $1$.
+Thus a valid double-tree execution need not be optimal, even on a metric.
+
+\subsection{Christofides: a \texorpdfstring{$3/2$}{3/2}-approximation}\label{tsp:christofides}
+\begin{enumerate}
+  \item Compute an MST $T$, and let $O=\{v:\deg_T(v)\text{ is odd}\}$.
+  \item Find a \emph{minimum-weight perfect matching} $M$ on the complete
+        graph induced by $O$, using the original metric costs.
+  \item Form the multigraph $T\cup M$, find an Euler circuit, and shortcut
+        repeated vertices to produce a tour $H$.
+\end{enumerate}
+\textbf{Feasibility.} The set $O$ has even cardinality.  Every vertex in
+$O$ gains exactly one incident matching edge and becomes even; all other
+degrees stay even.  The tree ensures connectivity.  Keep parallel copies
+if a matching edge is also in $T$.
+
+\begin{lemma}[Matching budget]
+The matching chosen above has cost $c(M)\le\OPT/2$.
+\end{lemma}
+\begin{proof}
+Take an optimal tour and shortcut it to retain only the vertices of $O$.
+The resulting even-length cyclic walk has cost at most $\OPT$.  Its
+alternating edges split into two perfect matchings $M_1,M_2$ on $O$.
+Therefore, by minimum weight of $M$,
+\[
+c(M)\le\min\{c(M_1),c(M_2)\}
+\le\frac{c(M_1)+c(M_2)}2\le\frac{\OPT}2.
+\]
+If $O$ has two vertices, the restricted cyclic walk traverses their edge
+twice; its two edge occurrences give the same one-edge matching.  If
+$O=\varnothing$, use the empty matching.
+\end{proof}
+Combining the spanning and matching budgets with metric shortcutting gives
+\[
+\boxed{\ c(H)\le c(T)+c(M)\le\OPT+\tfrac12\OPT
+       =\tfrac32\OPT.\ }
+\]
+All steps are polynomial time; minimum-weight perfect matching is the main
+additional subroutine beyond double-tree.  A maximal matching is insufficient:
+it may leave odd vertices unmatched, and an arbitrary perfect matching has
+no $\OPT/2$ cost guarantee.
+
+\subsection{Held--Karp exact dynamic programming}\label{tsp:heldkarp}
+This exact algorithm works for arbitrary tour costs; triangle inequality
+is unnecessary.  Fix a root $r$.  For $r\in S\subseteq V$ and $v\in S$,
+let $D[S,v]$ be the minimum cost of a path starting at $r$, ending at $v$,
+and visiting exactly the vertices in $S$, once each.
+
+\textbf{Bases.} $D[\{r\},r]=0$.  Set all impossible states to $\infty$,
+including $D[S,r]$ for $|S|>1$ and states with $r\notin S$ or $v\notin S$.
+For $v\ne r$,
+\[
+\boxed{\ D[S,v]=\min_{u\in S\setminus\{v\}}
+        \bigl(D[S\setminus\{v\},u]+c(u,v)\bigr).\ }
+\]
+\textbf{Why the recurrence is exact.} The penultimate vertex $u$ partitions
+all feasible paths.  Removing their last edge leaves precisely a feasible
+path for the smaller state; conversely, appending $(u,v)$ to any such path
+gives a feasible path for $(S,v)$.
+
+Evaluate states in increasing $|S|$.  For $n\ge2$, close the path by returning
+to $r$:
+\[
+\OPT=\min_{v\ne r}\bigl(D[V,v]+c(v,r)\bigr).
+\]
+Store a minimizing predecessor with each state; choose the minimizing final
+vertex, backtrack while removing the last vertex from $S$, reverse the
+resulting sequence, and append $r$.  There are $O(n2^n)$ states with $O(n)$
+transitions each, giving $O(n^2 2^n)$ time and $O(n2^n)$ space, including
+predecessors.  This is exponential, although faster than enumerating tours.
+
+\clearpage
+\section{Targeted Practice Questions}\label{prac:questions}\label{prac:main}
+These practice variations combine the supplied lectures, Tutorials 1--4,
+and question styles from the two sample finals.  They are speculative
+revision questions, not information about the actual midterm.  Marks are
+suggested practice weights.  Attempt the questions before consulting the
+separate answer sketches.
+
+\subsection{Questions}
+\paragraph{Q1. Scheduling with two levels of quotas (10 marks).}
+There are workers $i$, disjoint periods $j$, and tasks, each belonging to
+one period.  Worker $i$ can perform tasks in $A_i$, may perform at most
+$b_i$ tasks overall, and at most one task per period.  Every task must be
+performed by exactly one worker.
+(a) Construct a flow network and specify the target flow value.
+(b) Prove both directions of the reduction.  (c) Give an ILP.
+(d) Explain why a fractional feasible flow is not itself a schedule, and
+why this does not prevent a flow-based algorithm.
+
+\paragraph{Q2. Bounded-frequency weighted covering (8 marks).}
+Each element belongs to at most $k$ candidate sets with nonnegative costs.
+Give an ILP and a deterministic $k$-approximation using its LP relaxation.
+Prove feasibility and cost separately.  Does the same threshold proof work
+if instead every \emph{set contains at most $k$ elements}?
+
+\paragraph{Q3. Randomized cut, then remove the randomness (8 marks).}
+For weighted MAX-$k$-CUT on a loopless undirected graph with nonnegative
+weights, design an algorithm obtaining at least $(1-1/k)\OPT$ in expectation.
+Convert it to a deterministic polynomial-time algorithm.  State precisely
+how to compute conditional expectation after a partial labelling.  Explain
+why independence of the edge indicators is unnecessary.
+
+\paragraph{Q4. Randomized set cover with a stopping rule (10 marks).}
+Solve the natural weighted-set-cover LP on a feasible instance with $n\ge1$
+elements.  One trial takes $r=\lceil\ln(2n)\rceil$ independent rounds,
+selecting each set $j$ independently with probability $x_j^*$ in each round
+and taking their union.  Discard unsuccessful trials and repeat independently
+until a cover is obtained.  Prove almost-sure feasibility, expected polynomial
+running time, and expected returned cost at most $2r\OPT$.  Explain why
+``one trial has expected cost at most $rLP^*$, so the returned cover does
+too'' is not justified.
+
+\paragraph{Q5. Minimum-cut structure and tie-breaking (8 marks).}
+(a) Fix any maximum flow $f$.  Prove that for \emph{every} minimum cut,
+outgoing arcs are saturated and incoming arcs carry zero flow.
+(b) Deduce that a positive-capacity arc cannot cross two minimum cuts in
+opposite directions.  (c) For integer capacities, find a minimum cut with
+the fewest outgoing arcs.
+
+\paragraph{Q6. MAX-DICUT rounding and a changed probability (8 marks).}
+For a loopless directed graph with nonnegative arc weights, use the LP
+$z_{ij}\le x_i$, $z_{ij}\le1-x_j$, with variables in $[0,1]$, maximizing
+$\sum_{ij}w_{ij}z_{ij}$.  Prove that independently placing vertex $i$ in
+the source side with probability $p_i=1/4+x_i/2$ gives at least half the
+LP value in expectation.  As an extension, determine whether direct
+rounding $p_i=x_i$ also guarantees half the optimum when the LP solution
+is optimal.
+
+\paragraph{Q7. MAX-SAT clause lengths and combination (10 marks).}
+Write the weighted MAX-SAT ILP and LP.  Prove the LP-rounding bound for a
+clause of length $\ell$, including the AM--GM and concavity steps.  Then
+show why taking the better of LP rounding and fair random assignment
+obtains $3\OPT/4$ in expectation.  State the preprocessing needed for
+the clause-product calculation.
+
+\paragraph{Q8. Metric TSP and the role of assumptions (8 marks).}
+Prove the double-tree factor $2$ and Christofides factor $3/2$.  Explain
+exactly where triangle inequality, even parity, and minimum-weight perfect
+matching are used.  Give a four-vertex metric instance where a valid
+double-tree execution is nonoptimal.  Explain why arbitrary nonmetric
+costs invalidate the shortcut argument.
+
+\paragraph{Q9. Knapsack scaling (8 marks).}
+For nonnegative integer item values, derive the value-indexed $O(n^2V)$ DP,
+where $V$ is the largest item value.  Use it to obtain an FPTAS with
+$O(n^3/\epsilon)$ arithmetic-operation complexity.  Prove the guarantee
+and explain why overweight items must be removed before defining $V$.
+
+\paragraph{Q10. Vertex-disjoint routes (8 marks).}
+For distinct nonadjacent vertices $x,y$ of an undirected graph, prove that
+the maximum number of internally vertex-disjoint $x$--$y$ paths equals
+the minimum size of an $x$--$y$ vertex separator.  Give the flow construction
+and justify both correspondences.  Why do capacity-$1$ splitting arcs
+suffice, and why are the other arcs assigned capacity larger than $n$?
+
+\paragraph{Q11. Repair a flow algorithm (8 marks).}
+(a) A scaling algorithm starts at $k=C$, halves by real division, and stops
+below $1$.  Find an integer-capacity counterexample and repair the algorithm.
+(b) Prove that BFS augmentations give $O(nm^2)$ time independent of capacity
+magnitudes.  (c) Explain why arbitrary Ford--Fulkerson is only
+pseudo-polynomial for integer capacities and may fail to terminate for
+irrational capacities.
+
+\paragraph{Q12. An unfamiliar objective with a familiar proof (6 marks).}
+You are given $n$ strings of length $L$ over an alphabet of $q$ symbols.
+Give a deterministic $1/q$ retained-value approximation for their longest
+common subsequence in $O(nL+q)$ time.  Give a second proof using a sum of
+per-symbol upper bounds on $\OPT$.
+
+\subsection{Quick true/false drill}
+For each statement give a proof or a small counterexample.
+\begin{enumerate}[label=\textbf{T\arabic*.}]
+  \item Complementing any 2-approximate vertex cover gives a constant-factor
+        approximate maximum independent set.
+  \item Integer capacities imply every maximum flow is integral on every arc.
+  \item A feasible flow whose value equals the capacity of some cut is maximum.
+  \item An integer-capacity flow algorithm taking $O(mC)$ time is polynomial
+        in the binary input length.
+  \item A constant-factor approximation guarantee for MAX-SAT automatically
+        gives one for minimizing unsatisfied clauses.
+  \item Shortest residual distances never decrease under arbitrary
+        Ford--Fulkerson path choices.
+  \item A feasible solution of a minimization LP relaxation upper-bounds
+        the integer optimum.
+  \item Every graph on $n\ge3$ vertices has vertex-cover LP integrality gap
+        at least $2-2/n$.
+  \item Endpoints of a maximal matching always form a vertex cover;
+        endpoints of a maximum matching always form a minimum cover.
+  \item The indicators of two edges sharing a vertex must be independent
+        in order to sum their expectations.
+\end{enumerate}
+
+\clearpage
+\subsection{Answer sketches}
+\paragraph{Q1. Scheduling.}
+Use layers
+\[
+s\longrightarrow i\longrightarrow(i,j)\longrightarrow d\longrightarrow t
+\]
+with capacities $b_i,1,1,1$, respectively.  Include $(i,j)\to d$ exactly
+when task $d$ is in period $j$ and $d\in A_i$.  The target flow value is
+the number $D$ of tasks.  A schedule sends one unit on the path for each
+assignment.  Conversely, an integral flow of value $D$ saturates all
+task-to-sink arcs.  Each task then has exactly one unit of incoming flow;
+decode that arc as its assigned worker.  The worker and worker-period
+capacities enforce the two quotas.  Fractional flow can split a task across
+workers, but integer capacities guarantee the existence of an integral
+maximum flow, which the standard augmenting-path algorithms can return.
+
+For available pairs use binary $a_{id}$ and the feasibility ILP
+\[
+\sum_{i:d\in A_i}a_{id}=1\quad(\text{each }d),\qquad
+\sum_{d\in A_i}a_{id}\le b_i\quad(\text{each }i),\qquad
+\sum_{\substack{d\in A_i\\d\text{ in period }j}}a_{id}\le1
+\quad(\text{each }i,j).
+\]
+The network has polynomial size and requires one maximum-flow computation.
+
+\paragraph{Q2. Bounded-frequency covering.}
+Minimize $\sum_j c_jx_j$ subject to
+$\sum_{j:e\in S_j}x_j\ge1$ for every element, and $x_j\in\{0,1\}$.
+Relax to $[0,1]$ and select $x_j^*\ge1/k$.  A covering constraint has at
+most $k$ terms, so at least one meets the threshold.  With nonnegative costs,
+\[
+\ALG\le\sum_j kc_jx_j^*=kLP^*\le k\OPT.
+\]
+Bounded \emph{set size} does not bound the number of terms in a covering
+constraint.  For example, one element and two identical unit-cost singleton
+sets admit optimal LP solution $(1/2,1/2)$.  Set size is at most $1$, but
+threshold $1$ selects neither set.
+
+\paragraph{Q3. \texorpdfstring{MAX-$k$-CUT}{MAX-k-CUT} and conditional expectation.}
+Independent uniform vertex labels cut an edge with probability $1-1/k$.
+Linearity gives expectation $(1-1/k)\sum_e w_e\ge(1-1/k)\OPT$; edge
+indicators need not be independent.  Under a partial labelling, an edge
+with both endpoints fixed contributes its weight or zero.  An edge with
+at least one endpoint unfixed contributes $(1-1/k)w_e$.  For the next
+vertex, only edges to already fixed neighbors have a label-dependent
+contribution.  Choose the label maximizing the weight of differently
+labelled fixed neighbors.  The current conditional expectation is the
+average of the $k$ branch expectations, so this choice cannot decrease it.
+After all choices the objective equals its conditional expectation.
+A direct implementation takes $O(k(n+m))$ time.
+
+\paragraph{Q4. Set cover with rejection sampling.}
+For any element $e$, one round misses it with probability
+\[
+\prod_{j:e\in S_j}(1-x_j^*)
+\le \exp\!\left(-\sum_{j:e\in S_j}x_j^*\right)\le e^{-1}.
+\]
+After $r$ rounds this is at most $e^{-r}\le1/(2n)$.  A union bound implies
+trial success probability $p\ge1/2$.  For trial cost $C$,
+\[
+\mathbb E[C]=\sum_j c_j\bigl(1-(1-x_j^*)^r\bigr)
+\le r\sum_j c_jx_j^*=rLP^*.
+\]
+The accepted trial has the distribution of one trial conditioned on success
+$A$.  Since $C\ge0$,
+\[
+\mathbb E[C\mid A]
+=\frac{\mathbb E[C\mathbf1_A]}p
+\le\frac{\mathbb E[C]}p\le2rLP^*\le2r\OPT.
+\]
+Fresh independent trials give a geometric stopping time of mean $1/p\le2$;
+nontermination probability is $\lim_{t\to\infty}(1-p)^t=0$.
+Each trial is polynomial time and its output is checked for feasibility.
+The success event may be correlated with cost, so the unconditioned trial
+expectation alone does not bound the returned cost.
+
+\paragraph{Q5. Cuts.}
+For a fixed maximum flow and any minimum-cut source side $S$,
+\[
+0=c(\delta^+(S))-|f|
+=\sum_{e\in\delta^+(S)}(c_e-f_e)
+ +\sum_{e\in\delta^-(S)}f_e.
+\]
+All summands are nonnegative, so each vanishes.  An arc with $c_e>0$
+crossing outwards forces $f_e=c_e>0$; the same arc crossing inwards for
+another minimum cut would force $f_e=0$, a contradiction.
+For tie-breaking let $m=|E|$ and set $c'_e=(m+1)c_e+1$.  Then
+\[
+c'(\delta^+(S))=(m+1)c(\delta^+(S))+|\delta^+(S)|.
+\]
+An integer capacity difference of at least $1$ outweighs every cardinality
+difference, which is at most $m$.  Minimize the new capacity with one
+max-flow/min-cut computation.  Its encoding length grows by $O(\log(m+1))$.
+
+\paragraph{Q6. MAX-DICUT.}
+By independence for the two distinct endpoints and the LP constraints,
+\begin{align*}
+\Pr[i\in U,j\notin U]
+&=(1/4+x_i/2)(1/4+(1-x_j)/2)\\
+&\ge(1/4+z_{ij}/2)^2
+=z_{ij}/2+(2z_{ij}-1)^2/16\ge z_{ij}/2.
+\end{align*}
+Sum with the nonnegative weights.  For direct rounding, put
+$L=\sum w_{ij}z_{ij}=LP^*$ and $W=\sum w_{ij}$.  If $W=0$ the claim is
+trivial.  Otherwise $x_i(1-x_j)\ge z_{ij}^2$, and Cauchy--Schwarz gives
+\[
+\mathbb E[\ALG]\ge\sum w_{ij}z_{ij}^2\ge L^2/W.
+\]
+The feasible point $x_i=z_{ij}=1/2$ implies $L\ge W/2$ when the LP
+solution is optimal.  Hence $\mathbb E[\ALG]\ge L/2\ge\OPT/2$.
+The shifted rule has a local per-arc proof; the direct rule uses LP
+optimality for its global comparison.
+
+\paragraph{Q7. MAX-SAT.}
+Remove duplicate literals; treat tautological clauses as always satisfied.
+For each remaining nonempty clause $C_i$, use
+\[
+\max\sum_iw_iy_i,\qquad
+\sum_{j\in C_i^+}x_j+\sum_{j\in C_i^-}(1-x_j)\ge y_i,
+\qquad x_j,y_i\in\{0,1\};
+\]
+relax the domains to $[0,1]$.  Independent variable rounding gives literal
+success probabilities $a_1,\ldots,a_\ell$ in a clause with distinct
+variables, and $\sum_h a_h\ge y_i^*$.  AM--GM gives
+\[
+\Pr[C_i\text{ fails}]=\prod_h(1-a_h)
+\le\left(1-\frac{\sum_h a_h}{\ell}\right)^\ell
+\le(1-y_i^*/\ell)^\ell.
+\]
+The function $g(y)=1-(1-y/\ell)^\ell$ is concave on $[0,1]$ with
+$g(0)=0$.  Thus $g(y)\ge yg(1)$, and the clause contributes at least
+$b_\ell w_i y_i^*$ where $b_\ell=1-(1-1/\ell)^\ell\ge1-1/e$.
+Fair assignment contributes at least $a_\ell w_i y_i^*$, with
+$a_\ell=1-2^{-\ell}$ because $y_i^*\le1$.
+
+For $\ell=1,2$, $a_\ell+b_\ell=3/2$; for $\ell\ge3$,
+$a_\ell\ge7/8$ and $b_\ell\ge1-1/e>5/8$.  Therefore, for outputs $A,B$,
+\[
+\mathbb E[\max(A,B)]\ge\tfrac12(\mathbb E[A]+\mathbb E[B])
+\ge\tfrac34 LP^*\ge\tfrac34\OPT.
+\]
+The two outputs need not be independent.  Averaging just the global
+$1/2$ and $1-1/e$ guarantees would not prove $3/4$.
+
+\paragraph{Q8. TSP.}
+Deleting a tour edge proves $c(T)\le\OPT$ for an MST $T$.  Doubling gives
+even degrees and cost $2c(T)$; triangle inequality makes the final shortcut
+tour no more expensive.  For Christofides, the odd-degree set has even
+cardinality.  Shortcut an optimal tour to this set and split its alternating
+edges into two perfect matchings.  The minimum matching $M$ costs no more
+than their average, at most $\OPT/2$.  Thus the output costs at most
+$c(T)+c(M)\le3\OPT/2$.
+
+For the requested example, use the unit-cost cycle $A,B,D,C,A$ and diagonal
+costs $2$.  MST $\{AB,AC,CD\}$ has Euler circuit $A,B,A,C,D,C,A$ after
+doubling.  First-visit shortcutting returns $A,B,C,D,A$, cost $6$, while
+the original cycle has optimal cost $4$.  Without triangle inequality a
+shortcut edge can cost arbitrarily more than the detour it replaces.
+
+\paragraph{Q9. Knapsack.}
+Discard $w_i>W$, and handle no remaining items or $V=0$ separately.
+Let $D[i,p]$ be the minimum weight of a subset of the first $i$ items with
+value exactly $p$.  Set $D[0,0]=0$, all other initial states to $\infty$, and
+\[
+D[i,p]=\min\{D[i-1,p],\ w_i+D[i-1,p-v_i]\},
+\]
+omitting the second term when $p<v_i$.  Fill increasing $i$; choose the
+largest $p$ with $D[n,p]\le W$ and backtrack stored choices.  Since
+$p\le nV$, this takes $O(n^2V)$ arithmetic operations.
+
+For $0<\epsilon<1$, put $K=\epsilon V/n$ and
+$\widehat v_i=\lfloor v_i/K\rfloor\le n/\epsilon$.  Solve the DP with
+scaled values and original weights.  It takes $O(n^3/\epsilon)$ operations.
+For its returned set $S$ and an original optimum $S^*$,
+\[
+v(S)\ge K\widehat v(S)\ge K\widehat v(S^*)
+\ge\OPT-nK=\OPT-\epsilon V\ge(1-\epsilon)\OPT.
+\]
+Filtering ensures that the maximum-value item is itself feasible, so
+$V\le\OPT$.  Keeping original weights preserves feasibility.
+
+\paragraph{Q10. Vertex form of Menger's theorem.}
+Split each internal vertex into $v_{\rm in}\to v_{\rm out}$ of capacity
+$1$, leaving $x,y$ unsplit.  Replace each undirected edge $\{u,v\}$ by
+$u_{\rm out}\to v_{\rm in}$ and $v_{\rm out}\to u_{\rm in}$ of capacity
+$M=n+1$, interpreting an endpoint $x$ or $y$ as the unsplit vertex.
+Internally disjoint paths induce a feasible integral flow.  Conversely,
+decompose integral flow into unit $x$--$y$ paths and cycles and discard
+cycles; capacity-$1$ splitting arcs ensure internal vertex-disjointness.
+
+A separator of size $k$ deletes $k$ splitting arcs and destroys all flow
+paths.  Reachability after this deletion gives an original-network cut
+of capacity at most $k$.  Because $x,y$ are nonadjacent, all $n-2$ internal
+vertices form a separator, so a minimum cut has capacity at most
+$n-2<M$.  Consequently it cuts no capacity-$M$ arc.  Its outgoing splitting
+arcs identify a vertex separator whose size equals the cut capacity.
+Max-flow/min-cut now equates the two optima.  Adjacency is excluded because
+a direct $x$--$y$ edge survives deletion of every internal vertex.
+
+\paragraph{Q11. Flow algorithms.}
+A two-arc path with capacities $3,1$ has maximum flow $1$, but thresholds
+$3,1.5$ find no path before the flawed algorithm stops.  Start instead at
+$2^{\lfloor\log_2 C\rfloor}$ and halve through threshold $1$; handle $C=0$
+separately.  Use only residual arcs of capacity at least the current threshold.
+
+For BFS augmentation, let $d(v)$ be residual distance from $s$ before an
+augmentation.  Every surviving old arc satisfies $d(v)\le d(u)+1$.
+A new arc $(v,u)$ reverses an arc of the chosen shortest path, so
+$d(v)=d(u)+1$; it too satisfies the inequality needed along any new path.
+Induction along a new residual path proves that no distance decreases.
+If $(u,v)$ is saturated on a shortest path, then $d(v)=d(u)+1$.
+Before it can be saturated in that direction again, an augmentation must
+use $(v,u)$; at that later time
+\[
+d_{\rm later}(u)=d_{\rm later}(v)+1
+\ge d_{\rm earlier}(v)+1=d_{\rm earlier}(u)+2.
+\]
+Thus each labelled residual arc can be critical only $O(n)$ times.
+Each augmentation saturates one such arc, giving $O(nm)$ augmentations
+and $O(nm^2)$ time under the usual $O(m)$ search bound.
+
+With integer capacities, arbitrary Ford--Fulkerson increases value by at
+least $1$, giving $O(m|f^*|)$ time.  The numeric value $|f^*|$ may be
+exponential in its binary encoding length.  With irrational capacities,
+there need be no positive lower bound on augmentation amounts; bad path
+choices can produce infinitely many positive augmentations.  BFS avoids
+this dependence by bounding the number of augmentations combinatorially.
+
+\paragraph{Q12. Common subsequence.}
+For each symbol $a$, compute $f_a=\min_i\operatorname{count}_a(s_i)$.
+Return $a$ repeated $f_a$ times for a symbol maximizing $f_a$; this is
+always a common subsequence.  Some symbol appears at least $\OPT/q$ times
+in an optimal common subsequence, and its $f_a$ is at least that large.
+Alternatively,
+\[
+\OPT\le\sum_a f_a\le q\max_a f_a.
+\]
+To achieve $O(nL+q)$ even for variable $q$, initialize arrays once; while
+scanning each string, use timestamps to count only its occurring symbols.
+For each touched symbol update its minimum count and the number of strings
+in which it appears.  Symbols appearing in fewer than $n$ strings get
+$f_a=0$.  Each character and each touched symbol costs $O(1)$, followed
+by an $O(q)$ final scan; no $O(q)$ reset per string is needed.
+
+\subsection{True/false answers}
+\begin{enumerate}[label=\textbf{T\arabic*.}]
+  \item \textbf{False.} Take $q$ disjoint edges and one isolated vertex.
+        Selecting all edge endpoints is a 2-approximate cover; its complement
+        has size $1$, while a maximum independent set has size $q+1$.
+  \item \textbf{False.} Use unit arcs $s\to a,s\to b,a\to c,b\to c,c\to t$.
+        Sending $1/2$ on each branch and $1$ on $c\to t$ is a fractional
+        maximum flow.  An integral maximum also exists.
+  \item \textbf{True.} Weak duality gives $|f|\le|f^*|\le c(S)$;
+        equality of the outer values certifies maximum flow and minimum cut.
+  \item \textbf{False.} Capacity $C$ needs only $O(\log(C+1))$ bits.
+        A bound polynomial in $C$ may be exponential in input length.
+  \item \textbf{False.} A satisfiable formula can have minimum unsatisfied
+        cost $0$.  An assignment satisfying only half of its clauses may
+        meet a MAX-SAT factor-$2$ guarantee while leaving positive cost,
+        impossible for any finite multiplicative guarantee relative to $0$.
+  \item \textbf{False.} Use unit arcs along $s\to a\to b\to c\to d\to t$
+        and an additional arc $s\to d$.  Initially $d(s,c)=3$.  Augment
+        on the long path: the unused arc $s\to d$ and new reverse arc
+        $d\to c$ give distance $2$ to $c$.
+  \item \textbf{False.} The optimal relaxation value is a \emph{lower}
+        bound.  An arbitrary fractional feasible value need not bound the
+        integral optimum in either direction.  An integral feasible solution
+        does give an upper bound.
+  \item \textbf{False.} $K_n$ witnesses a worst-case gap $2-2/n$:
+        integral optimum $n-1$, LP optimum $n/2$.  This is not a statement
+        about every graph; a single edge with isolated vertices has gap $1$.
+  \item \textbf{First true, second false.} An uncovered edge could be added
+        to a matching, contradicting maximality.  For one edge the maximum
+        matching's endpoints give cover size $2$, but minimum cover size $1$.
+  \item \textbf{False.} Linearity of expectation requires no independence.
+\end{enumerate}
+
+\end{document}

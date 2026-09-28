@@ -1,0 +1,175 @@
+\section{Metric TSP and Eulerian Structure}\label{tsp:main}
+
+\subsection{General TSP, metric TSP, and the shortcut rule}
+The traveling salesperson problem asks for a minimum-cost Hamiltonian
+cycle: visit every vertex exactly once and return to the start.  Throughout
+the approximation algorithms below, the input is a complete undirected
+graph with nonnegative symmetric costs satisfying the triangle inequality
+\[
+c(u,w)\le c(u,v)+c(v,w).
+\]
+These are \emph{metric} costs.  Completeness supplies each shortcut edge;
+triangle inequality ensures that shortcutting a walk never increases its
+cost.  Repeatedly bypass already visited vertices, retaining the final
+return to the start, to turn a spanning closed walk into a Hamiltonian cycle.
+
+\paragraph{Why the metric assumption matters.}
+General TSP has no polynomial-time approximation with any fixed finite
+factor $\rho\ge1$, unless $\PTIME=\NP$.  Reduce Hamiltonian Cycle on an
+unweighted graph $G$ with $n$ vertices: complete the graph, give original
+edges cost $1$ and nonedges cost an integer $B>\rho n$.  A YES instance has
+$\OPT=n$, so a $\rho$-approximation returns cost at most $\rho n$.  In a NO
+instance every tour uses a nonedge, hence has cost at least $B>\rho n$.
+The algorithm would distinguish the two cases in polynomial time.  For
+fixed $\rho$, $B$ has polynomial encoding length.  These constructed costs
+need not satisfy triangle inequality; a cost-$B$ shortcut can replace a
+two-edge detour of cost $2$.
+
+Metric TSP remains NP-hard: assign costs $1$ to edges of a Hamiltonian Cycle
+instance and $2$ to nonedges.  Every triangle satisfies the metric inequality,
+and a tour of cost $n$ exists exactly when the original graph is Hamiltonian.
+This proves exact hardness, not the absence of constant-factor approximation.
+
+\subsection{Euler circuits, open trails, and orientation}\label{tsp:euler}
+An Euler trail uses every \emph{edge occurrence} exactly once; vertices may
+repeat.  Parallel edges are distinct occurrences.  An Euler circuit is a
+closed Euler trail.  A Hamiltonian cycle instead visits every vertex once.
+
+\begin{theorem}[Euler's criterion]
+An undirected multigraph with at least one edge has an Euler circuit iff
+all its nonisolated vertices are connected and every vertex has even degree.
+It has an Euler trail between distinct vertices $s,t$ iff all nonisolated
+vertices are connected and precisely $s,t$ have odd degree.
+\end{theorem}
+\begin{proof}
+In a closed traversal, each arrival at a vertex is paired with a departure,
+so every degree is even.  For an open traversal only the start and end have
+one unpaired incident edge.
+
+Conversely, start at any nonisolated vertex and keep following unused edges.
+An even-degree vertex other than the start cannot be the first place where
+this trail gets stuck: after arriving, an unused departure remains.  Thus
+the trail closes.  If edges remain, connectivity gives a vertex of the
+current circuit incident to unused edges.  The unused-edge degrees are
+still even, so construct another closed trail there and splice it into the
+first.  Repeat until every edge is used (Hierholzer's algorithm).
+For the open case add one extra $\{s,t\}$ edge, find an Euler circuit,
+rotate it to place that edge last, and delete the extra edge.
+\end{proof}
+Using adjacency lists and marking each edge occurrence, Hierholzer's
+algorithm runs in $O(|V|+|E|)$ time.  The handshaking identity
+$\sum_v\deg(v)=2|E|$ also shows that the number of odd-degree vertices is
+even.  Adding one edge toggles the parity of its two endpoints.
+
+\paragraph{Orienting an even-degree connected graph.}
+Find an Euler circuit and orient each edge in the direction in which the
+circuit traverses it.  The resulting directed graph is strongly connected:
+from any vertex $u$, follow the directed circuit cyclically until any desired
+vertex $v$ is reached.  Also $\deg^+(v)=\deg^-(v)$ at every vertex.
+This proof concerns the nonisolated vertices; a disconnected even-degree
+graph does not become strongly connected by orienting its components.
+
+\subsection{Double-tree: a 2-approximation}\label{tsp:doubletree}
+\begin{enumerate}
+  \item Compute a minimum spanning tree $T$.
+  \item Duplicate every edge of $T$, retaining both copies in a multigraph.
+  \item Find an Euler circuit in this connected even-degree multigraph.
+  \item Shortcut repeated vertex visits to obtain the output tour $H$.
+\end{enumerate}
+\textbf{Feasibility.} Doubling makes every degree even; the spanning tree
+ensures connectivity.  The Euler circuit visits all vertices, and
+shortcutting yields a Hamiltonian cycle in the complete graph.
+
+\textbf{Lower bound and guarantee.} Deleting any edge of an optimal tour
+leaves a spanning tree, so $c(T)\le\OPT$.  Therefore
+\[
+\boxed{\ c(H)\le 2c(T)\le2\OPT.\ }
+\]
+The first inequality uses triangle inequality; the second uses the MST lower
+bound.  Dense Prim takes $O(n^2)$ time on the complete graph; doubling,
+Euler traversal, and shortcutting take $O(n)$ further time.
+
+\paragraph{Four-vertex metric counterexample to optimality.}
+Use the shortest-path metric of the unit-cost cycle $A,B,D,C,A$:
+\[
+\begin{array}{c|rrrr}
+c & A&B&C&D\\\hline
+A&0&1&1&2\\
+B&1&0&2&1\\
+C&1&2&0&1\\
+D&2&1&1&0
+\end{array}
+\]
+The tree $\{AB,AC,CD\}$ is an MST of cost $3$.  The doubled tree admits
+Euler circuit $A,B,A,C,D,C,A$.  First-visit shortcutting gives
+$A,B,C,D,A$, of cost $1+2+1+2=6$.  The original cycle has cost $4$ and is
+optimal because every tour has four edges, each of cost at least $1$.
+Thus a valid double-tree execution need not be optimal, even on a metric.
+
+\subsection{Christofides: a \texorpdfstring{$3/2$}{3/2}-approximation}\label{tsp:christofides}
+\begin{enumerate}
+  \item Compute an MST $T$, and let $O=\{v:\deg_T(v)\text{ is odd}\}$.
+  \item Find a \emph{minimum-weight perfect matching} $M$ on the complete
+        graph induced by $O$, using the original metric costs.
+  \item Form the multigraph $T\cup M$, find an Euler circuit, and shortcut
+        repeated vertices to produce a tour $H$.
+\end{enumerate}
+\textbf{Feasibility.} The set $O$ has even cardinality.  Every vertex in
+$O$ gains exactly one incident matching edge and becomes even; all other
+degrees stay even.  The tree ensures connectivity.  Keep parallel copies
+if a matching edge is also in $T$.
+
+\begin{lemma}[Matching budget]
+The matching chosen above has cost $c(M)\le\OPT/2$.
+\end{lemma}
+\begin{proof}
+Take an optimal tour and shortcut it to retain only the vertices of $O$.
+The resulting even-length cyclic walk has cost at most $\OPT$.  Its
+alternating edges split into two perfect matchings $M_1,M_2$ on $O$.
+Therefore, by minimum weight of $M$,
+\[
+c(M)\le\min\{c(M_1),c(M_2)\}
+\le\frac{c(M_1)+c(M_2)}2\le\frac{\OPT}2.
+\]
+If $O$ has two vertices, the restricted cyclic walk traverses their edge
+twice; its two edge occurrences give the same one-edge matching.  If
+$O=\varnothing$, use the empty matching.
+\end{proof}
+Combining the spanning and matching budgets with metric shortcutting gives
+\[
+\boxed{\ c(H)\le c(T)+c(M)\le\OPT+\tfrac12\OPT
+       =\tfrac32\OPT.\ }
+\]
+All steps are polynomial time; minimum-weight perfect matching is the main
+additional subroutine beyond double-tree.  A maximal matching is insufficient:
+it may leave odd vertices unmatched, and an arbitrary perfect matching has
+no $\OPT/2$ cost guarantee.
+
+\subsection{Held--Karp exact dynamic programming}\label{tsp:heldkarp}
+This exact algorithm works for arbitrary tour costs; triangle inequality
+is unnecessary.  Fix a root $r$.  For $r\in S\subseteq V$ and $v\in S$,
+let $D[S,v]$ be the minimum cost of a path starting at $r$, ending at $v$,
+and visiting exactly the vertices in $S$, once each.
+
+\textbf{Bases.} $D[\{r\},r]=0$.  Set all impossible states to $\infty$,
+including $D[S,r]$ for $|S|>1$ and states with $r\notin S$ or $v\notin S$.
+For $v\ne r$,
+\[
+\boxed{\ D[S,v]=\min_{u\in S\setminus\{v\}}
+        \bigl(D[S\setminus\{v\},u]+c(u,v)\bigr).\ }
+\]
+\textbf{Why the recurrence is exact.} The penultimate vertex $u$ partitions
+all feasible paths.  Removing their last edge leaves precisely a feasible
+path for the smaller state; conversely, appending $(u,v)$ to any such path
+gives a feasible path for $(S,v)$.
+
+Evaluate states in increasing $|S|$.  For $n\ge2$, close the path by returning
+to $r$:
+\[
+\OPT=\min_{v\ne r}\bigl(D[V,v]+c(v,r)\bigr).
+\]
+Store a minimizing predecessor with each state; choose the minimizing final
+vertex, backtrack while removing the last vertex from $S$, reverse the
+resulting sequence, and append $r$.  There are $O(n2^n)$ states with $O(n)$
+transitions each, giving $O(n^2 2^n)$ time and $O(n2^n)$ space, including
+predecessors.  This is exponential, although faster than enumerating tours.

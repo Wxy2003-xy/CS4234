@@ -1,0 +1,394 @@
+===== PDF PAGE 1 =====
+Optimization Algorithms
+Diptarka Chakraborty
+Week 1 
+Introduction to 
+Approximation Algorithms
+CS4234
+
+===== PDF PAGE 2 =====
+From hardness to useful guarantees
+2
+1  Hardness
+Why exact polynomial-time 
+algorithms are unlikely
+2  Approximation
+What a fast algorithm is 
+allowed to lose
+3  Analysis
+How to prove a worst-case 
+guarantee
+Two worked examples: knapsack first, then set cover.
+
+===== PDF PAGE 3 =====
+Decision and optimization ask different questions
+3
+Decision Optimization
+Input: graph G, vertices s and t, budget B
+Is there an s–t path of length ≤ B?
+Input: graph G, vertices s and t
+What is the shortest s–t path 
+length?
+Decision returns YES/NO; optimization returns the best value or solution.
+
+===== PDF PAGE 4 =====
+A threshold turns optimization into a decision query
+4
+Minimization problem
+Given budget B, ask:
+Does a feasible solution
+with cost ≤ B exist? 0 20 40 60 80 100
+B = 60
+YES if the optimum lies here
+An optimizer immediately answers every threshold question.
+
+===== PDF PAGE 5 =====
+Repeated decision queries can locate the optimum
+5
+1 [0, 100] cost ≤ 50? YES [0, 50]
+2 [0, 50] cost ≤ 25? NO [26, 50]
+3 [26, 50] cost ≤ 38? YES [26, 38]
+For bounded integer objectives, binary search uses only logarithmically many queries.
+
+===== PDF PAGE 6 =====
+Decision hardness transfers to optimization
+6
+Fast optimizer Compare OPT with B YES / 
+NO
+If optimization were easy, the decision version would also be easy.
+Therefore, an NP-hard decision version makes the optimization problem NP-hard too.
+
+===== PDF PAGE 7 =====
+A reduction lets one solver handle another problem
+7
+instance x
+of problem A
+polynomial-time
+transformation f
+instance f(x)
+of problem B
+x is YES for A   ⇔ f(x) is YES for B
+Notation: A ≤ₚ B means a solver for B can solve A after this transformation.
+
+===== PDF PAGE 8 =====
+NP-complete problems sit at the boundary of verification and 
+hardness
+8
+NP
+NP-hard
+NP-completesolutions verifiable
+in polynomial time
+at least as hard as
+every problem in NP
+NP-complete = in NP and NP-hard.
+
+===== PDF PAGE 9 =====
+An NP-completeness proof has two obligations
+9
+1 Show X ∈ NP
+Give a polynomial-time verifier
+for a proposed certificate.
+2 Show X is NP-hard
+Choose a known NP-complete A
+and prove A ≤ₚ X.
+Membership and hardness are separate claims—prove both.
+
+===== PDF PAGE 10 =====
+For hardness, the reduction arrow must point toward the new 
+problem
+10
+Correct
+known hard A new problem X
+A ≤ₚ X
+Does not prove X hard
+new problem X known 
+hard A
+X ≤ₚ A
+A reduction shows the target is at least as hard as the source.
+
+===== PDF PAGE 11 =====
+11
+
+===== PDF PAGE 12 =====
+When exact optimization is hard, choose the right compromise
+12
+Exact on smaller inputs
+Brute force, branch-and-
+bound, dynamic 
+programming
+Exploit structure
+Special cases, 
+parameterization, 
+relaxations
+Approximate
+Fast feasible solution with 
+a provable quality 
+guarantee
+today
+Approximation is useful only when the loss is quantified.
+
+===== PDF PAGE 13 =====
+NP-Hard Optimization Problems
+13
+
+
+===== PDF PAGE 14 =====
+Approximation trades a little quality for speed
+14
+feasible solutions
+OPT
+ALG
+Polynomial time
++
+Worst-case quality bound
+A good approximation algorithm guarantees both feasibility and "closeness" to OPT.
+
+===== PDF PAGE 15 =====
+For minimization, ALG may be above OPT—but not by more 
+than 𝝆 ≥ 𝟏
+15
+OPT ALG
+factor at most ρ
+OPT ≤ ALG ≤ ρ · OPT
+Examples: shortest tour, set cover, scheduling cost.
+
+===== PDF PAGE 16 =====
+For maximization, ALG may be below OPT—but not
+by more than 𝝆 ≥ 𝟏
+16
+ALG OPT
+factor at most ρ
+OPT / ρ ≤ ALG ≤ OPT
+Examples: knapsack value, maximum cut, maximum coverage.
+
+===== PDF PAGE 17 =====
+One ratio convention handles both minimization and 
+maximization
+17
+minimization
+ALG / OPT ≤ ρ
+maximization
+OPT / ALG ≤ ρ
+same idea
+max { ALG/OPT, OPT/ALG } ≤ ρ
+Always state which convention you use; here ρ ≥ 1 is the approximation factor.
+
+===== PDF PAGE 18 =====
+Common approaches
+18
+Greedy
+Heuristics
+Linear 
+Program
+
+===== PDF PAGE 19 =====
+Other Approaches
+19
+SDP
+Local Search
+Randomization
+
+===== PDF PAGE 20 =====
+All Come Together
+20
+
+
+===== PDF PAGE 21 =====
+A guarantee comes from comparing ALG and OPT on an 
+arbitrary instance
+21
+1 Fix any input instance I
+2 Name the algorithm value ALG(I) and optimum OPT(I)
+3 Use structure or a relaxation to relate the two values
+4 Conclude the same inequality for every I
+
+===== PDF PAGE 22 =====
+Knapsack: maximizevalue without exceeding capacity
+22
+capacity W = 10
+selected weight ≤ 10
+A
+weight 4   value 10
+B
+weight 6   value 12
+C
+weight 5   value 9
+D
+weight 3   value 6
+Best: A + B
+weight 10, value 22
+The combinatorial difficulty is deciding which items work well together.
+
+===== PDF PAGE 23 =====
+Knapsack is a constrained subset-selection problem
+23
+Input items i = 1,…,n with weight wᵢ and value vᵢ; capacity W
+Choose a subset S ⊆ {1,…,n}
+maximize σ𝒊∈𝑺 𝒗𝒊 subject to σ𝒊∈𝑺 𝒘𝒊  ≥W
+Integral knapsack: every item is either taken or not taken.
+
+===== PDF PAGE 24 =====
+Fractional knapsack is solved by sorting value density
+24
+density(i) = vᵢ / wᵢ sort high to low fill capacity
+4.0
+whole
+3.0
+whole
+2.2
+fraction
+1.4
+stop
+Only the first item that does not fully fit is taken fractionally.
+
+===== PDF PAGE 25 =====
+The fractional optimum is an upper bound on integral knapsack
+25
+fractional feasible solutions
+integral feasible solutions
+OPT integral
+OPT fractional
+OPT ≤ F, where F is the value of the fractional greedy solution.
+
+===== PDF PAGE 26 =====
+Density greedy can make a locally good choice that blocks the 
+best item
+26
+capacity
+small,
+high 
+density
+remaining capacity is too small for the valuable 
+large item Greedy stops
+The fractional algorithm could take a fraction; the integral algorithm cannot.
+This gap is exactly what the repair must handle.
+
+===== PDF PAGE 27 =====
+A two-item instance makes naive greedy arbitrarily bad
+27
+capacity W
+A
+weight 1   value 2
+density 2
+B
+weight W   value W
+density 1
+Greedy picks A
+value = 2
+OPT picks B
+value = W
+ALG / OPT = 2 / W  →  0
+No constant approximation factor is possible for naive density greedy.
+
+===== PDF PAGE 28 =====
+Modified greedy keeps the better of two candidates
+28
+Candidate 1
+density-greedy set G
+Candidate 2
+best feasible single item
+take the maximum value
+M = max { G, vₘₐₓ }
+The extra candidate protects us from the one large item greedy may block.
+
+===== PDF PAGE 29 =====
+The fractional solution is a greedy prefix plus one fraction
+29
+capacity W
+whole item 1 whole item 2 whole item 3 α of item j unused
+F = G + αvⱼ
+Here G is the value of the whole-item greedy prefix and 0 ≤ α < 1.
+
+===== PDF PAGE 30 =====
+The fractional value is at most greedy plus one whole item
+30
+F = G + αvⱼ
+because α < 1
+F ≤ G + vⱼ
+F ≤ G + vₘₐₓ
+The best feasible single item is worth at least vⱼ.
+This is the key inequality; everything else is algebra.
+
+===== PDF PAGE 31 =====
+The better candidate captures at least half of their sum
+31
+G + vₘₐₓ max {G, vₘₐₓ}
+≥ (G + vₘₐₓ)/2
+M ≥ (G + vₘₐₓ)/2 ≥ F/2 ≥ OPT/2
+The fractional relaxation connects the algorithm to the unknown optimum.
+
+===== PDF PAGE 32 =====
+Modified greedy is a 2-approximation for knapsack
+32
+Algorithm Return the better of density greedy and the best feasible single 
+item.
+Guarantee value(M) ≥ 1/2 · OPT
+Time Sort by density, scan once, and track the best feasible item.
+A tiny algorithmic repair converts an unbounded loss into a constant guarantee.
+
+===== PDF PAGE 33 =====
+The knapsack proof illustrates a reusable approximation 
+template
+33
+1  Relax
+Create an easier 
+problem whose 
+optimum bounds OPT.
+2  Decompose
+Express the relaxed 
+solution using 
+algorithmic pieces.
+3  Compare
+Relate those pieces to 
+what the algorithm 
+returns.
+4  Conclude
+Chain inequalities to 
+obtain the global 
+factor.
+Set cover will use a different comparison object—element prices—but the logic is the same.
+
+===== PDF PAGE 34 =====
+An FPTAS lets us request any fixed accuracy
+34
+input instance and ε FPTAS value ≥ (1 − ε)OPT
+running time polynomial in n and 1/ε
+Fully polynomial means efficient in both input size and requested precision.
+
+===== PDF PAGE 35 =====
+Smaller ε improves accuracy but usually increases running time
+35
+ε = 0.20 ≥ 80% of OPT more 
+work
+ε = 0.10 ≥ 90% of OPT more 
+work
+ε = 0.01 ≥ 99% of OPT more 
+work
+An approximation scheme exposes an explicit accuracy–time tradeoff.
+
+===== PDF PAGE 36 =====
+Returning the better of two candidates gives a generic half 
+bound
+36
+OPT ≤ A + B max{A,B} ≥ (A+B)/2
+≥ OPT/2If two nonnegative pieces upper-bound OPT, one of them 
+carries at least half.
+This max-of-candidates trick appears in many simple approximation algorithms.
+
+===== PDF PAGE 37 =====
+Quick check: maximizing the better of two objectives
+37
+Objective: h(x) = f(x) + g(x), with f,g ≥ 0
+𝒙𝒇 maximizes f 𝒙𝒈 maximizes g return better of
+h(𝒙𝒇), h(𝒙𝒈)
+What approximation factor is guaranteed?
+Hint: compare f(x*) with f(𝒙𝒇), and g(x*) with g(𝒙𝒈).
+
+===== PDF PAGE 38 =====
+Answer: the better candidate is a 2-approximation
+38
+OPT = f(x*) + g(x*)
+≤ f(𝑥𝑓) + g(𝑥𝑔)
+≤ h(𝑥𝑓) + h(𝑥𝑔)
+≤ 2 · max{h(𝒙𝒇), h(𝒙𝒈)}
+returned value ≥ OPT/2

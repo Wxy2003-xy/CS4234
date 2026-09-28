@@ -1,0 +1,988 @@
+===== PDF PAGE 1 =====
+CS4234: Optimization Algorithms
+Semester 1, AY 2026-27
+School of Computing, NUS
+Problem Set for Tutorial 1
+Question 1:You are given an undirected graphG= (V, E). The goal of this problem is to remove
+a minimum number of edges such that the residual graph contains no triangles. (I.e., there is no set of
+three vertices (a, b, c) such that edges (a, b), (b, c), and (a, c) are all in the residual graph.)
+Give a 3-approximation algorithm that runs in polynomial time. (That is, it should guarantee that
+there are no triangles, and that the number of edges removed is within a factor of 3 of optimal.)
+Question 2:In the first lecture, we hinted at the possibility of afully polynomial time approximation
+scheme(FPTAS) for theKnapsack problem(that is, for any 0< ϵ <1, there is an algorithm that
+outputs a solution with value at least (1−ϵ) times that attained by an optimal solution and running
+time poly(n/ϵ)).
+We are givennitems with itemihaving an integral weightw i and an integral valuev i, and a
+capacityW. We want to output a subset of thenitems which has total weight lesser or equal toWwith
+maximum sum value, i.e., outputS⊆ {1,2, ..., n}such that P
+i∈S wi ≤Wwhich maximizes P
+i∈S vi.
+LetV= max i vi.
+Question 2A:Design an algorithm that runs in timeO(n 2V). [Hint:Think dynamic programming.]
+Question 2B:Notice that ifV=O(poly(n/ϵ)), then the algorithm runs in poly-time. Deduce an
+FPTAS for theKnapsackproblem. [Hint: Divide eachv i by some term depending on the approximation
+termϵandV, before running the algorithm in part A.]
+Question 3:Given a graphG= (V, E), anindependent setis a subset of verticesI⊆Vsuch that no
+two nodes inIare neighbors. There is a close connection between finding a minimum vertex cover and
+a maximum independent set. Assume thatOPT-VCis an algorithm for finding a minimum vertex cover.
+Then the following is an algorithm for finding a maximum independent set:
+OPT-IS(V, E)
+C = OPT-VC(V, E)
+I = V \ C
+return I
+That is, ifCis a minimum vertex cover, thenV\Cis a maximum independent set.
+Now, assume thatGreedy-Match-VCis the 2-approximation algorithm for vertex cover that we studied
+in class (lecture 2). Consider the following algorithm for the independent set:
+Greedy-IS(V, E)
+C = Greedy-Match-VC(V, E)
+I = V \ C
+return I
+Give an example graph where the approximation ratio for this algorithm is as bad as possible. That is,
+draw a graph where the maximum independent set is very large, while the independent set returned by
+theGreedy-ISalgorithm is very small.
+1
+
+===== PDF PAGE 2 =====
+Notice what this demonstrates: even though it is easy to translate anoptimalalgorithm for vertex
+cover into anoptimalalgorithm for independent set, it is very hard to turn anapproximationalgorithm
+for the vertex cover into anapproximationalgorithm for the independent set.
+2
+
+===== PDF PAGE 3 =====
+CS4234: Optimization Algorithms
+Semester 1, AY 2026-27
+School of Computing, NUS
+Solutions for Tutorial 1
+Question 1.We are given an undirected graphG= (V, E), and we wish to remove as few edges
+as possible so that the remaining graph is triangle-free.
+Algorithm.Construct a maximal collectionTof pairwise edge-disjoint triangles. This can be
+done greedily: examine all triples of vertices, and whenever the triple induces a triangle none of
+whose edges belongs to a previously selected triangle, add it toT. Return
+F=
+[
+T∈T
+E(T),
+that is, remove all three edges of every selected triangle.
+Lemma 1.The graphG−Fis triangle-free.
+Proof.Suppose, for contradiction, thatG−Fcontains a triangleT. None of the edges ofTbelongs
+toF, soTis edge-disjoint from every triangle inT. We could therefore addTtoT, contradicting
+the maximality ofT.
+Lemma 2.IfF ∗ is an optimal set of edges whose removal destroys all triangles, then|F ∗| ≥ |T |.
+Proof.The setF ∗ must contain at least one edge from each triangle inT. The triangles inTare
+edge-disjoint, so the edges chosen for distinct triangles must be distinct. Hence|F∗| ≥ |T |.
+Since the algorithm removes exactly three edges per selected triangle,
+|F|= 3|T | ≤3|F ∗|= 3OPT.
+Thus the algorithm is a3-approximation. If the graph has no triangle, both the algorithm and the
+optimum remove zero edges.
+Using an adjacency matrix, we can examine all triples inO(|V| 3)time. For each edge, we
+store one bit recording whether it already belongs to a selected triangle, so testing and selecting
+a triple takes constant time. The algorithm therefore runs in polynomial time; its running time is
+O(|V| 3 +|E|).
+1
+
+===== PDF PAGE 4 =====
+Question 2A.For itemi, letw i andv i denote its positive integral weight and nonnegative integral
+value. Recall thatV= max i vi. Since the value of every item is at mostV, the value of any subset
+is at mostnV.
+Fori∈ {0, . . . , n}andp∈ {0, . . . , nV}, define
+D[i, p] =the minimum total weight of a subset of items1, . . . , ihaving total value exactlyp.
+If no such subset exists, setD[i, p] = +∞. Initialize
+D[0,0] = 0, D[0, p] = +∞forp >0.
+Fori= 1, . . . , n, use the recurrence
+D[i, p] =
+(
+min{D[i−1, p], w i +D[i−1, p−v i]}, p≥v i,
+D[i−1, p], p < v i.
+The answer is the largestpsuch thatD[n, p]≤W.
+Lemma 3.For everyiandp, the table entryD[i, p]has the meaning stated above.
+Proof.We use induction oni. The boundary conditions make the claim true fori= 0. Consider a
+minimum-weight subset of items1, . . . , ihaving value exactlyp. If it omits itemi, its weight is at
+leastD[i−1, p]. If it includes itemi, the remaining items have valuep−v i, and its weight is at
+leastw i +D[i−1, p−v i]. Conversely, each finite alternative in the recurrence describes a subset of
+value exactlyp. Taking the smaller alternative is therefore correct.
+A subset is feasible precisely when its weight is at mostW. It follows from the lemma that
+the largestpwithD[n, p]≤Wis the maximum value of a feasible subset. To recover the subset,
+backtrack from this table entry: compareD[i, p]withD[i−1, p]; when the second alternative was
+used, include itemiand replacepbyp−v i.
+There areO(n 2V)table entries, each computable in constant time. Hence the running time is
+O(n2V), and the space usage isO(n2V). If only the optimum value is needed, two rows suffice, and
+the space can be reduced toO(nV).
+Question 2B.First discard every item withw i > W, since such an item cannot occur in a feasible
+solution. If no items remain, return the empty set. Redefinento be the number of remaining items
+andV= max i vi. IfV= 0, every feasible solution has value zero, so again return the empty set.
+Otherwise, fix0< ϵ <1and set
+K= ϵV
+n ,bv i =
+j vi
+K
+k
+.
+Run the dynamic program from Question 2A using the integer valuesbvi and the original weights,
+and return a feasible setSof maximum scaled value.
+Becausev i ≤V,
+bvi ≤
+ V
+K
+
+=
+j n
+ϵ
+k
+.
+Consequently, the running time from Question 2A becomes
+O
+
+n2 max
+i
+bvi
+
+=O
+ n3
+ϵ
+
+,
+2
+
+===== PDF PAGE 5 =====
+which is polynomial in bothnand1/ϵ. The scaling can be implemented using integer arithmetic,
+for example by computingbvi =⌊nv i/(ϵV)⌋whenϵis represented as a rational number.
+It remains to prove the approximation guarantee. LetS∗ be an optimal solution for the original
+instance. By optimality ofSfor the scaled instance,
+X
+i∈S
+bvi ≥
+X
+i∈S∗
+bvi.
+For every item,
+Kbvi ≤v i < K(bvi + 1).
+Therefore,
+X
+i∈S
+vi ≥K
+X
+i∈S
+bvi
+≥K
+X
+i∈S∗
+bvi
+>
+X
+i∈S∗
+vi −K|S ∗|
+≥OPT−nK= OPT−ϵV.
+Every remaining item fits individually, so an item of valueVis a feasible solution. HenceV≤OPT,
+and thus X
+i∈S
+vi ≥OPT−ϵV≥(1−ϵ)OPT.
+The algorithm is therefore an FPTAS for Knapsack.
+Question 3.For every integerq≥1, letG q consist ofqpairwise disjoint edges together with one
+isolated vertexz. The caseq= 5is shown below.
+a1
+b1
+a2
+b2
+a3
+b3
+a4
+b4
+a5
+b5
+z
+Figure 1: Five disjoint edges and one isolated vertex.
+Every maximal matching inGq contains allqedges: if one of these edges were omitted, neither of
+its endpoints could be matched by another edge, so it could be added to the matching. Consequently,
+Greedy-Match-VCplaces both endpoints of every edge inC. It does not place the isolated vertex
+inC. The independent set returned byGreedy-ISis therefore
+I=V\C={z},
+which has size one.
+On the other hand, a maximum independent set containszand exactly one endpoint of each of
+theqdisjoint edges. Thus
+|I ∗|=q+ 1,|I|= 1, |I ∗|
+|I| =q+ 1.
+3
+
+===== PDF PAGE 6 =====
+Sinceqcan be arbitrarily large, the approximation ratio is unbounded. In particular, complementing
+the vertex cover returned by a2-approximation does not yield any constant-factor approximation
+for Maximum Independent Set.
+The underlying reason is that complementation subtracts cardinalities rather than preserving
+their ratio. IfC ∗ is a minimum vertex cover andI∗ =V\C ∗, the guarantee|C| ≤2|C ∗|gives only
+|V\C| ≥ |V| −2|C ∗|= 2|I ∗| − |V|,
+and this lower bound may be zero even when|I∗|is large.
+4
+
+===== PDF PAGE 7 =====
+CS4234: Optimization Algorithms
+Semester 1, AY 2026-27
+School of Computing, NUS
+Problem Set for Tutorial 2
+Question 1: Traveling Salesperson Algorithms
+LetG= (V, E)be a complete weighted graph onnvertices, with edge costc(u, v). A traveling
+salesperson tour is a minimum-cost Hamiltonian cycle.
+1A. An exact exponential-time algorithm
+Give a dynamic-programming algorithm for the Traveling Salesperson Problem that runs inO(2nn2)
+time. Clearly define the subproblems, recurrence, base cases, and final answer. You may fix an
+arbitrary vertexras the start and end of the tour.
+1B. The metric TSP approximation need not be optimal
+Recall the double-tree2-approximation for metric TSP: compute a minimum spanning tree, double
+its edges, find an Eulerian tour, and shortcut repeated vertices. Give a metric instance and a
+valid execution of this algorithm for which the returned tour is not optimal. State the costs of the
+returned tour and of a strictly better tour.
+Question 2: Building Roads for Eulerian Tours
+Humperdink and Mildred run two hotels in a popular tourist destination. A tourist wants to leave a
+hotel, traverse every road exactly once, and finish at the Central Plaza. In the current road network,
+neither hotel’s guests can do so.
+The network is a multigraph, so a newly built road may run parallel to an existing road.
+2A. A route for Hotel Humperdink
+Humperdink will build one new road. Which two locations should it connect so that a guest can
+start at Hotel Humperdink, traverse every road exactly once, and finish at the Central Plaza? Draw
+the new road on Figure 1 and justify your answer.
+1
+
+===== PDF PAGE 8 =====
+y
+y
+y
+y
+y
+y y
+Motel Mildred
+Nice
+View
+Famous
+Coffee
+Central Plaza
+Tram
+Station
+Hotel Humperdink
+Figure 1: The town’s road network. We call the unlabelled vertex in the lower-right corner the
+South Junction.
+2B. A route for Motel Mildred, but not Hotel Humperdink
+StartingfromthenetworkafterPart2A,Mildredwillbuildoneadditionalroad. Whichtwolocations
+should it connect so that a guest can start at Motel Mildred, traverse every road exactly once, and
+finish at the Central Plaza, while no such route starts at Hotel Humperdink? Justify your answer.
+2C. Characterizing Eulerian paths
+LetGbe a connected multigraph, and letsanddbe two distinct designated vertices. AnEulerian
+path fromstodstarts ats, ends atd, and traverses every edge exactly once. Prove thatGhas
+such a path if and only ifsanddhave odd degree and every other vertex has even degree.
+2
+
+===== PDF PAGE 9 =====
+Question 3: Group Admission at a Museum
+A museum can admit at mostnvisitors in one day. There aremgroups, and groupicontainsg i
+visitors. A group must be admitted in full or rejected in full. The objective is to maximize the total
+number of admitted visitors. Assume thatgi andnare positive integers.
+3A. Analyzing a greedy algorithm
+Consider the following algorithm. It processes the groups in nonincreasing order of size and admits
+a group whenever it fits in the remaining capacity.
+Algorithm 1:Largest-first group admission
+1F unctionGroupAdmission(g[1..m], n)
+2reorder the groups so thatg 1 ≥g 2 ≥ · · · ≥g m
+3admitted←0
+4remaining←n
+5fori←1tomdo
+6ifg i ≤remainingthen
+7ADMIT(i)
+8remaining←remaining−g i
+9admitted←admitted+g i
+10else
+11REJECT(i)
+12returnadmitted
+Prove that this is a2-approximation: if an optimal solution admitsOPTvisitors, the algorithm
+admits at leastOPT/2visitors.
+3B. Showing that the analysis is tight
+Give a family of instances for which the ratioALG/OPTapproaches1/2as the capacityngrows.
+3C. A read-only, constant-space algorithm
+Now suppose that the arrayg[1..m]is stored in read-only memory. You may scan it repeatedly, but
+you may not reorder it, modify it, or copy it, and you may use onlyO(1)extra space.
+Give a polynomial-time2-approximation under these restrictions. Aim for anO(m)-time algorithm.
+Hint: First find the largest group that fits by itself, and consider separately whether its size is at
+leastn/2.
+3
+
+===== PDF PAGE 10 =====
+CS4234: Optimization Algorithms
+Semester 1, AY 2026-27
+School of Computing, NUS
+Solutions for Tutorial 2
+Question 1: Traveling Salesperson Algorithms
+1A. AnO(2 nn2)dynamic program
+Fix a vertexr∈V. For every subsetS⊆Vwithr∈Sand everyv∈S, define
+D[S, v] =minimum cost of a path that starts atr, visits exactly the vertices inS, and ends atv.
+The path is required to visit every vertex inSexactly once. The base case is
+D[{r}, r] = 0.
+All other states that do not satisfy the definition are assigned value+∞. For|S| ≥2andv∈S\{r},
+the recurrence is
+D[S, v] = min
+u∈S\{v}
+ 
+D[S\ {v}, u] +c(u, v)
+
+.
+After filling the table in increasing order of|S|, the optimal tour cost is
+min
+v∈V\{r}
+ 
+D[V, v] +c(v, r)
+
+.
+Correctness.We prove the recurrence by induction on|S|. The base state is the empty path
+atr. Consider an optimal path counted byD[S, v], and letube the vertex immediately before
+v. Removing its last edge(u, v)leaves a minimum-cost path counted byD[S\ {v}, u]; otherwise
+replacing that prefix by a cheaper one would improve the original path. Conversely, appending(u, v)
+to any path counted byD[S\ {v}, u]produces a feasible path forD[S, v]. Taking the minimum over
+all possible predecessorsuis therefore exact. Finally, every Hamiltonian cycle throughrhas some
+last vertexvbefore returning tor, which gives the final minimization above.
+There are at mostn2n−1 =O(n2 n)states and at mostntransitions per state. Thus the running
+time isO(2 nn2)and the table usesO(2 nn)space. Storing a minimizing predecessor for each state
+also allows the tour to be reconstructed.
+1B. A metric instance where double-tree is not optimal
+Consider four vertices arranged on the unit cycle
+A−B−D−C−A.
+1
+
+===== PDF PAGE 11 =====
+Give each cycle edge cost1, and give the two diagonalsA−DandB−Ccost2. These costs form
+a metric: they are exactly the shortest-path distances in the unit cycle.
+A B
+C D
+1
+1
+1
+1 2
+2
+Figure 1: A metric four-vertex instance. One possible MST is highlighted in blue.
+Choose the MST with edgesA−B,A−C, andC−D, which has cost3. After doubling these
+edges, one valid Eulerian tour is
+A, B, A, C, D, C, A.
+Shortcutting repeated vertices returns
+A, B, C, D, A,
+whose cost is
+1 + 2 + 1 + 2 = 6.
+However,
+A, B, D, C, A
+is a valid tour of cost
+1 + 1 + 1 + 1 = 4.
+Thus this valid execution of the double-tree algorithm is not optimal.
+Question 2: Building Roads for Eulerian Tours
+Use the abbreviationsM(Motel Mildred),N(Nice View),C(Famous Coffee),P(Central Plaza),
+T(Tram Station),H(Hotel Humperdink), andS(South Junction). Their initial degrees are
+vertex M N C P T H S
+deg 2 2 4 5 4 2 3
+Thus the two initially odd vertices arePandS. Adding a road toggles the parity of exactly its two
+endpoints.
+2
+
+===== PDF PAGE 12 =====
+2A. Humperdink’s road
+To obtain an Eulerian path fromHtoP, the odd vertices must become preciselyHandP. Vertex
+Pis already odd, so its parity should not change. We must toggleHfrom even to odd andSfrom
+odd to even. Therefore, Humperdink should build asecond, parallel road betweenHandS.
+M N
+C
+P T
+H S
+Figure 2: Part 2A: the blue curved edge is a new road parallel to the existingH–Sroad. The
+remaining odd vertices areHandP.
+After this addition,deg(H) = 3anddeg(S) = 4, while all other degrees are unchanged. Hence
+exactlyHandPare odd, as required.
+For example, treating the two parallelH–Sroads as distinct edges, one valid Eulerian path is
+H, P, M, C, N, T, C, P, T, S, H, S, P.
+2B. Mildred’s road
+After Part 2A, the odd vertices areHandP. Mildred wants them to beMandP. She should
+thereforetoggleHandMbybuildingaroadbetweenMotelMildredandHotelHumperdink.
+M N
+C
+P T
+H S
+Figure 3: Part 2B: the green roadM–Hmoves the odd endpoint fromHtoM. The blue road from
+Part 2A remains.
+3
+
+===== PDF PAGE 13 =====
+NowMandPare the only odd vertices, so an Eulerian path runs fromMtoP. VertexHis even,
+so no Eulerian path can start atHand end atP.
+One valid Eulerian path after both roads have been added is
+M, H, P, M, C, N, T, C, P, T, S, H, S, P.
+2C. Characterization of Eulerian paths
+Necessity.Suppose an Eulerian path starts atsand ends atd. At every vertex other thansand
+d, each arrival along an edge is paired with a departure along a different edge. Thus its incident
+edges occur in pairs, so the vertex has even degree. Ats, there is one initial departure with no
+matching arrival; all other incident edges are paired. Henceshas odd degree. Similarly,dhas one
+final arrival with no matching departure, sodhas odd degree.
+Sufficiency.Supposesanddare odd and every other vertex is even. Add one new edge betweens
+andd. The resulting connected multigraph has even degree at every vertex, so Euler’s cycle theorem
+(or Hierholzer’s algorithm) gives an Eulerian cycle. Delete the newly added edge from that cycle
+and start reading the remaining edges immediately after the deletion. What remains is a trail that
+starts at one ofs, d, ends at the other, and uses every original edge exactly once. Reverse it if
+necessary to obtain an Eulerian path fromstod.
+Question 3: Group Admission at a Museum
+Groups larger thanncannot occur in any feasible solution, so they may be ignored in every part.
+3A. The largest-first algorithm is a1/2-approximation
+LetAbe the number of visitors admitted by the greedy algorithm.
+IfA≥n/2, thenOPT≤nimmediately gives
+A≥ n
+2 ≥ OPT
+2 .
+It remains to considerA < n/2. The final unused capacity is then
+r=n−A > n
+2 .
+Remaining capacity never increases, so it was at leastrwhenever a group was processed. Therefore
+every group of size at mostn/2fitted when it was considered and was admitted.
+There also cannot be a feasible group of size strictly greater thann/2. If such groups existed, the
+largest-first order would consider one of them before any group of size at mostn/2. The first feasible
+such group would fit into the initially empty museum, forcingA > n/2, a contradiction. Thus every
+group that could belong to an optimal solution was admitted by the greedy algorithm. In this case
+A= OPT.
+In both cases,A≥OPT/2.
+4
+
+===== PDF PAGE 14 =====
+3B. A family approaching the factor1/2
+Letn= 2kand consider three groups of sizes
+k+ 1, k, k.
+The greedy algorithm first admits the group of sizek+ 1. Onlyk−1places remain, so it rejects
+both groups of sizek. Hence
+ALG =k+ 1.
+The optimum admits the two groups of sizek, filling all2kplaces, so
+OPT = 2k.
+Consequently,
+ALG
+OPT = k+ 1
+2k = 1
+2 + 1
+2k − →1
+2 .
+3C. AnO(m)-time,O(1)-space algorithm
+Make one pass through the read-only array to find an indexbof a largest group satisfyinggb ≤n.
+If no such group exists, return the empty solution.
+1. Ifg b ≥n/2, admit only groupb.
+2. Ifg b < n/2, make a second pass through the groups in their given order, admitting a group
+whenever it fits in the remaining capacity.
+The algorithm stores only the current maximum, its index, the remaining capacity, and the running
+admitted total, so it usesO(1)extra space.
+For the first case,
+ALG =g b ≥ n
+2 ≥ OPT
+2 .
+For the second case, every feasible group has size strictly less thann/2. LetAbe the total produced
+by the second pass. IfA≥n/2, the same capacity bound provesA≥OPT/2. IfA < n/2, the final
+unused capacity is greater thann/2and was never smaller earlier in the scan. Every feasible group
+is smaller than this amount, so every feasible group was admitted. The solution is then optimal.
+Thus the algorithm is always a1/2-approximation.
+Both passes takeO(m)time, and the extra space isO(1).
+5
+
+===== PDF PAGE 15 =====
+CS4234: Optimization Algorithms
+Semester 1, AY 2026–27
+School of Computing, NUS
+Problem Set for Tutorial 3
+Question 1: A Randomized Approximation for MAXk-CUT
+LetG= (V, E)be an undirected graph with nonnegative edge weightswij, and letk≥2. A feasible
+solution partitionsVintokpossibly empty partsV 1, . . . , Vk. Its value is the total weight of the
+edges whose endpoints lie in different parts.
+Give a randomized polynomial-time algorithm whose expected value is at leastk−1
+k OPT.Prove the
+approximation guarantee.
+Question 2: A Basic Randomized Approximation for MAX DICUT
+LetG= (V, A)be a directed graph with nonnegative arc weightsw ij. Assume thatGhas no
+self-loops; such loops can be discarded because they never cross a directed cut. A directed cut is a
+partition(U, W)ofV, whereW=V\U. Its value is the total weight of the arcs(i, j)∈Awith
+i∈Uandj∈W.
+Give a randomized polynomial-time algorithm whose expected value is at least1
+4 OPT.Prove the
+approximation guarantee.
+Question 3: LP Rounding for MAX DICUT
+Use the same notation as in Question 2.
+3A. An integer-programming formulation
+For each vertexi∈V, letx i indicate whetheriis placed inU. For each arc(i, j)∈A, letz ij
+indicate whether that arc contributes to the directed cut. Show that the following integer program
+1
+
+===== PDF PAGE 16 =====
+has an optimum equal to the maximum directed-cut value:
+maximize
+X
+(i,j)∈A
+wijzij
+subject toz ij ≤x i,for every(i, j)∈A,
+zij ≤1−x j,for every(i, j)∈A,
+xi ∈ {0,1},for everyi∈V,
+0≤z ij ≤1,for every(i, j)∈A.
+Explain both directions: how a directed cut induces a feasible solution of the same value, and how
+an optimal integral solution induces a directed cut of the same value.
+3B. Randomized rounding
+Relax the constraintsx i ∈ {0,1}to0≤x i ≤1and solve the resulting linear program. Let(x, z)
+be an optimal LP solution. Independently place each vertexiinUwith probability
+pi = 1
+4 + xi
+2 ,
+and place every remaining vertex inW.
+Prove that the expected weight of the resulting directed cut is at least half the LP optimum, and
+hence that this is a randomized2-approximation for MAX DICUT.
+2
+
+===== PDF PAGE 17 =====
+CS4234: Optimization Algorithms
+Semester 1, AY 2026–27
+School of Computing, NUS
+Solutions for Tutorial 3
+Question 1: A Randomized Approximation for MAXk-CUT
+Independently assign every vertexv∈Va labelL(v)chosen uniformly from{1, . . . , k}, and set
+Va ={v∈V:L(v) =a}fora= 1, . . . , k.
+This produces a feasiblek-cut.
+For each edgee={i, j} ∈E, writew e =w ij and letX e be the indicator that its endpoints receive
+different labels. The probability that the endpoints receive the same label is
+Pr[L(i) =L(j)] =
+kX
+a=1
+Pr[L(i) =a] Pr[L(j) =a] =k
+ 1
+k
+2
+= 1
+k .
+Therefore,
+E[Xe] = Pr[X e = 1] = 1− 1
+k = k−1
+k .
+By linearity of expectation, the expected value of the cut is
+E
+"X
+e∈E
+weXe
+#
+=
+X
+e∈E
+weE[Xe]
+= k−1
+k
+X
+e∈E
+we.
+Because all weights are nonnegative, nok-cut can have value larger than the total edge weight.
+Hence
+OPT≤
+X
+e∈E
+we,
+and consequently
+E[value returned]≥ k−1
+k OPT.
+Thus the algorithm is a randomizedk/(k−1)-approximation in expectation. Generating the labels
+and evaluating the cut takesO(|V|+|E|)time.
+1
+
+===== PDF PAGE 18 =====
+Question 2: A Basic Randomized Approximation for MAX DICUT
+Independently place each vertex inUwith probability1/2, and place it inWotherwise.
+For every arca= (i, j)∈A, writew a =w ij and letX a indicate that the arc goes fromUtoW.
+Sincei̸=jand the two vertex choices are independent,
+Pr[Xa = 1] = Pr[i∈U] Pr[j∈W] = 1
+2 · 1
+2 = 1
+4 .
+It follows from linearity of expectation that
+E[value returned] =
+X
+a∈A
+waE[Xa] = 1
+4
+X
+a∈A
+wa.
+Every directed cut contains only arcs fromA, and all arc weights are nonnegative. Therefore
+OPT≤
+X
+a∈A
+wa,
+which gives
+E[value returned]≥ 1
+4 OPT.
+This is a randomized4-approximation in expectation. Its running time isO(|V|+|A|).
+Notice that the indicators belonging to different arcs need not be independent. Linearity of expec-
+tation applies regardless of dependencies between them.
+Question 3: LP Rounding for MAX DICUT
+3A. Correctness of the integer program
+We interpretxi = 1as placing vertexiinU, andx i = 0as placing it inW.
+First, consider any directed cut(U, W). Set
+xi =
+(
+1, i∈U,
+0, i∈W,
+and setz ij = 1exactly wheni∈Uandj∈W. Ifz ij = 1, thenx i = 1and1−x j = 1, so
+both constraints onzij are satisfied. Whenz ij = 0, they are satisfied automatically. The resulting
+integer-program objective is exactly the value of the cut. Thus every directed cut induces a feasible
+solution of the same value.
+Conversely, take any feasible solution with integralxand define
+U={i∈V:x i = 1}, W=V\U.
+If an arc(i, j)does not go fromUtoW, then eitherx i = 0orx j = 1. In the first case,zij ≤x i = 0;
+in the second case,zij ≤1−x j = 0. Therefore only arcs directed fromUtoWcan have positive
+zij, and the integer-program objective is at most the value of the cut(U, W).
+2
+
+===== PDF PAGE 19 =====
+For a fixed integral vectorx, if(i, j)goes fromUtoW, both upper bounds onz ij equal1. Since
+wij ≥0, we may setz ij = 1without decreasing the objective. Hence an optimal integral solution
+and its induced directed cut can be chosen to have the same value. Combining the two directions
+shows that the integer-program optimum equals the MAX DICUT optimum. It also explains why
+the variablesz ij need not be declared integral.
+3B. Analysis of the randomized rounding
+Let(x, z)be an optimal solution to the LP relaxation, with value
+LP⋆ =
+X
+(i,j)∈A
+wijzij.
+For each vertexi, the rounding algorithm independently placesiinUwith probability
+pi = 1
+4 + xi
+2 .
+Because0≤x i ≤1, we have1/4≤p i ≤3/4, so these are valid probabilities.
+Fix an arc(i, j)∈A. It contributes to the rounded directed cut precisely wheni∈Uandj∈W.
+Independence gives
+Pr[i∈U, j∈W] =p i(1−p j)
+=
+ 1
+4 + xi
+2
+ 3
+4 − xj
+2
+
+=
+ 1
+4 + xi
+2
+ 1
+4 + 1−x j
+2
+
+.
+The LP constraints givezij ≤x i andz ij ≤1−x j. Hence each of the two factors above is at least
+1/4 +z ij/2, and therefore
+Pr[i∈U, j∈W]≥
+ 1
+4 + zij
+2
+2
+= zij
+2 + (2zij −1) 2
+16
+≥ zij
+2 .
+LetX ij be the indicator that arc(i, j)contributes to the rounded cut. Using the preceding bound
+and linearity of expectation,
+E[value returned] =
+X
+(i,j)∈A
+wijE[Xij]
+=
+X
+(i,j)∈A
+wij Pr[i∈U, j∈W]
+≥ 1
+2
+X
+(i,j)∈A
+wijzij
+= 1
+2 LP⋆
+≥ 1
+2 OPT.
+3
+
+===== PDF PAGE 20 =====
+The last inequality holds because the LP relaxation is an upper bound on the integer optimum.
+Thus the rounding algorithm is a randomized2-approximation in expectation.
+Solving the LP takes polynomial time. Once an optimal LP solution is available, the rounding and
+evaluation steps takeO(|V|+|A|)time. Hence the entire algorithm runs in polynomial time.
+4
+
+===== PDF PAGE 21 =====
+CS4234: Optimization Algorithms
+Semester 1, AY 2026–27
+School of Computing, NUS
+Problem Set for Tutorial 4
+Question 1: Randomized LP Rounding for Weighted Set Cover
+LetUbe a universe ofn≥2elements, and letS={S 1, . . . , Sm}be a family of subsets whose union
+isU. SetS j has nonnegative costcj. Aset coveris a subfamilyC ⊆ Ssuch that
+[
+S∈C
+S=U.
+Its cost is the sum of the costs of its sets. LetOPTbe the minimum cost of a set cover.
+UsingthenaturalLPrelaxationandrandomizedrounding, designaLasVegasrandomizedalgorithm
+that returns a valid set cover with probability1(and every returned solution is feasible), runs in
+expected polynomial time, and satisfies
+E[cost(C)]≤O(logn)OPT.
+State the LP relaxation, describe the algorithm, and prove all three properties.
+Hint.Starting from an optimal LP solution, consider several independent rounds of randomized
+rounding in one trial. Bound the probability that a fixed element remains uncovered, and repeat
+fresh trials until a cover is obtained. Take care when bounding the expected cost of the first
+successful trial.
+Question 2: Menger’s Theorem via Max Flow
+LetG= (V, E)be an undirected graph, and letx, y∈Vbe distinct, nonadjacent vertices. Anx–y
+vertex separatoris a setC⊆V\ {x, y}such thatG−Ccontains no path fromxtoy. Twox–y
+paths areinternally vertex-disjointif they have no common vertex other thanxandy.
+Prove the vertex version of Menger’s theorem using the Max-Flow Min-Cut Theorem:
+min{|C|:Cis anx–yvertex separator}= max{k:Gcontainskpairwise internally vertex-disjointx–ypaths}.
+Give an explicit flow-network construction and justify both the cut–separator correspondence and
+the flow–path correspondence.
+1
+
+===== PDF PAGE 22 =====
+Question 3: Breaking Ties Between Minimum Cuts
+LetG= (V, A)be a directed flow network with sources, sinkt, and nonnegative integer capacities
+ca. For an(s, t)-cut(S, V\S), let
+δ+(S) ={(u, v)∈A:u∈S, v /∈S}.
+Its capacity isc(S) = P
+a∈δ+(S) ca, and its cardinality is|δ+(S)|.
+Give a polynomial-time algorithm that finds, among all minimum(s, t)-cuts, one having the smallest
+cardinality. Prove that your algorithm is correct and analyze its running time.
+Question 4: An Arc Cannot Cross Minimum Cuts in Opposite Di-
+rections
+Lete= (u, v)∈Abe an arc of positive capacity in a directed flow networkG= (V, A). Suppose
+that there is a minimum(s, t)-cut(S, V\S)withu∈Sandv /∈S. Prove that there is no minimum
+(s, t)-cut(S ′, V\S ′)withu /∈S ′ andv∈S ′.
+2
+
+===== PDF PAGE 23 =====
+CS4234: Optimization Algorithms
+Semester 1, AY 2026–27
+School of Computing, NUS
+Solutions for Tutorial 4
+Question 1: Randomized LP Rounding for Weighted Set Cover
+The LP relaxation
+For each setS j, introduce a variablex j indicating whether that set is selected. The natural LP
+relaxation is
+minimize
+mX
+j=1
+cjxj
+subject to
+X
+j:e∈Sj
+xj ≥1,for everye∈U,
+0≤x j ≤1,for everyj= 1, . . . , m.
+Letx ∗ be an optimal LP solution and write
+LP⋆ =
+mX
+j=1
+cjx∗
+j .
+The characteristic vector of every set cover is feasible for this LP and has the same cost. Conse-
+quently,
+LP⋆ ≤OPT.
+The rounding algorithm
+Set
+r=⌈ln(2n)⌉.
+Onetrialconsistsofrindependentroundingrounds. Ineveryround, selecteachsetS j independently
+with probabilityx ∗
+j. LetCbe the union of the sets selected in allrrounds; duplicate selections are
+ignored. IfCcoversU, return it. Otherwise, discard it and perform a fresh, independent trial. Thus
+the algorithm returns the first successful trial.
+1
+
+===== PDF PAGE 24 =====
+Probability that one trial succeeds
+Fix an elemente∈U. In one rounding round,
+Pr[eis not covered] =
+Y
+j:e∈Sj
+(1−x ∗
+j )
+≤exp
+
+−
+X
+j:e∈Sj
+x∗
+j
+
+
+≤e −1.
+The first inequality uses1−z≤e −z, and the second uses the LP covering constraint fore. Since
+therrounds are independent,
+Pr[eremains uncovered after the trial]≤e −r ≤ 1
+2n .
+A union bound over allnelements gives
+Pr[Cis not a set cover]≤n· 1
+2n = 1
+2 .
+LetAbe the event that a trial succeeds and letq= Pr[A]. We have shown thatq≥1/2.
+Expected cost of one trial
+LetI j indicate thatS j is selected in at least one of therrounds. By the union bound,
+E[Ij] = Pr[I j = 1] = 1−(1−x ∗
+j )r ≤rx ∗
+j .
+Therefore, by linearity of expectation,
+E[cost(C)] =
+mX
+j=1
+cjE[Ij]
+≤r
+mX
+j=1
+cjx∗
+j
+=rLP ⋆.
+The first successful trial
+LetC t andA t denote the rounded family and success event in trialt, and let
+N= min{t≥1 :A t occurs}.
+The trials are independent and each succeeds with probabilityq≥1/2. Hence
+Pr[N > t] = (1−q) t ≤2 −t,
+soNis finite with probability1andE[N] = 1/q≤2.
+2
+
+===== PDF PAGE 25 =====
+The cost of a trial and its success event may be correlated, so we account for this explicitly. Using
+independence between different trials,
+E[cost(CN )] =
+X
+t≥1
+E
+
+cost(Ct)1{N=t}
+
+=
+X
+t≥1
+(1−q) t−1E[cost(C)1 A]
+= E[cost(C)1A]
+q
+≤ E[cost(C)]
+q
+≤2rLP ⋆
+≤2⌈ln(2n)⌉OPT.
+Thus the algorithm terminates with probability1, and whenever it terminates it returns a valid set
+cover. Its expected cost is at most2⌈ln(2n)⌉OPT =O(logn)OPT.
+Solving the LP takes polynomial time. Each trial usesr=O(logn)sampling rounds and a
+polynomial-time coverage check, and the expected number of trials is at most2. Thus the algorithm
+runs in expected polynomial time.
+Question 2: Menger’s Theorem via Max Flow
+Writen=|V|. Construct a directed capacitated networkNas follows. For every vertexv∈
+V\ {x, y}, create two verticesv in andv out, together with the arc
+(vin, vout)
+of capacity1. Do not splitxory. For convenience, define
+v− =
+(
+vin, v /∈ {x, y},
+v, v∈ {x, y}, v+ =
+(
+vout, v /∈ {x, y},
+v, v∈ {x, y}.
+For every undirected edge{u, v} ∈E, add the two arcs
+(u+, v−)and(v +, u−),
+each with capacityM=n+ 1. The source isxand the sink isy.
+Paths and integral flows
+Suppose thatGcontainskpairwise internally vertex-disjointx–ypaths. Each such path gives a
+directedx–ypath inN. Whenever it visits an internal vertexv, it uses the splitting arc
+vin − →vout.
+Send one unit of flow along each path. The original paths are internally vertex-disjoint, so no
+capacity-1splitting arc is used more than once. This gives a feasible flow of valuek.
+3
+
+===== PDF PAGE 26 =====
+Conversely, all capacities inNare integers, so there is an integral maximum flow. Decompose an
+integral flow of valuekinto unitx–yflow paths, discarding flow cycles. Every path that passes
+through an internal vertexvuses(v in, vout), whose capacity is1. Hence at most one unit path
+usesv. Mapping the flow paths back toGyieldskpairwise internally vertex-disjointx–ypaths.
+Therefore,
+maximum flow value inN=maximum number of internally vertex-disjointx–ypaths inG.
+Separators and cuts
+LetCbe anx–yvertex separator inG. Delete fromNthe splitting arcs
+{(vin, vout) :v∈C}.
+There is then no directed path fromxtoy; otherwise it would map to a path inG−C. LetRbe
+the set reachable fromxafter these arcs are deleted. Theny /∈R. Every arc of the original network
+leavingRmust be one of the deleted splitting arcs, since the head of any undeleted outgoing arc
+would also be reachable. Thus(R, V(N)\R)is a cut of capacity at most|C|.
+Letλbe the minimum cut capacity inN, and letκbe the minimum size of anx–yvertex separator
+inG. The preceding argument shows
+λ≤κ.
+Becausexandyare nonadjacent,V\ {x, y}is anx–yseparator. Hence
+λ≤n−2< M.
+Let(P, Q)be a minimumx–ycut inN. Its capacity is less thanM, so no capacity-Marc leaves
+P. Every arc leavingPis therefore a capacity-1splitting arc. Define
+C={v∈V\ {x, y}:v in ∈P, v out ∈Q}.
+The cut capacity is|C|. Moreover,CseparatesxfromyinG. Otherwise, anx–ypath inG−C
+would induce a directed path inNavoiding all the splitting arcs belonging toC. That path would
+have to leaveP, contradicting the fact that precisely those splitting arcs are the arcs leavingP.
+Consequently,
+κ≤ |C|=λ.
+We conclude thatκ=λ.
+The Max-Flow Min-Cut Theorem and the two correspondences now give
+min{size of anx–yvertex separator}=minimum cut capacity inN
+=maximum flow value inN
+= max{number of pairwise internally vertex-disjointx–ypaths}.
+The networkNhas2n−2vertices and2|E|+n−2arcs. It can be constructed inO(n+|E|)time,
+after which one maximum-flow computation completes the proof constructively.
+4
+
+===== PDF PAGE 27 =====
+Question 3: Breaking Ties Between Minimum Cuts
+Letm=|A|. Replace the capacity of each arcaby
+bca = (m+ 1)c a + 1.
+Compute a minimum(s, t)-cut using the modified capacities and return it.
+For a cut with source sideS, write
+q(S) =|δ +(S)|.
+Its modified capacity is
+bc(S) =
+X
+a∈δ+(S)
+ 
+(m+ 1)c a + 1
+
+= (m+ 1)c(S) +q(S).
+Thus the first term records the original cut capacity, while the second records its cardinality.
+Let
+λ= min{c(S) :Sis the source side of an(s, t)-cut},
+and letS ∗ be a cut of capacityλhaving the smallest cardinality among all such cuts. Since
+q(S ∗)≤m,
+bc(S∗) = (m+ 1)λ+q(S ∗)≤(m+ 1)λ+m.
+Let bSminimize the modified capacity. We first show thatc(bS) =λ. Ifc( bS)> λ, integrality of the
+original capacities impliesc(bS)≥λ+ 1. It would follow that
+bc(bS)≥(m+ 1)(λ+ 1) = (m+ 1)λ+m+ 1>bc(S ∗),
+contradicting the choice ofbS. Thus bSis an original minimum cut.
+For every original minimum cutS,
+bc(S) = (m+ 1)λ+q(S).
+The first term is identical for all such cuts, so minimizingbc(S)minimizesq(S). ThereforebShas the
+smallest cardinality among all original minimum cuts.
+Constructing the modified capacities takesO(m)time and increases their encoding length by only
+O(logm)bits. The algorithm then makes one maximum-flow/minimum-cut computation, so it runs
+in polynomial time. Rational capacities can first be scaled to integers without changing which cuts
+are minimum.
+Question 4: An Arc Cannot Cross Minimum Cuts in Opposite Di-
+rections
+Fix any maximums–tflowf, and let its value beλ. For a set of arcsB, writef(B) = P
+a∈B fa
+andc(B) = P
+a∈B ca. ForX⊆V, letδ +(X)denote the arcs leavingXand letδ −(X)denote the
+arcs enteringX.
+5
+
+===== PDF PAGE 28 =====
+LetXbe the source side of any minimum(s, t)-cut. Flow conservation and the Max-Flow Min-Cut
+Theorem give
+λ=f(δ +(X))−f(δ −(X)) =c(δ +(X)).
+Consequently,
+0 =c(δ +(X))−λ
+=
+X
+a∈δ+(X)
+(ca −f a) +
+X
+a∈δ−(X)
+fa.
+Every summand is nonnegative. Hence every arc leavingXis saturated, while every arc entering
+Xcarries zero flow.
+Apply this observation to the minimum cut with source sideS. Sinceu∈Sandv /∈S, the arc
+e= (u, v)leavesS, and therefore
+fe =c e >0.
+If there were a minimum cut with source sideS′ such thatu /∈S ′ andv∈S ′, thenewould enter
+S′. The same observation would give
+fe = 0,
+a contradiction. Thus no minimum cut can place(u, v)in the opposite direction.
+6

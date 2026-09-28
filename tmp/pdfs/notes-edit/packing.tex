@@ -1,0 +1,67 @@
+\subsection{Vertex cover from a maximal matching}
+\label{gre:vc}
+View each edge as an element and each vertex as the set of its incident edges. Every
+element then belongs to exactly two sets. For the \emph{unweighted} problem, greedily
+construct any maximal matching $M$ and return the set $C$ of \textbf{all endpoints of $M$}.
+\begin{algorithm}[H]
+\caption{Maximal-matching vertex cover}
+\KwIn{Undirected graph $G=(V,E)$}
+\KwOut{A vertex cover $C\subseteq V$}
+$M\gets\varnothing$; mark all vertices unmatched\;
+\ForEach{$\{u,v\}\in E$}{
+  \If{both $u$ and $v$ are unmatched}{
+    $M\gets M\cup\{\{u,v\}\}$; mark $u,v$ matched\;
+  }
+}
+\Return $C=\bigcup_{e\in M}e$\;
+\end{algorithm}
+\begin{proof}
+An uncovered edge would have two unmatched endpoints and could be added to $M$, contrary
+to maximality. Any vertex cover must take a distinct endpoint from each pairwise disjoint
+matching edge, so $|M|\le\OPT$. Hence $|C|=2|M|\le2\OPT$.
+The scan takes $O(|V|+|E|)$ time. Maximum matching is unnecessary; maximality proves
+coverage, while disjointness proves the lower bound.
+\end{proof}
+This unweighted cardinality proof does not give a weighted-vertex-cover guarantee by
+simply summing endpoint weights; use LP rounding for that version.
+
+\paragraph{Why complements do not preserve approximation.}
+The complement of any vertex cover is an independent set, and $\OPT_{IS}=|V|-\OPT_{VC}$.
+But $|C|\le2\OPT_{VC}$ only implies
+$|V\setminus C|\ge2\OPT_{IS}-|V|$, which can be useless. On $q$ disjoint edges plus one
+isolated vertex, the matching algorithm selects all $2q$ nonisolated vertices. Its complement
+has size 1, while $\OPT_{IS}=q+1$. Thus exact optimization equivalence does not imply
+approximation preservation.
+
+\subsection{Triangle deletion and disjoint-obstruction packing}
+\label{gre:triangles}
+To delete as few edges as possible so that an undirected graph becomes triangle-free,
+repeatedly find a remaining triangle and delete \emph{all three} of its edges. Return the
+union $F$ of deleted edges.
+\begin{proof}
+The process stops with no triangle. The selected triangles are pairwise edge-disjoint,
+because earlier selected edges were deleted. If $k$ triangles were selected, every feasible
+deletion set must remove at least one distinct edge from each of these triangles, so
+$\OPT\ge k$. Our output has $|F|=3k\le3\OPT$.
+One implementation scans all vertex triples once with an adjacency matrix: select a
+triangle only if none of its edges was selected earlier. At the end, any surviving triangle
+would have been eligible when its triple was scanned, a contradiction. Time is
+$O(|V|^3+|E|)$ with constant-time edge tests.
+\end{proof}
+\textbf{Counterexample to deleting an arbitrary single edge per triangle:}
+take a shared edge $ab$ and vertices $v_1,\ldots,v_q$, each joined to both $a$ and $b$.
+Deleting $ab$ solves the instance, while repeatedly deleting a spoke can require $q$ edges.
+
+\paragraph{Reusable generalization.}
+For fixed forbidden subgraphs whose occurrences cannot be created by deleting edges,
+suppose every forbidden configuration has $r$ edges for a fixed constant $r$. Select a maximal
+collection of edge-disjoint configurations and delete all their edges. Maximality gives
+feasibility, disjointness gives $\OPT\ge k$, and $\ALG=rk\le r\OPT$. Detection must be
+polynomial; the fact that $r$ is fixed is relevant. Induced patterns need separate care:
+edge deletion can create a new induced pattern. Weighted deletions need a different cost argument.
+
+\paragraph{Greedy by number of triangles removed.}
+This is weighted set cover on the universe of original triangles, with each graph edge
+covering the triangles that contain it. Recompute marginal coverage after each deletion.
+The generic proof gives an $H_N$ bound, where $N$ is the number of original triangles;
+it does not by itself establish the factor 3 above.

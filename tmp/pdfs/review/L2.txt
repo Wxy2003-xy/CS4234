@@ -1,0 +1,815 @@
+===== PDF PAGE 1 =====
+Optimization Algorithms
+Diptarka Chakraborty
+Week 2 
+Set Cover, Vertex Cover,
+Traveling Salesperson
+CS4234
+
+===== PDF PAGE 2 =====
+Set cover: choose sets that cover every element
+2
+Universe U = {e₁, e₂, e₃, e₄, e₅, e₆}.  Each row below is one available set.
+Set e₁ e₂ e₃ e₄ e₅ e₆
+S₁
+S₂
+S₃
+S₄
+Goal: choose the fewest rows whose dots/elements touch every column.
+
+===== PDF PAGE 3 =====
+Two different covers use the same number of sets
+3
+Cover A
+S₁
+e₁ e₂ e₃
+S₂
+e₄ e₅ e₆
+Cover B
+S₃
+e₁ e₂ e₄ e₅
+S₄
+e₃ e₆
+2 sets 2 sets
+In unweighted set cover, both solutions are equally good.
+
+===== PDF PAGE 4 =====
+Costs distinguish equally small covers
+4
+Cover A
+S₁
+e₁ e₂ e₃
+cost 4
+S₂
+e₄ e₅ e₆
+cost 4
+Cover B
+S₃
+e₁ e₂ e₄ e₅
+cost 5
+S₄
+e₃ e₆
+cost 4
+total cost = 8 total cost = 9
+Weighted set cover minimizes total cost—not the number of sets.
+
+===== PDF PAGE 5 =====
+Exact optimization is hard—seek a guarantee
+5
+Decision version
+Given a budget B, is there a 
+cover
+with total cost at most B?
+NP-complete
+Approximation
+Find a polynomial-time solution
+and prove its worst-case ratio.
+cost(ALG) ≤ ρ · OPT
+We will prove a logarithmic guarantee for a simple greedy rule.
+
+===== PDF PAGE 6 =====
+Greedy buys the cheapest newly covered element
+6
+R = elements not yet covered score(S) = cost(S) / |S ∩ R|
+1 Compute every score
+2 Choose a minimum-score set
+3 Remove its newly covered elements from R
+Repeat until R = ∅.
+
+===== PDF PAGE 7 =====
+Iteration 1: S₃ has the best current price
+7
+All six elements are initially uncovered.
+Set e₁ e₂ e₃ e₄ e₅ e₆ cost cost / new
+S₁ 4 4/3 = 1.33
+S₂ 4 4/3 = 1.33
+S₃ 5 5/4 = 1.25
+S₄ 4 4/2 = 2.00
+Pick S₃; it covers e₁, e₂, e₄, e₅.
+
+===== PDF PAGE 8 =====
+Iteration 2: only e₃ and e₆ remain
+8
+Grey columns are already covered by S₃.
+Set e₁ e₂ e₃ e₄ e₅ e₆ cost cost / new
+S₁ 4 4/1 = 4.00
+S₂ 4 4/1 = 4.00
+S₃ 5 —
+S₄ 4 4/2 = 2.00
+Pick S₄; every element is now covered.
+
+===== PDF PAGE 9 =====
+Greedy is close—but not optimal
+9
+Optimal cover
+S₁
+e₁ e₂ e₃
+cost 4
+S₂
+e₄ e₅ e₆
+cost 4
+Greedy cover
+S₃
+e₁ e₂ e₄ e₅
+cost 5
+S₄
+e₃ e₆
+cost 4
+OPT = 8 GREEDY = 9
+How can we bound GREEDY / OPT without knowing OPT?
+
+===== PDF PAGE 10 =====
+Charge S₃'s cost equally to its new elements
+10
+Selected set S₃
+cost = 5
+e₁
+1.25
+e₂
+1.25
+e₄
+1.25
+e₅
+1.25
+5 = 4 × 1.25   — each newly covered element receives price p(e) = 1.25
+
+===== PDF PAGE 11 =====
+The element charges add up to greedy's cost
+11
+1.25
+e₁
+1.25
+e₂
+2
+e₃
+1.25
+e₄
+1.25
+e₅
+2
+e₆
+1.25 + 1.25 + 2 + 1.25 + 1.25 + 2 = 9
+Σₑ p(e) = cost(GREEDY)
+
+===== PDF PAGE 12 =====
+Focus on one set S* chosen by OPT
+12
+S* cost c*
+m elements
+We will bound the total greedy charge paid by the elements of S*.
+
+===== PDF PAGE 13 =====
+With r elements left, greedy's price is at most c*/r
+13
+S* is still available
+covered r uncovered
+S* could cover the remaining r elements
+at average cost c*/r.
+Greedy chooses a minimum score
+therefore   p(next element) ≤ c*/r
+This inequality is the core of the analysis.
+
+===== PDF PAGE 14 =====
+The harmonic series appears as elements are covered
+14
+remaining elements in S*
+c*/m c*/(m−1) c*/(m−2) c*/… c*/2 c*/1
+Each denominator shrinks, so later elements may receive a larger charge.
+Add these bounds—not the actual unknown optimal solution.
+
+===== PDF PAGE 15 =====
+Order S*'s elements by when greedy covers them
+15
+1
+e₁
+c*/m
+2
+e₂
+c*/(m−1)
+3
+e₃
+c*/(m−2)
+4
+…
+…
+5
+eₘ₋₁
+c*/2
+6
+eₘ
+c*
+p(eₜ) is no larger than the cost of S* divided by the number still uncovered.
+p(eₜ) ≤ c* / (m − t + 1)
+
+===== PDF PAGE 16 =====
+One optimal set is charged at most c* Hₘ
+16
+Σ   p(e)
+e ∈ S*
+≤ c*  ( 1/m + 1/(m−1) + ··· + 1 )
+=  c* Hₘ
+1 1/2 1/3 1/4 1/5 1/6 1/7
+Hₘ = 1 + 1/2 + ··· + 1/m
+
+===== PDF PAGE 17 =====
+Summing over OPT gives the approximation ratio
+17
+optimal set 𝑺𝟏
+∗
+charge ≤ Hₙ · cost(𝑺𝟏
+∗ )
+optimal set 𝑺𝟐
+∗
+charge ≤ Hₙ · cost(𝑺𝟐
+∗ )
+optimal set 𝑺𝟑
+∗
+charge ≤ Hₙ · cost(𝑺𝟑
+∗ )
+GREEDY = Σₑ p(e)
+≤  Hₙ · Σ       cost(S*)
+S* ∈ OPT
+=  Hₙ · OPT
+Every element is covered by at least one optimal set.
+
+===== PDF PAGE 18 =====
+The harmonic number grows logarithmically
+18
+1 2 3 4 5 6 7 8
+f(x) = 1/x Hₙ = 1 + 1/2 + ··· + 1/n
+≤ 1 + ∫₁ⁿ dx/x
+= 1 + ln n
+GREEDY ≤ Hₙ · OPT ≤ (1 + ln n) · OPT
+
+===== PDF PAGE 19 =====
+Greedy set cover is logarithmically optimal
+19
+Algorithm Choose the set with minimum cost per newly covered element.
+Guarantee cost(GREEDY) ≤ Hₙ · OPT ≤ (1 + ln n) · OPT.
+Limit For every α > 0, (1 − α) ln n approximation is NP-hard. 
+[ Dinur & Steurer’14]
+A simple local choice achieves an essentially best-possible global guarantee.
+
+===== PDF PAGE 20 =====
+Announcement
+20
+Tutorials Tutorial sessions start next week.
+Two groups Thu 14:00–15:00 at LT15  |  Tue 19:00–20:00 at COM4 Seminar Room 31
+Problem set Uploaded by Friday in the week before the tutorial.
+For next week's tutorial, look for the problem set tomorrow.
+
+===== PDF PAGE 21 =====
+Graph structure improves the guarantee
+21
+Generic set cover
+Edges are elements.
+Each vertex covers its incident 
+edges.
+logarithmic
+Use a matching
+Disjoint edges certify a lower bound 
+on every cover.
+factor 2
+Same covering idea—stronger structure—better guarantee.
+
+===== PDF PAGE 22 =====
+Vertex Cover: select vertices that touch every edge
+22
+A set C ⊆ V is a vertex cover if every edge has at least one endpoint in C.
+Goal: minimize |C|.
+a
+b
+d
+e
+f
+c
+Green vertices form a vertex cover
+
+===== PDF PAGE 23 =====
+Maximal matching gives a 2-approximation
+23
+M = ∅ Return C = endpoints(M)
+1 Choose any remaining edge e
+2 Add e to M
+3 Delete every edge incident to e
+Repeat until no edge remains.
+
+===== PDF PAGE 24 =====
+Build 1: choose any edge
+24
+Start with M = ∅ and choose edge {a,b}.
+Matched edges never share an endpoint.
+a
+b
+c
+d
+e
+f
+
+===== PDF PAGE 25 =====
+Build 2: choose another disjoint edge
+25
+Delete edges incident to a or b; then choose {d,e}.
+Matched edges never share an endpoint.
+a
+b
+c
+d
+e
+f
+
+===== PDF PAGE 26 =====
+Build 3: add (c,f) to the matching
+26
+The edge (c,f) is disjoint from the first two matched edges, so add it to M.
+Now M is maximal, and its endpoints form a vertex cover.
+a
+b
+c
+d
+e
+f
+
+===== PDF PAGE 27 =====
+Why matched endpoints cover every edge
+27
+Suppose {u,v} is uncovered
+u v
+u ∉ C v ∉ C
+Neither endpoint is incident to a matched 
+edge.
+So {u,v} is disjoint from M.
+Then {u,v} could be added to M
+contradicts maximality
+Therefore every edge has a selected endpoint.
+
+===== PDF PAGE 28 =====
+How is OPT related to |M| for any matching M?
+28
+
+===== PDF PAGE 29 =====
+A matching lower-bounds every vertex cover
+29
+The matching edges are disjoint, so a cover needs a distinct chosen endpoint for each one.
+For every matching M:  |M| ≤ OPT.
+a b c d e f
+one distinct cover vertex per matched edge
+
+===== PDF PAGE 30 =====
+Both endpoints give factor 2
+30
+maximal matching M
+matching edges are disjoint
+each edge forces one OPT vertex
+|C| = 2|M|
+≤ 2 · OPT
+2-approximation
+Feasibility comes from maximality; the guarantee comes from disjointness.
+
+===== PDF PAGE 31 =====
+Quick check: does maximum mean optimal?
+31
+Claim
+Endpoints of a maximum 
+matching always form an 
+optimal cover.
+TRUE/FALSE?
+
+===== PDF PAGE 32 =====
+Quick check: does maximum mean optimal?
+32
+Claim
+Endpoints of a maximum 
+matching always form an 
+optimal cover.
+FALSE
+What is true
+Endpoints of any maximal matching 
+cover all edges.
+≤ 2·OPT
+Maximum helps the lower bound; maximality proves feasibility.
+
+===== PDF PAGE 33 =====
+Traveling Salesperson Problem (TSP)
+33
+
+
+===== PDF PAGE 34 =====
+TSP: visit every vertex once and return
+34
+Input: a complete weighted graph.  Goal: a minimum-cost tour (Hamiltonian cycle).
+A tour uses every vertex exactly once before returning to the start.
+a
+b c
+d
+ef
+
+===== PDF PAGE 35 =====
+TSP: Brute Force and DP
+• Brute force: Try 𝑛! (or 𝑛 − 1 ! by fixing one node) permutations on 
+nodes ( 𝑉 = 𝑛)
+• Run time 𝑂(𝑛!)
+• Try Dynamic Programming (Held-Karp): 𝑂(𝑛22𝑛)
+35
+
+===== PDF PAGE 36 =====
+Cost structure changes what is possible
+36
+General TSP
+Arbitrary edge costs can create 
+an enormous YES/NO gap.
+no factor
+Metric TSP
+Triangle inequality makes shortcuts 
+safe.
+constant factor
+Triangle inequality is what enables approximation.
+
+===== PDF PAGE 37 =====
+Informal: A bridge creates an arbitrarily large TSP cost gap
+37
+NO instance: the cost-1 graph has a bridge
+a
+b
+c
+d
+e
+f
+solid green = cost 1 dashed red = cost B
+Complete the graph: cost 1 on edges of G;
+cost B on every non-edge.
+YES: a Hamiltonian cycle has cost n = 6
+NO: a cycle must cross the cut twice;
+only one cost-1 edge crosses it, so OPT ≥ B + 5
+Choose B = rn + 1: an r-approximation would separate YES from NO (unless P = NP).
+
+===== PDF PAGE 38 =====
+Metric TSP: the structural ingredients
+38
+Input Complete graph with nonnegative symmetric costs.
+Structure c(u,w) ≤ c(u,v) + c(v,w) triangle inequalaity
+Consequence Shortcut repeated vertices without increasing cost.
+First build an easy repeated walk; then turn it into a tour.
+
+===== PDF PAGE 39 =====
+Metric TSP is also NP-Hard
+• Metric TSP is NP-hard
+• To think: Where does the hardness come from?
+• Every vertex needs to be visited “exactly” once
+• What about “at least” once instead? (TSP-with Repetition)
+39
+
+===== PDF PAGE 40 =====
+A repeated walk contains a detour
+40
+Suppose v has already been visited and the walk uses u → v → w.
+Triangle inequality tells us the detour is never cheaper.
+u
+v
+w
+repeated visit
+
+===== PDF PAGE 41 =====
+Shortcut the repeated vertex
+41
+Replace u → v → w by the direct edge u → w.
+c(u,w) ≤ c(u,v) + c(v,w)
+u
+v
+w
+shortcut
+
+===== PDF PAGE 42 =====
+Can we solve Metric TSP with Repetition?
+• Again, NP-hard
+• But can we get an approximation?
+• Think about some “object” that connects all the vertices “with 
+minimum cost”
+• Have you encountered any such object before?
+42
+
+===== PDF PAGE 43 =====
+An MST (minimum spanning tree)is a lower bound on OPT
+43
+optimal TSP tour T*
+remove any one tour edge
+obtain a spanning tree
+cost(MST)
+≤ cost(that tree)
+≤ OPT
+This lower bound will pay for the spanning part of both TSP algorithms.
+
+===== PDF PAGE 44 =====
+Double-tree: MST → Euler walk → tour
+44
+H = minimum spanning tree Output a Hamiltonian tour
+1 Duplicate every edge of H
+2 Find an Eulerian cycle
+3 Shortcut repeated vertices
+The next four slides build the algorithm one layer at a time.
+
+===== PDF PAGE 45 =====
+Eulerian Cycle
+• Definition: In a multigraph 𝐺 = (𝑉, 𝐸), an Eulerian Cycle 𝐶 is a cycle 
+(sequence of edges) such that
+• Every edge 𝑢, 𝑣 ∈ 𝐸 appears in 𝐶 exactly the same number of times as in 𝐸
+(basically, each occurrence of edge 𝑢, 𝑣 ∈ 𝐸 appears exactly once)
+45
+Eulerian Cycle: A, B, C, D, E, F, G, H, I, J, K
+
+===== PDF PAGE 46 =====
+Eulerian Cycle: Existence and Algorithm
+• Theorem: A multigraph 𝐺 = 𝑉, 𝐸 has an Eulerian cycle if and only if
+• It is connected (except isolated vertices)
+• Each vertex has even degree
+• Moreover, there is a polynomial time algorithm that, given 𝐺 = 𝑉, 𝐸
+finds an Eulerian cycle if exists.
+• Proof: Exercise (Try using induction on the number of edges)
+46
+
+===== PDF PAGE 47 =====
+Build 1: compute a minimum spanning tree
+47
+The MST connects every vertex at cost at most OPT.
+Spanning lower bound:  cost(H) ≤ OPT.
+a
+b
+c
+d
+e
+f
+
+===== PDF PAGE 48 =====
+Build 2: duplicate every tree edge
+48
+Every degree becomes even; total multigraph cost is 2·cost(H).
+Parity is now fixed—but every tree edge was bought twice.
+a
+b
+c
+d
+e
+f
+
+===== PDF PAGE 49 =====
+Build 3: traverse an Eulerian cycle
+49
+A connected even-degree multigraph has an Eulerian cycle.
+The walk uses every copied edge exactly once.
+a
+b
+c
+d
+e
+f
+
+===== PDF PAGE 50 =====
+Build 4: shortcut repeated vertices
+50
+Remove repeated visits using triangle inequality.
+The shortcut tour costs no more than the Euler walk.
+a
+b
+c
+d
+e
+f
+
+===== PDF PAGE 51 =====
+Double-tree costs at most 2·OPT
+51
+MST H
+double every edge
+shortcut the Euler walk
+cost(T)
+≤ 2·cost(H)
+≤ 2·OPT
+The two losses are visible: double the tree, then never increase cost again.
+
+===== PDF PAGE 52 =====
+Exercise
+• Try https://visualgo.net/en/tsp
+• Design an example such that the above algorithm cannot get 
+“asymptotically” better than 2-factor approximation
+52
+
+
+===== PDF PAGE 53 =====
+Where does factor 2 come from?
+53
+Double-tree
+Buy a second copy of every MST 
+edge.
++ cost(H)
+Observation
+Only odd-degree vertices block an 
+Eulerian cycle.
+repair parity
+Pay only for the vertices whose parity is wrong.
+
+===== PDF PAGE 54 =====
+Eulerian cycles are controlled by parity
+54
+Criterion Connected multigraph is Eulerian iff every degree is even.
+Double-tree Duplicating all edges makes every degree even.
+Christofides Add edges only between odd-degree vertices.
+Augmentation is a parity-repair problem.
+
+===== PDF PAGE 55 =====
+Only odd-degree vertices need repair
+55
+In this MST, the red vertices have odd degree.
+Adding one edge flips parity at both endpoints.
+a
+b
+c
+d
+e
+f
+
+===== PDF PAGE 56 =====
+Why the number of odd vertices is even
+56
+Σ  degree(v)
+v ∈ V
+= 2|E| (always even)
+therefore  #odd  is even
+Odd vertices can always be paired by a perfect matching.
+
+===== PDF PAGE 57 =====
+A perfect matching repairs all odd degrees
+57
+Pair every odd-degree vertex exactly once; choose the minimum-cost pairing.
+After adding M, every degree in H ∪ M is even.
+a
+b
+c
+d
+e
+f
+
+===== PDF PAGE 58 =====
+Christofides: repair parity cheaply
+58
+H = MST O = odd-degree vertices of H
+1 Find a minimum perfect matching M on O
+2 Find an Euler tour of H ∪ M
+3 Shortcut repeated vertices
+The matching replaces the second copy of the whole tree.
+
+===== PDF PAGE 59 =====
+Christofides spends in two phases
+59
+Spanning
+Minimum spanning tree H 
+connects all vertices.
+≤ OPT
+Parity repair
+Minimum perfect matching M fixes 
+the odd set O.
+≤ OPT/2
+Then Euler tour + shortcut converts H ∪ M into a TSP tour.
+
+===== PDF PAGE 60 =====
+Build 1: compute the MST H
+60
+The spanning cost satisfies cost(H) ≤ OPT.
+Spanning budget: at most OPT.
+a
+b
+c
+d
+e
+f
+
+===== PDF PAGE 61 =====
+Build 2: mark the odd-degree set O
+61
+Only vertices in O need their parity flipped.
+The handshaking lemma guarantees |O| is even.
+a
+b
+c
+d
+e
+f
+
+===== PDF PAGE 62 =====
+Build 3: add a minimum matching on O
+62
+Each matching edge flips two odd degrees to even.
+Repair budget: prove cost(M) ≤ OPT/2.
+a
+b
+c
+d
+e
+f
+
+===== PDF PAGE 63 =====
+Build 4: traverse H ∪ M with an Euler tour
+63
+Every degree is now even, so an Eulerian cycle exists.
+The Euler walk costs cost(H)+cost(M).
+a
+b
+c
+d
+e
+f
+
+===== PDF PAGE 64 =====
+Build 5: shortcut to a Hamiltonian tour
+64
+Triangle inequality removes repeated visits for free.
+Final tour cost never exceeds cost(H)+cost(M).
+a
+b
+c
+d
+e
+f
+
+===== PDF PAGE 65 =====
+The 3/2 proof has two budgets
+65
+Spanning cost(H) ≤ OPT
+Parity cost(M) ≤ OPT/2
+Shortcut cost(T) ≤ cost(H)+cost(M)
+It remains to justify the matching budget.
+
+===== PDF PAGE 66 =====
+Shortcut OPT down to the odd-degree set
+66
+Keep only the vertices in O and shortcut over every other vertex of an optimal tour T*.
+The resulting even cycle T*ₒ has cost at most OPT.
+a
+b c
+d
+ef
+
+===== PDF PAGE 67 =====
+Alternating edges form two perfect matchings
+67
+even cycle on the odd-degree set O
+M₁ M₂ M₁ M₂ M₁ M₂
+Purple and green edges each touch every vertex exactly once.
+The cheaper alternating matching costs at most half the cycle.
+
+===== PDF PAGE 68 =====
+The matching costs at most OPT/2
+68
+shortcut T* to O
+alternate edges: M₁ and M₂
+choose the cheaper matching
+cost(M)
+≤ cost(T*ₒ)/2
+≤ OPT/2
+One of the two alternating perfect matchings costs at most half the cycle.
+
+===== PDF PAGE 69 =====
+ChristofidesAlgorithm: costs at most 3·OPT/2
+69
+MST H
+matching M on O
+shortcut the Euler tour
+cost(T)
+≤ cost(H)+cost(M)
+≤ 3·OPT/2
+The spanning and parity budgets add; shortcutting never hurts.
+
+===== PDF PAGE 70 =====
+Compare the two metric-TSP algorithms
+70
+Double-tree
+MST + a second copy of every 
+tree edge.
+2-approx
+Christofides
+MST + minimum matching on odd 
+vertices.
+3/2-approx
+Both finish with an Euler tour and safe shortcutting.
+
+===== PDF PAGE 71 =====
+Exercise
+• Design an example such that the above algorithm cannot get 
+“asymptotically” better than 3/2-factor approximation
+• Remark: Can get better than 3/2: “A (slightly) improved 
+approximation algorithm for metric TSP” by Karlin, Klein, Gharan’21
+71
+
+===== PDF PAGE 72 =====
+One proof skeleton, three guarantees
+72
+Vertex Cover maximal matching or LP lower bound → factor 2
+Double-tree MST lower bound + full parity repair → factor 2
+Christofides MST + minimum matching repair → factor 3/2
+Design the solution around a lower bound that can pay for every step.
+
+===== PDF PAGE 73 =====
+References (so far)
+• Knapsack: Chapter 8 of [Vazirani]
+• Set Cover: Chapter 2 of [Vazirani]
+• Traveling Salesperson Problem: Chapter 3 of [Vazirani]
+73

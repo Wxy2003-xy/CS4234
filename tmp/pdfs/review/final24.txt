@@ -1,0 +1,303 @@
+===== PDF PAGE 1 =====
+CS4234 Final Exam, Semester 1, 2024-25
+• Always prove correctness of your algorithms.
+• You do not need to analyze the time complexity.
+Question 1 (7 points)
+Let X = {x1, x2, . . . , xn} be a set of n elements. Let S1, S2, . . . , Sm be subsets of X, i.e.,
+each Sj ⊆ X with weights w1, w2 · · · , wm respectively. Assume that every item in X appears
+in some set, i.e., S
+j Sj = X. A set cover of X with S is a set I ⊆ { 1, . . . , m} such thatS
+j∈I Sj = X. A minimum set cover is a set cover I of minimum weight, i.e., P
+j∈I wj is
+minimized.
+(a) Write an Integer Linear Program for the minimum weighted set cover problem.
+(b) If for every i ∈ [n], xi appears in at most k many Sj’s then give a polynomial-time
+algorithm that finds a k-approximation for this bounded weighted set cover problem.
+Question 2 (7 points)
+(a) Let f and f ′ be two feasible (s, t)-flows in a flow network G, such that |f ′| > |f |. Prove
+that there is a feasible ( s, t)-flow with value |f ′| − |f | in the residual network Gf.
+(b) Prove or disprove the following statement: Given a flow network G, if we replace a
+directed edge e with two directed edges e1 and e2 in opposite directions, and with the
+same capacity, then the value of the maximum flow remains unchanged.
+Question 3 (6 points)
+In the bin-packing problem, we are given n pieces (or items) with specified sizes a1, a2, . . . , an,
+such that
+1 > a 1 ≥ a2 ≥ · · · ≥ an > 0;
+we wish to pack the pieces into bins, where each bin can hold any subset of pieces of total
+size at most 1, so our goal is to find a packing which minimize the number of bins used.
+Find a polynomial time algorithm which gives us a packing which uses OU T bins, such that
+OU T ≤ 2OP T + 1, where OP T is the minimum number of bins needed to pack the n items.
+1
+
+===== PDF PAGE 2 =====
+CS4234 Final Exam, Semester 1, 2024-25
+Question 4 (7 points)
+In the maximum 3-cut problem, we are given an undirected graph G = (V, E), and nonneg-
+ative weights wij ≥ 0 for all (i, j) ∈ E. The goal is to partition the vertex set V into 3 parts,
+V1, V2, and V3 so as to maximize the weight of all edges whose endpoints are in different
+parts (i.e., max (i,j)∈E:i∈Va,j∈Vb,a̸=b wij ). Give a deterministic polynomial time algorithm that
+finds a 2
+3-approximate solution for the maximum 3-CUT problem.
+Question 5 (6 points)
+Assume you are given a connected, undirected graphG = (V, E) where every node has degree
+2k, for some integer k ≥ 1. An orientation of G assigns a direction to every edge in E, i.e.,
+for each edge ( u, v), it outputs either ( u → v) or ( v → u). The result is a directed graph
+orient(G).
+Prove that there exists an orientation of the graph so that the directed graph orient( G) is
+strongly connected. (Recall that in a strongly connected graph, there is a directed path
+between every pair of nodes in both directions.)
+Question 6 (7 points)
+Give a linear-programming formulation of the bipartite maximum matching problem.
+The input is a bipartite graph G = (U ∪ V ; E), where E ⊆ U × V ; the output is the largest
+matching in G. Your linear program should have one variable for each edge. Now dualize
+the linear program. What do the dual variables represent? What does the objective function
+represent? What problem is this!?
+END OF PAPER
+2
+
+===== PDF PAGE 3 =====
+• Solutions of final exam - CS4234, 2024-25.
+Question 1 (7 points)
+Let X = {x1, x2, . . . , xn} be a set of n elements. Let S1, S2, . . . , Sm be subsets of X, i.e.,
+each Sj ⊆ X with weights w1, w2, . . . , wm respectively. Assume that every item in X appears
+in some set, i.e., S
+j Sj = X. A set cover of X with S is a set I ⊆ { 1, . . . , m} such thatS
+j∈I Sj = X. A minimum set cover is a set cover I of minimum weight, i.e., P
+j∈I wj is
+minimized.
+(a) Write an Integer Linear Program for the minimum weighted set cover problem.
+Solution: Given an input ( X, S1, . . . , Sm) of the set cover problem, we introduce a
+variable si for every set Si, with the intended meaning that si = 1 when Si is
+selected, and si = 0 otherwise. We can express the set cover problem as the following
+integer linear program:
+minimize
+mX
+i=1
+wi · si,
+subject to
+X
+i:x∈Si
+si ≥ 1 ∀x ∈ X,
+0 ≤ si ≤ 1 ∀i ∈ {1, . . . , m},
+si ∈ N ∀i ∈ {1, . . . , m}.
+(b) If for every i ∈ [n], xi appears in at most k sets Sj, give a polynomial-time algorithm
+that finds a k-approximation for this bounded weighted set cover problem.
+Solution: For this part, relax the above ILP to an LP by removing the integrality
+constraint. Suppose we solve the linear programming relaxation and find an optimal
+fractional solution s∗ to the relaxation. That is, we are given a number s∗
+i in the
+range [0, 1] for every set Si.
+If every element x belongs to at most k sets, we can round the numbers s∗
+i ≥ 1/k to 1
+and the numbers s∗
+i < 1/k to 0. This would produce a feasible cover because for
+every x, there exists an si such that x ∈ Si and si ≥ 1/k; otherwise, the constraint
+corresponding to x would be violated.
+We can prove that this method achieves a k-approximation because, when we round
+s∗
+i to s′
+i ∈ {0, 1}, any s∗
+i rounded to 1 is inflated by at most a factor of k.
+1
+
+===== PDF PAGE 4 =====
+Question 2 (7 points)
+(a) Let f and f ′ be two feasible (s, t)-flows in a flow network G, such that |f ′| > |f |. Prove
+that there is a feasible ( s, t)-flow with value |f ′| − |f | in the residual network Gf.
+Solution: Consider the two flows f and f ′. For any edge e in G:
+- If f ′
+e > f e, set the flow value ge of edge e in Gf to f ′
+e − fe. Since the residual
+capacity of e in Gf is cf
+e = ce − fe, and f ′
+e is a feasible flow, we have
+f ′
+e − fe ≤ ce − fe = cf
+e. Therefore, this value is feasible.
+- If f ′
+e ≤ fe, set the flow value ger (on the reverse edge er in Gf) to fe − f ′
+e. Here,
+cf(er) = fe (the residual capacity of er), and g(er) = fe − f ′
+e ≤ fe = cf(er). This value
+is also feasible.
+From the above assignments, the value of the flow going out of s in Gf is |f ′| − |f |, as
+desired.
+Additionally, flow conservation is maintained at every vertex. For edges where
+f ′
+e > f e, they contribute f ′
+e − fe in the orientation of e. For edges where fe > f ′
+e, they
+contribute fe − f ′
+e in the opposite direction, which is effectively −(f ′
+e − fe). Therefore,
+the total flow into any vertex equals the total flow out of the vertex, ensuring
+conservation.
+(b) Prove or disprove the following statement: Given a flow network G, if we replace a
+directed edge e with two directed edges e1 and e2 in opposite directions, and with the
+same capacity, then the value of the maximum flow remains unchanged.
+Solution: The statement is false.
+Consider a simple example where the graph G contains a single directed edge from t
+to s with capacity 10. In this case, the maximum flow in G is 0, as there is no path
+from s to t.
+If we replace the directed edge e with two directed edges e1 (from t to s) and e2 (from
+s to t) with the same capacity, the residual capacity allows a flow of 10 through the
+edge e2. Consequently, the maximum flow increases to 10.
+Hence, the value of the maximum flow does not remain unchanged.
+Question 3 (6 points)
+In the bin-packing problem, we are given n pieces (or items) with specified sizes a1, a2, . . . , an,
+such that
+1 > a 1 ≥ a2 ≥ · · · ≥ an > 0;
+2
+
+===== PDF PAGE 5 =====
+we wish to pack the pieces into bins, where each bin can hold any subset of pieces of total
+size at most 1. Our goal is to find a packing that minimizes the number of bins used.
+Find a polynomial-time algorithm that gives us a packing which uses OU T bins, such that
+OU T ≤ 2OP T + 1, where OP T is the minimum number of bins needed to pack the n items.
+Solution: The algorithm is straightforward: when processing ai, check if ai can be placed
+in any of the currently open bins. If it cannot, open a new bin and place ai in the newly
+opened bin.
+We claim that at most one bin can remain strictly less than half-full at any point. To see
+why, suppose there were two bins that were less than half-full. In this case, the items in the
+second bin (the later-opened bin) could have been placed in the first bin (the
+earlier-opened bin), contradicting our assumption.
+Now, let t be the number of bins that are more than half-full. The total size of items in
+these bins is at least t/2, as each bin contributes at least half its capacity. Thus,P ai ≥ t/2.
+Since the total size of the items P ai must fit into OP T bins, we have P ai ≤ OP T.
+Therefore, t ≤ 2OP T.
+Additionally, at most one bin can remain less than half-full, so the total number of bins
+used is OU T ≤ t + 1 ≤ 2OP T + 1, as required.
+Question 4 (7 points)
+In the maximum 3-cut problem, we are given an undirected graph G = (V, E) and nonnega-
+tive weights wij ≥ 0 for all ( i, j) ∈ E. The goal is to partition the vertex set V into 3 parts,
+V1, V2, and V3, so as to maximize the weight of all edges whose endpoints are in different
+parts (i.e., max (i,j)∈E:i∈Va,j∈Vb,a̸=b wij). Give a deterministic polynomial-time algorithm that
+finds a 2
+3-approximate solution for the maximum 3-CUT problem.
+Solution: Consider the vertices of the graph as ( v1, . . . , vn). For each vertex vi, randomly
+pick a number g(i) from the range [1 , 2, 3]. Assign vertex vi to the set Vg(i). We claim that,
+in expectation, this approach provides a ( 2
+3)-approximation.
+The proof is as follows: the number of cut edges is represented by the random variable
+Y =
+X
+(i,j),i<j
+wij1 g(i)̸=g(j).
+Taking the expectation, we have:
+E [Y ] =
+X
+(i,j),i<j
+wijP (g(i) ̸= g(j)).
+3
+
+===== PDF PAGE 6 =====
+Since each g(i) is chosen uniformly at random from [1 , 2, 3], it is straightforward to
+calculate that P (g(i) ̸= g(j)) = 1 − 1
+3 = 2
+3. Substituting this, we get:
+E [Y ] =
+X
+(i,j),i<j
+wij · 2
+3 .
+We also know that P
+(i,j),i<j wij ≥ OP T, since wij ≥ 0. Hence, E [Y ] ≥ 2
+3 · OP T.
+Therefore, the randomized algorithm gives a ( 2
+3)-approximation in expectation.
+Next, we derandomize this algorithm to obtain a deterministic solution.
+Consider the expected value:
+E [Y ] = E [Y |g(v1) = 1]·P (g(v1) = 1)+E [Y |g(v1) = 2]·P (g(v1) = 2)+E [Y |g(v1) = 3]·P (g(v1) = 3).
+Since one of the conditional expectations, E [Y |g(v1) = j], must be at least E [Y ], set
+g(v1) = h(1), where h(1) is the value of j that maximizes E [Y |g(v1) = j].
+Now consider the next vertex v2. Compute:
+E [Y |g(v1) = h(1)] =
+X
+j∈{1,2,3}
+1
+3 · E [Y |g(v1) = h(1), g(v2) = j].
+Assign g(v2) = h(2), where h(2) is the value of j that maximizes
+E [Y |g(v1) = h(1), g(v2) = j].
+Repeat this process for all vertices v3, . . . , vn, assigning g(vi) = h(i), where h(i) maximizes
+the corresponding conditional expectation. This recursive process ensures that the
+deterministic algorithm achieves at least the expected value of the randomized algorithm.
+Hence, we obtain a deterministic polynomial-time ( 2
+3)-approximation algorithm for the
+maximum 3-cut problem.
+Question 5 (6 points)
+Assume you are given a connected, undirected graphG = (V, E) where every node has degree
+2k for some integer k ≥ 1. An orientation of G assigns a direction to every edge in E, i.e.,
+for each edge ( u, v), it outputs either ( u → v) or ( v → u). The result is a directed graph
+orient(G).
+Prove that there exists an orientation of the graph so that the directed graph orient( G) is
+strongly connected. (Recall that in a strongly connected graph, there is a directed path
+between every pair of nodes in both directions.)
+4
+
+===== PDF PAGE 7 =====
+Solution: Since the graph G is connected and every node has even degree, there exists an
+Eulerian cycle in G that visits every edge exactly once. We use this Eulerian cycle to
+construct the orientation.
+Orient the edges according to the Eulerian cycle as follows: assume the Eulerian cycle is
+given by the sequence of edges e1, e2, e3, . . . , em. For each edge ei = (u, v) in the cycle, if
+the next edge in the cycle is ei+1 = (v, w), orient ei as (u → v). This ensures that each edge
+is oriented in the direction of traversal along the cycle.
+Since the Eulerian cycle visits every node in the graph, it guarantees that every pair of
+nodes is connected by a directed path following the cycle (in the correct direction).
+Therefore, the graph orient( G) is strongly connected.
+If the Eulerian cycle forms the entire graph, we are done. Otherwise, remove the edges of
+the Eulerian cycle from G and apply induction on the remaining edges. By induction, the
+remaining subgraph can also be oriented to form a strongly connected directed graph.
+Combining the orientations of the Eulerian cycle and the remaining subgraph ensures that
+the entire graph orient( G) is strongly connected.
+Thus, there exists an orientation of G such that orient(G) is strongly connected.
+Question 6 (7 points)
+Give a linear programming formulation of the bipartite maximum matching problem.
+The input is a bipartite graph G = (U ∪ V, E), where E ⊆ U × V ; the output is the largest
+matching in G. Your linear program should have one variable for each edge. Now dualize
+the linear program. What do the dual variables represent? What does the objective function
+represent? What problem is this?
+Solution: The linear program for the maximum bipartite matching problem is formulated
+as follows:
+max
+X
+(i,j)∈E
+xij
+subject to
+X
+(i,j)∈E
+xij ≤ 1, ∀i ∈ U,
+X
+(i,j)∈E
+xij ≤ 1, ∀j ∈ V,
+xij ≥ 0, ∀(i, j) ∈ E.
+Here, xij represents whether the edge ( i, j) is included in the matching. The objective is to
+maximize the number of matched edges while ensuring that no vertex is incident to more
+than one edge in the matching.
+5
+
+===== PDF PAGE 8 =====
+The dual of the above linear program is as follows:
+min
+X
+i∈U
+yi +
+X
+j∈V
+yj
+subject to yi + yj ≥ 1, ∀(i, j) ∈ E,
+yi ≥ 0, ∀i ∈ U,
+yj ≥ 0, ∀j ∈ V.
+In the dual formulation:
+• The variables yi and yj represent whether vertex i ∈ U or j ∈ V , respectively, is
+included in the vertex cover.
+• The constraint yi + yj ≥ 1 ensures that for every edge ( i, j) ∈ E, at least one of its
+endpoints is included in the vertex cover.
+The objective function of the dual represents the total weight (or size) of the vertex cover,
+which we aim to minimize.
+Thus, the dual linear program corresponds to the minimum vertex cover problem for
+the bipartite graph G. By strong duality, the optimal value of the maximum matching
+problem equals the optimal value of the minimum vertex cover problem, which is a
+well-known result for bipartite graphs.
+END OF PAPER
+6

@@ -1,0 +1,275 @@
+===== PDF PAGE 1 =====
+Optimization Algorithms
+Diptarka Chakraborty
+Week 4 
+Network Flow (I)
+CS4234
+
+===== PDF PAGE 2 =====
+Problem definition (Informal)
+Given a network, where each edge has a certain capacity,
+There is a designated source vertex 𝒔 and sink vertex 𝒕.
+Compute the maximum flow that we can achieve from  𝒔 to 𝒕.
+2
+
+===== PDF PAGE 3 =====
+Question: What is flow along an edge ?
+Answer: The rate (per unit time) at which the commodity is being transported along the edge ?
+Question: What is capacity of an edge ?
+Answer: The maximum rate at which the commodity can be transported along the edge.
+Example: 25 litre/sec
+3
+An edge
+
+===== PDF PAGE 4 =====
+Are there any constraintsfor a flow ?
+Capacity constraint :
+Flow along an edge cannot exceed its capacity
+Conservation constraint :
+Flow entering node 𝒖 = Flow leaving node 𝒖.
+4
+5
+2520 𝒖
+
+===== PDF PAGE 5 =====
+Formal Description of Flow
+5
+
+===== PDF PAGE 6 =====
+Formal Description of Flow
+6
+𝒔
+𝒗
+𝒖
+𝒙
+𝒚
+2
+17
+5
+68
+7
+4
+𝒕
+𝑮=(𝑽, 𝑬) : a directed graph with
+𝒔: source, 
+𝒕: sink
+𝒄: 𝑬 → 𝐑+
+𝒄(𝒙,𝒚) = capacity of edge (𝒙,𝒚)
+Flow 𝒇: 𝑬 → 𝐑+ such that 
+• For each edge (𝒙,𝒚) ∈ 𝑬
+𝒇(𝒙,𝒚) ≤ 𝒄(𝒙,𝒚)
+• For each vertex 𝒗 ∈ 𝑽\{𝒔, 𝒕}
+෍
+𝒖,𝒗 ∈ 𝑬
+𝒇(𝒖,𝒗) = ෍
+𝒗,𝒛 ∈ 𝑬
+𝒇(𝒗 , 𝒛)
+156
+714
+Capacity constraint
+Conservation constraint
+
+===== PDF PAGE 7 =====
+Formal Description of Flow
+value(𝒇)= flow leaving 𝒔
+= ෍
+𝒔,𝒗 ∈ 𝑬
+𝒇(𝒖,𝒗)
+7
+𝒔
+𝒗
+𝒖
+𝒙
+𝒚
+2
+17
+5
+7
+4
+𝒕
+𝑮=(𝑽, 𝑬) : a directed graph with
+𝒔: source, 
+𝒕: sink
+𝒄: 𝑬 → 𝐑+
+𝒄(𝒙,𝒚) = capacity of edge (𝒙,𝒚)
+Flow 𝒇: 𝑬 → 𝐑+ such that 
+• For each edge (𝒙,𝒚) ∈ 𝑬
+𝒇(𝒙,𝒚) ≤ 𝒄(𝒙,𝒚)
+• For each vertex 𝒗 ∈ 𝑽\{𝒔, 𝒕}
+෍
+𝒖,𝒗 ∈ 𝑬
+𝒇(𝒖,𝒗) = ෍
+𝒗,𝒛 ∈ 𝑬
+𝒇(𝒗 , 𝒛)
+156
+714
+5
+7
+7
+1
+4
+11
+1
+68
+
+===== PDF PAGE 8 =====
+Formal Description of Flow
+value(𝒇)= flow leaving 𝒔
+= ෍
+𝒔,𝒗 ∈ 𝑬
+𝒇(𝒖,𝒗)
+8
+𝒔
+𝒗
+𝒖
+𝒙
+𝒚
+2
+17
+5
+7
+4
+𝒕
+𝑮=(𝑽, 𝑬) : a directed graph with
+𝒔: source, 
+𝒕: sink
+𝒄: 𝑬 → 𝐑+
+𝒄(𝒙,𝒚) = capacity of edge (𝒙,𝒚)
+Max-Flow Problem:
+Given a network 𝑮=(𝑽,𝑬), and two vertices 
+𝒔,𝒕 ∈ 𝑽, compute a flow from 𝒔 to 𝒕 of 
+maximum value.
+156
+714
+68
+
+===== PDF PAGE 9 =====
+Towards designing max flow algorithm
+9
+𝒔
+𝒗
+𝒖
+𝒙
+𝒚
+6
+2
+17
+5
+68
+7 714
+4
+𝒕
+15
+5
+5
+5
+1 1
++16
+7
+7
++712
+What is the most 
+natural approach to 
+solve this problem ?
+
+===== PDF PAGE 10 =====
+Towards designing max flow algorithm
+10
+𝒔
+𝒗
+𝒖
+𝒙
+𝒚
+6
+2
+17
+5
+68
+7 714
+4
+𝒕
+15
+5
+5
+5
+1 1
++16
+7
+7
++712
+Finding some 𝒔 − 𝒕 path,
+Sending flow along the path,
+Updating capacities, 
+Finding some 𝒔 − 𝒕 path, … 
+
+===== PDF PAGE 11 =====
+Towards designing max flow algorithm
+First-attempt-algo(𝑮,𝒔,𝒕)
+{  𝒇 𝟎;
+While (there is 𝒔-𝒕 path in 𝑮) do
+{   Let 𝑷 be any 𝒔-𝒕 path in 𝑮
+Let 𝒄𝒃 be bottleneck capacity of 𝑷;   
+For each (𝒙,𝒚) ∈ 𝑷 do
+{       
+𝒇(𝒙,𝒚)  𝒇(𝒙,𝒚) + 𝒄𝒃;   
+𝒄(𝒙,𝒚)  𝒄(𝒙,𝒚) - 𝒄𝒃; 
+If (𝒄(𝒙,𝒚) = 𝟎) remove (𝒙,𝒚) from 𝑮
+}
+}
+return 𝒇;  
+}  
+Question: Is the algorithm correct ?
+11
+
+===== PDF PAGE 12 =====
+A counterexample 
+for
+First-attempt-algo
+12
+
+===== PDF PAGE 13 =====
+Question: What is the maximum flow from 𝒔 to 
+𝒕 ?
+Answer: 30
+13
+𝒔
+𝒙
+𝒚
+𝒕
+2010
+50
+20 10
+
+===== PDF PAGE 14 =====
+Executing our first attempt algorithm
+14
+𝒔
+10
+2010
+50
+20
+𝒙
+𝒚
+𝒕
+10
+10
+30
+𝒙
+𝒚
+𝒕𝒔
+20
+20
+20
+No 𝒔 − 𝒕 path
+
+===== PDF PAGE 15 =====
+References
+• Chapter 26 (Maximum Flow) of “Introduction to Algorithms”, Cormen, 
+Leiserson, Rivest and Stein
+• Chapter 7 (Network Flow) of “Algorithm Design”, Kleinberg and Tardos
+15
+
+===== PDF PAGE 16 =====
+Acknowledgement
+• Slides are taken from a course by Prof. Surender Baswana at IIT Kanpur
+16

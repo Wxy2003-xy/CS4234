@@ -1,0 +1,406 @@
+===== PDF PAGE 1 =====
+Optimization Algorithms
+Diptarka Chakraborty
+Week 3 
+Maximum Satisfiability
+CS4234
+
+===== PDF PAGE 2 =====
+Announcement
+2
+• Mini-project details are available in Canvas.
+• Work in groups of 3–4 and read the instruction document.
+• Understand the problem, compare one or two solution ideas, and implement when feasible.
+• You may use an LLM to formalize your ideas to see if it provides any improvement for the problem, in which subcase it 
+improves, or to implement it.
+• Use Google Scholar to find useful baselines and heuristics.
+For the mini-project: understand → compare → test.
+
+===== PDF PAGE 3 =====
+Max-Cut: separate vertices to maximize crossing weight
+3
+S V \ S
+a
+b
+c
+d
+e
+f
+A cut partitions the vertices; its value is the total weight crossing the partition.
+
+===== PDF PAGE 4 =====
+Max-Cut is a canonical randomized-approximation problem
+4
+S V \ S
+a
+b
+c
+d
+e
+f
+Only edges with exactly one endpoint in S contribute to the cut.
+
+===== PDF PAGE 5 =====
+An algorithm maps each input to an output
+5
+Input Algorithm Output
+The output and running time are functions of the input.
+
+===== PDF PAGE 6 =====
+A deterministic algorithm repeats the same behavior
+6
+Input Algorithm One fixed
+output
+Fix the input: both the output and execution path are fixed.
+
+===== PDF PAGE 7 =====
+A randomized algorithm samples an output
+7
+Input Algorithm
++ random bits
+Sampled
+output
+Fix the input: random bits still create a distribution over outputs.
+
+===== PDF PAGE 8 =====
+Measure randomized approximation in expectation
+8
+Minimization
+E[cost(A)] / OPT ≤ ρ(n)
+Maximization
+OPT / E[cost(A)] ≤ ρ(n)
+The expectation is over the algorithm’s internal random choices.
+
+===== PDF PAGE 9 =====
+Expectation is one guarantee—not the only one
+9
+In expectation
+Analyze E[cost(A)].
+Often derandomizable by the method of conditional 
+expectation.
+With high probability
+Bound the failure probability.
+Tools: concentration, repetition, success amplification.
+Choose the guarantee that matches how the algorithm will be used.
+
+===== PDF PAGE 10 =====
+Expectation is a weighted average of outcomes
+10
+For a discrete random variable X:
+E[X] = ∑ₓ x · Pr[X = x]
+For a fair die: E[X] = (1+2+3+4+5+6)/6 = 3.5
+Expectation summarizes a distribution—weighted average ofattainable outcomes.
+
+
+===== PDF PAGE 11 =====
+Linearity lets us analyze pieces independently
+11
+For any random variables X and Y and constant a:
+E[X + Y] = E[X] + E[Y]        and        E[aX] = aE[X]
+No independence assumption is required.
+Express the objective as a sum of indicators, then analyze one indicator at a time.
+
+===== PDF PAGE 12 =====
+Random cut: place every vertex independently
+12
+1   Start with S = ∅.
+2   For each vertex v, put v in S with probability 1/2.
+3   Return the cut (S, V \ S).
+One random bit
+per vertex
+Independence makes each edge easy to analyze.
+
+===== PDF PAGE 13 =====
+A random cut keeps half the total edge weight
+13
+Let Xₑ indicate whether edge e crosses the cut.
+E[w(cut)] = ∑ₑ w(e)E[Xₑ] = ½∑ₑ w(e)
+The remaining question is why Pr[Xₑ = 1] = 1/2.
+The expected cut value is exactly half of the graph’s total weight.
+
+===== PDF PAGE 14 =====
+Each edge crosses with probability 1/2
+14
+For e = (u,v), the endpoints receive independent fair bits.
+Pr[Xₑ = 1] = ¼ + ¼ = ½
+Therefore E[Xₑ] = 1/2, and linearity sums the contribution of every edge.
+Analyze one edge; linearity does the rest.
+
+===== PDF PAGE 15 =====
+Random cut is a 2-approximation
+15
+E[w(cut)] ≥ ½ · OPT
+OPT is at most the total edge weight, while the random cut gets half of that total weight in expectation.
+A simple local random choice yields a global factor-1/2 guarantee.
+
+===== PDF PAGE 16 =====
+Max-SAT asks us to satisfy as many clauses of a CNFas possible
+16
+Literal A Boolean variable xⱼ or its negation ¬xⱼ.
+Clause An OR of literals, e.g. Cᵢ = x₁ ∨ ¬x₂ ∨ x₄.
+CNF An AND of clauses: Φ = C₁ ∧ C₂ ∧ ··· ∧ Cₘ.
+Max-SAT Choose an assignment maximizing the satisfied clause weight.
+SAT asks whether all clauses can be satisfied; Max-SAT optimizes how many.
+
+===== PDF PAGE 17 =====
+A concrete formula separates satisfying assignments
+17
+Formula
+Φ = (¬x₂ ∨ x₃) ∧ (x₁ ∨ ¬x₂ ∨ x₃) ∧ (¬x₁ ∨ x₂ ∨ x₄)
+Two assignments
+Satisfying:  x₁=T, x₂=F, x₃=F, x₄=T
+Not satisfying:  x₁=T, x₂=F, x₃=F, x₄=F
+The objective counts the clauses made true by the assignment.
+
+===== PDF PAGE 18 =====
+Quick check: random assignment for Max-E2SAT
+18
+Every clause has exactly two literals. If every variable is independently true with 
+probability 1/2, what approximation factor follows?
+A   4 B   2 C   4/3 D   1
+Compute the probability that one two-literal clause is satisfied.
+
+===== PDF PAGE 19 =====
+A two-literal clause is satisfied with probability 3/4
+19
+The clause fails only when both literals are false.
+Pr[clause satisfied] = 1 − (½)² = ¾
+So E[# satisfied] = ¾m ≥ ¾ · OPT because OPT ≤ m.
+Random assignment is a 4/3-approximation for Max-E2SAT.
+
+===== PDF PAGE 20 =====
+Weighted Max-SAT uses clause values
+20
+Weight Each clause Cᵢ has nonnegative weight wᵢ.
+Indicator τ(Cᵢ) = 1 if the assignment satisfies Cᵢ; otherwise 0.
+Objective cost(τ) = ∑ᵢ wᵢ τ(Cᵢ).
+Goal Choose τ maximizing cost(τ).
+Linearity of expectation also works for weighted clauses.
+
+===== PDF PAGE 21 =====
+Algo1: flip an unbiased coin for every variable
+21
+1   For each variable xⱼ, independently set xⱼ = true with probability 1/2.
+2   Evaluate which clauses are satisfied.
+3   Return the sampled assignment τ.
+Goal:
+bound E[cost(τ)]
+Start with the simplest possible randomized assignment.
+
+===== PDF PAGE 22 =====
+Longer clauses are easier to satisfy
+22
+If clause Cᵢ has ℓᵢ literals, it fails only when every literal is false.
+Pr[Cᵢ satisfied] = 1 − 𝟐−ℓ𝒊
+The worst case is ℓᵢ = 1, where the probability is only 1/2.
+Clause length controls the success probability of unbiased rounding.
+
+===== PDF PAGE 23 =====
+Algo1 guarantees half of optimum
+23
+E[cost(τ)] = ∑ᵢ wᵢ(1 − 𝟐−ℓ𝒊) ≥ ½∑ᵢwᵢ ≥ ½ · OPT
+Every clause contributes at least half its weight in expectation.
+Unbiased coins give a 2-approximation for Max-SAT.
+
+===== PDF PAGE 24 =====
+Can biased coins beat factor 1/2?
+24
+Unbiased
+Pr[xⱼ = true] = 1/2
+Symmetric, but singleton clauses remain a bottleneck.
+Biased
+Pr[xⱼ = true] = p
+Tune p to favor the literal structure after preprocessing.
+The next algorithm trades symmetry for a stronger worst-case bound.
+
+===== PDF PAGE 25 =====
+Algo2: set each variable true with probability p
+25
+1   Choose a bias p ∈ [0,1].
+2   Independently set xⱼ = true with probability p and false with 
+probability 1−p.
+3   Return the sampled assignment.
+Choose p
+to maximize the worst clause 
+probability
+The analysis reveals which p balances the competing clause types.
+
+===== PDF PAGE 26 =====
+First assume every clause has at least two literals
+26
+Let aᵢ and bᵢ be the positive and negative literal counts in Cᵢ, with aᵢ+bᵢ=ℓᵢ≥2.
+Pr[Cᵢ satisfied] =?
+Assume p ≥ 1/2.
+With length at least two, every clause succeeds with probability at least 1−p².
+
+===== PDF PAGE 27 =====
+First assume every clause has at least two literals
+27
+Let aᵢ and bᵢ be the positive and negative literal counts in Cᵢ, with aᵢ+bᵢ=ℓᵢ≥2.
+Pr[Cᵢ satisfied] = 1 − 𝒑𝒃𝒊 𝟏 − 𝒑 𝒂𝒊 ≥ 1 − 𝒑ℓ𝒊
+Assume p ≥ 1/2.
+With length at least two, every clause succeeds with probability at least 1−p².
+
+===== PDF PAGE 28 =====
+Under the length assumption, Algo2 earns 1−p²
+28
+E[cost(τ)] ≥ (1−p²)∑ᵢwᵢ ≥ (1−p²) · OPT
+This bound improves as p moves away from 1—until singleton clauses intervene.
+For clauses of length at least two, the guarantee is 1−p².
+
+===== PDF PAGE 29 =====
+Positive singleton clauses earn probability p
+29
+A clause containing only xⱼ is satisfied exactly when xⱼ = true.
+Pr[xⱼ satisfied] = p
+We must balance p for positive singletons against 1−p² for longer clauses.
+The worst clause type determines the global approximation factor.
+
+===== PDF PAGE 30 =====
+Balance the two clause guarantees
+30
+guarantee(p) = min{ p , 1−p² } ≥ 𝟎. 𝟔𝟏𝟖
+Set p = 1−p² so neither clause type is the bottleneck (𝑝 = ( 5 − 1)/2).
+The optimum bias is where the two lower bounds meet.
+
+===== PDF PAGE 31 =====
+Preprocess conflicting singleton clauses
+(From now assume without loss of generality)
+31
+1
+Each single literal clause 
+appear at most once; 
+otherwise increase its 
+weight
+2
+Among single literal 
+clauses: weight of clause 
+𝑥𝑖 ≥ weight of clause ҧ𝑥𝑖; 
+otherwise, consider new 
+variable 𝑦𝑖 = ҧ𝑥𝑖 and 
+replace all the occurrences
+3
+Similarly, both 𝑥𝑖 and ҧ𝑥𝑖
+must occur (if ҧ𝑥𝑖 occurs); 
+otherwise, consider new 
+variable 𝑦𝑖 = ҧ𝑥𝑖 and 
+replace all the occurrences
+Preprocessing creates the structure needed for a useful bias.
+
+===== PDF PAGE 32 =====
+At most N singleton weight is unavoidable
+32
+Let N be the total 𝑤𝑒𝑖𝑔ℎ𝑡 𝑜𝑓 ҧ𝑥𝑗 appearing as a clause
+OPT ≤ ∑ᵢ wᵢ − N
+For each pair xⱼ and ¬xⱼ, every assignment must lose at least the smaller weight.
+The preprocessing loss is also a certified upper-bound correction.
+
+===== PDF PAGE 33 =====
+Analyze the remaining formula with positive singletons
+33
+Let U contain every clause except the removed negative singleton clauses.
+E[cost on U] ≥ min{p, 1−p²} · σ𝑪𝒊∈𝑼 𝒘𝒊
+The same two cases now cover every surviving clause.
+After preprocessing, one bias parameter controls the whole formula.
+
+===== PDF PAGE 34 =====
+Combine the preprocessing and random-assignment bounds
+34
+E[cost(τ)] ≥ min 𝑝, 1 − 𝑝2 σ𝑖 𝑤𝑖 − 𝑁 ≥ min 𝑝, 1 − 𝑝2 𝑂𝑃𝑇
+The structural upper bound absorbs the weight removed during preprocessing.
+A lower bound on the algorithm meets an upper bound on OPT.
+
+===== PDF PAGE 35 =====
+The golden-ratio bias gives 0.618
+35
+Solve p = 1−p² in [0,1].
+p = (√5 − 1)/2 ≈ 0.618
+At this value, p = 1−p², so the two worst-case clause bounds are equal.
+Algo2 achieves a 1.619-approximation for Max-SAT.
+
+===== PDF PAGE 36 =====
+Biased coins improve the 2-approximationguarantee
+36
+E[cost(Algo2)] ≥ 0.618 · OPT
+Next questions: Can we remove the randomness? Can LP relaxation improve the factor further?
+The proof combines preprocessing, bias optimization, and expectation.
+
+===== PDF PAGE 37 =====
+Derandomization follows the better conditional branch
+37
+E[cost] = W
+x₁ = true
+E[cost | true]
+x₁ = false
+E[cost | false]
+Choose the branch whose conditional expectation is at least the current expectation.
+Random choices become deterministic decisions without decreasing the guarantee.
+
+===== PDF PAGE 38 =====
+Conditional expectation turns choices into decisions
+38
+Suppose the current partial assignment has conditional expectation W and p = Pr[xⱼ=true]
+W = p·E[cost | xⱼ=true] + (1−p)·E[cost | xⱼ=false]
+At least one branch has conditional expectation at least W; choose it deterministically.
+A weighted average cannot exceed both of its components.
+
+===== PDF PAGE 39 =====
+The first variable splits the original expectation
+39
+E[cost(τ)] = ½E[cost | x₁=true] + ½E[cost | x₁=false]
+Therefore max{E[cost | true], E[cost | false]} ≥ E[cost(τ)].
+One of the two first decisions preserves the expected guarantee.
+
+===== PDF PAGE 40 =====
+Choose the branch with larger conditional expectation
+40
+Set x₁ = true
+Compute E[cost | x₁=true]
+Set x₁ = false
+Compute E[cost | x₁=false]
+Commit to the better branch, then continue with the next variable.
+
+===== PDF PAGE 41 =====
+Repeat until every variable is fixed
+41
+1
+Compute both conditional expectations 
+for xⱼ.
+2
+Choose the larger one and fix xⱼ.
+3
+Continue with xⱼ₊₁ until the assignment 
+is complete.
+The conditional expectation never decreases along the chosen path.
+
+===== PDF PAGE 42 =====
+The final deterministic assignment keeps the guarantee
+42
+After the last variable is fixed, no randomness remains.
+cost(τ-det) ≥ E[cost(τ-random)]
+If the randomized algorithm was an α-approximation in expectation, the deterministic assignment is also an 
+α-approximation.
+Derandomization converts an existential expectation into a concrete solution.
+
+===== PDF PAGE 43 =====
+Derandomization is efficient when expectations are computable
+43
+Needed Compute the two conditional expectations at each variable.
+Cost A polynomial number of variables times polynomial work per decision.
+Max-SAT Clause contributions update locally, so the computation is efficient.
+The method works when conditional expectations are polynomial-time computable.
+
+===== PDF PAGE 44 =====
+Randomization gives two reusable techniques
+44
+Analysis Use indicators and linearity of expectation.
+Design Tune a biased distribution to balance worst cases.
+Derandomize Follow the branch with the larger conditional expectation.
+Exercise: derandomize the randomMax-Cut algorithm by conditional expectation.
+
+===== PDF PAGE 45 =====
+References
+• Max-SAT: 
+Chapter 5 of [Williamson and Shmoys]
+Chapter 16 of [Vazirani]
+45

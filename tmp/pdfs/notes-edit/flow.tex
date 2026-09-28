@@ -1,0 +1,448 @@
+\section{Network Flow}\label{nf:chapter}
+
+\subsection{Model, residual arcs, and augmentation}\label{nf:model}
+Let $G=(V,E)$ be a directed network with distinct source $s$, sink $t$,
+capacities $c_e\ge0$, $n=|V|$, and $m=|E|$. Parallel and antiparallel arcs
+are allowed; each original arc has its own identity. A feasible flow satisfies
+\[
+  0\le f_e\le c_e\quad(e\in E),\qquad
+  \sum_{e\in\delta^-(v)}f_e=\sum_{e\in\delta^+(v)}f_e
+  \quad(v\ne s,t).
+\]
+Here $\delta^+(S)$ and $\delta^-(S)$ are the original arcs leaving and entering
+$S$, respectively. The objective is the \emph{net} source outflow
+\[
+  |f|=\sum_{e\in\delta^+(s)}f_e-\sum_{e\in\delta^-(s)}f_e.
+\]
+It equals net inflow at $t$. If there are no arcs entering $s$, it is simply
+source outflow. Nonnegativity is part of feasibility.
+
+\paragraph{Residual graph $G_f$.}
+For each original arc $e=(u,v)$, keep two \emph{labelled} residual arcs:
+\[
+\begin{array}{c|c|c}
+\text{label and direction}&\text{residual capacity}&\text{augmentation by }\Delta\\\hline
+ e^+:u\to v&c_e-f_e&f_e\gets f_e+\Delta\\
+ e^-:v\to u&f_e&f_e\gets f_e-\Delta
+\end{array}
+\]
+Only positive-capacity residual arcs are available. In particular, when
+$(u,v)$ and $(v,u)$ are both original arcs, an arc directed $u\to v$ may
+mean increasing one original flow or decreasing the other. Its label, not
+membership of $(u,v)$ in $E$, determines the update.
+For a simple residual $s$--$t$ path $P$, set
+$\Delta=\min_{a\in P}c_f(a)$ and apply its labelled updates.
+Bounds $0\le f_e\le c_e$ remain valid; every internal path vertex has zero
+change in net outflow; $|f|$ increases by $\Delta$.
+
+\paragraph{Why reverse arcs are necessary.}
+Take unit-capacity arcs $s\to a,s\to b,a\to b,a\to t,b\to t$.
+After sending one unit along $s\to a\to b\to t$, no forward-only
+augmenting path remains, although the optimum is 2. The residual path
+$s\to b\to a\to t$ uses the reverse of $a\to b$, cancels that unit, and
+produces the two direct unit routes $s\to a\to t$ and $s\to b\to t$.
+
+\paragraph{Comparing two flows: use the residual network.}
+For feasible original flows $f,g$, set $h(e^+)=\max\{g_e-f_e,0\}$ and
+$h(e^-)=\max\{f_e-g_e,0\}$. These values respect residual capacities;
+conservation follows by subtracting the two original conservation equations,
+and $|h|=|g|-|f|$. Conversely, a residual flow $h$ updates the original flow by
+$f'_e=f_e+h(e^+)-h(e^-)$, with $0\le f'_e\le c_e$ and
+$|f'|=|f|+|h|$. Thus residual flow models possible improvement.
+The ordinary vector $g-f$ need not be a nonnegative flow in $G$: an arc may
+carry less under $g$ than under $f$. Its negative component belongs on the
+corresponding reverse residual arc.
+
+\subsection{Cut identities and max-flow/min-cut}\label{nf:cuts}
+An $s$--$t$ cut is a partition $(S,V\setminus S)$ with $s\in S$, $t\notin S$;
+its capacity counts only arcs directed \emph{out of} $S$:
+$c(S)=\sum_{e\in\delta^+(S)}c_e$.
+Summing net outflow over all $v\in S$ cancels every internal arc and gives
+\begin{equation}\label{nf:cut-identity}
+ \boxed{|f|=\sum_{e\in\delta^+(S)}f_e-\sum_{e\in\delta^-(S)}f_e\le c(S).}
+\end{equation}
+An especially useful equivalent identity is
+\begin{equation}\label{nf:cut-slack}
+ \boxed{c(S)-|f|=
+ \sum_{e\in\delta^+(S)}(c_e-f_e)+\sum_{e\in\delta^-(S)}f_e.}
+\end{equation}
+All terms on the right are nonnegative. This is also the total capacity
+of the residual arcs leaving $S$, with each original crossing arc contributing
+exactly one term.
+
+\begin{theorem}[Augmenting paths and optimality]\label{nf:mfmc}
+For a feasible flow $f$, the following are equivalent:
+\begin{enumerate}
+ \item $f$ is maximum;
+ \item $G_f$ has no $s$--$t$ path;
+ \item $|f|=c(S)$ for some $s$--$t$ cut $S$.
+\end{enumerate}
+Consequently maximum flow value equals minimum cut capacity.
+\end{theorem}
+\begin{proof}
+A residual path permits a strictly positive augmentation, so a maximum flow
+has no such path. If none exists, define
+$S=\{v:v\text{ is reachable from }s\text{ in }G_f\}$.
+Then $s\in S,t\notin S$. For an original arc leaving $S$, $c_e-f_e=0$;
+otherwise its forward residual arc would make its head reachable.
+For an original arc entering $S$, $f_e=0$; otherwise its reverse residual arc
+would do the same. Equation~\eqref{nf:cut-slack} gives $c(S)=|f|$.
+Finally, equality certifies optimality of both $f$ and $S$ by
+\eqref{nf:cut-identity}. A maximum exists because the feasible set is nonempty,
+closed, and bounded; applying the equivalence to it proves the equality of
+the two optima, even for real capacities.
+\end{proof}
+\textbf{Proof trap:} define $S$ by residual reachability. An arbitrary partition
+at termination need not be minimum; an outgoing residual arc contradicts the
+head's non-reachability, not necessarily non-reachability of $t$ directly.
+
+\subsection{Ford--Fulkerson and integral flows}\label{nf:ff}
+\begin{algorithm}[H]
+\caption{Ford--Fulkerson: arbitrary residual augmenting paths}
+\KwIn{Network $G$, capacities $c_e\ge0$, source $s$, sink $t$}
+$f_e\gets0$ for every $e\in E$\;
+\While{a residual $s$--$t$ path exists}{
+ Find a simple $s$--$t$ path $P$ in $G_f$\;
+ $\Delta\gets\min_{a\in P}c_f(a)$\;
+ Apply the labelled forward/reverse updates along $P$ by $\Delta$\;
+}
+\Return{$f$ and the source-reachable cut in $G_f$}\;
+\end{algorithm}
+If it terminates, the algorithm is correct by Theorem~\ref{nf:mfmc}.
+With integer capacities, all flows, residual capacities, and bottlenecks stay
+integral; each augmentation increases value by at least 1. Thus there are at
+most $F^*=|f^*|$ augmentations and time $O(m(1+F^*))$ after discarding isolated
+vertices. This is \emph{pseudo-polynomial}: a binary capacity $C$ occupies
+$O(\log C)$ bits, not $C$ bits. Rational capacities also give termination after
+scaling by a common denominator, without a polynomial iteration bound from
+this argument. For irrational capacities, unfortunate path choices may cause
+infinitely many augmentations; arbitrary-path Ford--Fulkerson is not a
+capacity-independent algorithm.
+
+\paragraph{Integer bad example: $2C$ augmentations instead of two.}
+Use arcs $s\to a,s\to b,a\to t,b\to t$ of capacity $C$ and
+$a\to b$ of capacity 1. Alternate $s\to a\to b\to t$ with
+$s\to b\to a\to t$, where the second path uses the reverse residual arc
+of $a\to b$. Each augmentation has bottleneck 1; every pair increases all
+four outer flows by 1 and returns the middle flow to 0. There are $2C$
+augmentations before reaching value $2C$, exponential in the bit length of
+$C$. Taking the two direct paths would require only two augmentations.
+
+\begin{theorem}[Edgewise integrality]\label{nf:integrality}
+With integer capacities, there exists a maximum flow with $f_e\in\mathbb Z$
+for \emph{every} original arc $e$.
+\end{theorem}
+\begin{proof}
+Start at zero and use Ford--Fulkerson. Every augmentation is integral, and
+termination follows from the finite integer upper bound on flow value.
+\end{proof}
+This is an existence theorem, not a statement that every maximum flow is
+integral. For example, unit arcs $s\to a,s\to b,a\to c,b\to c,c\to t$
+admit a maximum flow of value 1 that sends $1/2$ along each branch.
+An integral maximum also exists. An integer \emph{total value} alone is not
+enough to decode a matching or an indivisible assignment.
+
+\subsection{Capacity scaling: \texorpdfstring{$O(m^2(1+\log C))$}{O(m squared log C)}}\label{nf:scaling}
+Assume integer capacities and $C=\max_e c_e$ (return zero if $E$ is empty or
+$C=0$). For a threshold $k$, retain only labelled residual arcs of capacity
+at least $k$; call this graph $G_f^{\ge k}$.
+
+\begin{algorithm}[H]
+\caption{Capacity scaling: augment only through residual capacities $\ge k$}
+$f\gets0$; $k\gets2^{\lfloor\log_2 C\rfloor}$\;
+\While{$k\ge1$}{
+ \While{$G_f^{\ge k}$ has an $s$--$t$ path}{
+  Find an $s$--$t$ path $P$ in $G_f^{\ge k}$\;
+  $\Delta\gets\min_{a\in P}c_f(a)$\;
+  Apply the labelled updates along $P$ by $\Delta$\;
+ }
+ $k\gets k/2$\;
+}
+\Return{$f$}\;
+\end{algorithm}
+\paragraph{Correctness.}
+Feasibility is preserved. At the end of the $k=1$ phase, integral residual
+capacities imply every positive residual arc has capacity at least 1. Hence
+there is no residual $s$--$t$ path, and $f$ is maximum.
+\textbf{Threshold trap:} starting at $k=C$ with real halving can miss 1.
+For a path with capacities $3,1$, thresholds $3,1.5$ find no path and then
+stop, incorrectly returning zero. Powers of two ensure a final phase at 1.
+
+\paragraph{At most $2m$ augmentations per phase.}
+At the end of a $k$ phase, let $S$ be the vertices reachable in
+$G_f^{\ge k}$. Each residual arc leaving $S$ has capacity less than $k$.
+Each original crossing arc contributes once to \eqref{nf:cut-slack}, so
+\[
+ F^*-|f|\le c(S)-|f|<mk\qquad(m>0).
+\]
+At the start of the next phase, whose threshold is $k/2$, the gap is less
+than $2m(k/2)$. Equivalently, a phase with threshold $k$ starts with gap
+less than $2mk$. This also holds for the first phase since
+$F^*\le\sum_{e\in\delta^+(s)}c_e\le mC<2mk$.
+Every augmentation adds at least $k$, so a phase has fewer than $2m$
+augmentations. The phase need not itself reach the optimum.
+There are $1+\lfloor\log_2 C\rfloor$ phases and each path search/update costs
+$O(m)$ in the usual graph-operation model, giving $O(m^2(1+\log C))$ time.
+
+\subsection{Shortest augmenting paths: \texorpdfstring{$O(nm^2)$}{O(n m squared)}}\label{nf:sap}
+Use BFS in the full positive-residual graph to find an $s$--$t$ path with the
+\emph{fewest arcs}; augment by its bottleneck and repeat until BFS fails.
+This is the standard Edmonds--Karp shortest-augmenting-path rule. Some course
+materials use different names: remember the path rule and its bound.
+It works with arbitrary nonnegative real capacities in the exact-arithmetic
+model; the number of graph operations does not depend on their magnitudes.
+
+\begin{algorithm}[H]
+\caption{Shortest augmenting paths (BFS; not arbitrary path choice)}
+$f\gets0$\;
+\While{BFS in $G_f$ reaches $t$ from $s$}{
+ Let $P$ be the shortest residual path given by BFS parent pointers\;
+ $\Delta\gets\min_{a\in P}c_f(a)$\;
+ Apply the labelled updates along $P$ by $\Delta$\;
+}
+\Return{$f$}\;
+\end{algorithm}
+
+\begin{lemma}[Residual distances never decrease]\label{nf:distance}
+Let $d(v)$ be the BFS distance from $s$ before an augmentation and $d'(v)$
+afterwards, with distance $\infty$ for unreachable vertices. Then
+$d'(v)\ge d(v)$ for every $v$.
+\end{lemma}
+\begin{proof}
+If false, take a shortest new path to a vertex whose distance decreased,
+and its first vertex $v$ with $d'(v)<d(v)$. Its predecessor $u$ satisfies
+$d'(u)\ge d(u)$ and $d'(v)=d'(u)+1$. If $u\to v$ was an old residual arc,
+then $d(v)\le d(u)+1\le d'(u)+1=d'(v)$, a contradiction.
+Otherwise it is a newly available reverse of an arc $v\to u$ on the old
+shortest augmenting path. Every prefix of that path is shortest, so
+$d(u)=d(v)+1$, and
+$d'(v)=d'(u)+1\ge d(u)+1=d(v)+2$, again a contradiction.
+\end{proof}
+
+\begin{lemma}[A residual arc is critical only $O(n)$ times]\label{nf:critical}
+Call a labelled residual arc \emph{critical} when an augmentation saturates
+it. Each of the $2m$ possible residual labels is critical at most $O(n)$ times.
+\end{lemma}
+\begin{proof}
+Suppose $a:u\to v$ is saturated on a shortest path when distances are $d$.
+Then $d(v)=d(u)+1$. Before $a$ can be used and saturated again, positive
+capacity on its particular label must be restored by an augmentation using
+its paired reverse label $v\to u$. At that intervening augmentation, with
+distances $\widehat d$, shortest-path choice and monotonicity imply
+\[
+ \widehat d(u)=\widehat d(v)+1\ge d(v)+1=d(u)+2.
+\]
+At the next critical use of $a$, its tail distance is at least
+$\widehat d(u)$. Thus the tail distance increases by at least 2 between
+critical uses. A finite shortest simple path has at most $n-1$ arcs, so only
+$O(n)$ such uses are possible.
+\end{proof}
+Each augmentation saturates at least one label, so there are $O(nm)$
+augmentations. BFS and updating take $O(n+m)$ time, or $O(m)$ after irrelevant
+isolated vertices are omitted. Thus the standard total is $O(nm^2)$.
+Finite termination plus Theorem~\ref{nf:mfmc} proves correctness.
+This algorithm augments one path per BFS; a blocking-flow algorithm is a
+different variant.
+
+\subsection{Flow decomposition and reduction templates}\label{nf:reductions}
+\paragraph{Decomposition.}
+A nonnegative feasible flow of value $F\ge0$ decomposes into weighted simple
+$s$--$t$ paths of total weight $F$ and directed cycles. To see this, add a
+labelled artificial arc $t\to s$ carrying $F$, making a circulation.
+Follow positive-flow arcs until a cycle appears and subtract its minimum
+flow. Conservation prevents getting stuck; each subtraction eliminates an
+arc, so repeating gives a cycle decomposition. Removing the artificial arc
+turns precisely its cycles into $s$--$t$ paths. Integer flows give integer
+weights, hence $F$ unit paths after splitting weights. Cycles may be discarded
+without changing value or violating capacity constraints.
+
+\paragraph{Reduction checklist.}
+Specify vertices, arcs, capacities, source/sink, and target flow value.
+Prove (i) an original solution gives a flow and (ii) an \emph{integral} flow
+meeting the target decodes into an original solution. State graph size and
+invoke a polynomial-time flow algorithm. A fractional maximum-flow witness
+need not decode; choose an integral maximum instead.
+
+\paragraph{Bipartite matching.}
+For a bipartite graph $(L\cup R,E)$, make
+$s\to u$ for $u\in L$, $u\to v$ for $uv\in E$, and $v\to t$ for $v\in R$,
+all of capacity 1. A matching of size $q$ gives $q$ unit paths.
+Conversely, in an integral flow, edges $uv$ carrying 1 form a matching:
+source/terminal capacity 1 and conservation allow at most one at each
+endpoint. Their number equals the flow value. Thus maximum matching size is
+the maximum flow value; matching every left vertex means target $|L|$.
+
+\paragraph{Vertex capacities.}
+To impose throughput $b_v$ on an internal vertex $v$, replace it by
+$v_{\rm in}\to v_{\rm out}$ of capacity $b_v$. Redirect each original
+$u\to v$ to $u_{\rm out}\to v_{\rm in}$, retaining its capacity.
+Incoming/outgoing notation refers to unsplit vertices where appropriate.
+Conservation forces all throughput across the splitting arc; conversely an
+original flow respecting $b_v$ extends by putting that throughput on it.
+Leave terminals unsplit unless their own throughput is constrained.
+
+\paragraph{Multiple sources/sinks and exact supplies.}
+Add a super-source $s_0$ with $s_0\to a_i$ of capacity equal to source $i$'s
+supply bound, and arcs $b_j\to t_0$ for sink receipt bounds.
+If exact supplies $a_i$ and demands $b_j$ sum to $B$, target value $B$ forces
+all these arcs to be saturated and gives the prescribed amounts.
+For unrestricted auxiliary arcs, use a finite upper bound on all possible
+flow (for example $1+\sum_e c_e$), rather than an unspecified infinity.
+
+\paragraph{Edge-disjoint paths.}
+Give every original directed arc capacity 1. A family of $q$ edge-disjoint
+$s$--$t$ paths gives a feasible value-$q$ flow. Conversely, decompose an
+integral maximum flow into unit paths and discard cycles. Capacity 1 prevents
+any original arc from belonging to two paths. Hence their maximum number
+equals the minimum number of outgoing arcs in an $s$--$t$ cut.
+For undirected edges, insert both orientations of capacity 1. Cancel equal
+flow on opposite orientations first; this preserves conservation and value.
+Then decomposition uses each undirected edge at most once across all paths.
+A cut counts exactly one orientation of each crossing undirected edge.
+
+\subsection{Vertex-disjoint paths and Menger's theorem}\label{nf:menger}
+\begin{theorem}[Vertex form of Menger]
+For distinct nonadjacent vertices $x,y$ in an undirected graph, the maximum
+number $p$ of internally vertex-disjoint $x$--$y$ paths equals the minimum
+size $q$ of a set $Z\subseteq V\setminus\{x,y\}$ whose deletion separates
+$x$ from $y$.
+\end{theorem}
+\begin{proof}
+Let $N$ be the original number of vertices and choose $M=N+1$.
+Split every internal vertex into $v_{\rm in}\to v_{\rm out}$ of capacity 1;
+keep $x,y$ unsplit. Replace every undirected edge $\{u,v\}$ by
+$u_{\rm out}\to v_{\rm in}$ and $v_{\rm out}\to u_{\rm in}$, each of capacity
+$M$, interpreting unsplit endpoints as themselves. Source is $x$, sink is $y$.
+
+\emph{Paths correspond to flow.} Internally disjoint paths give unit flows
+without exceeding any splitting capacity, so maximum flow $F^*\ge p$.
+Conversely, integral decomposition produces $F^*$ unit paths. No two can use
+the same internal splitting arc, so they decode to internally vertex-disjoint
+paths. Thus $p=F^*$.
+
+\emph{Separators correspond to cuts.} Given a separator $Z$, delete its
+splitting arcs and take the source-reachable set in the remaining network.
+The sink is unreachable. Every arc crossing out of this set in the original
+network must be a deleted splitting arc, so it defines a cut of capacity at
+most $|Z|$. Hence minimum cut capacity $C^*\le q$.
+Because $x,y$ are nonadjacent, deleting all $N-2$ other vertices separates
+them; therefore $C^*\le N-2<M$. No minimum cut can contain an outgoing
+$M$-capacity arc. Its outgoing arcs are all unit splitting arcs; let $Z$
+be their original vertices. Every $x$--$y$ path must cross that cut and hence
+one of those splitting arcs, so $Z$ is a separator with $|Z|=C^*$.
+Thus $q\le C^*$ as well. Max-flow/min-cut gives $p=F^*=C^*=q$.
+\end{proof}
+Nonadjacency is needed for this separator formulation: deleting internal
+vertices cannot destroy a direct edge $xy$. The same splitting idea gives
+the directed internally vertex-disjoint path variant when an internal
+separator exists.
+
+\subsection{Layered scheduling with two quota levels}\label{nf:scheduling}
+There are workers $i=1,\ldots,r$, periods $j=1,\ldots,k$, and $D$ tasks.
+Task $d$ belongs to period $p(d)$. Worker $i$ can perform tasks in $A_i$,
+may perform at most $b_i$ tasks overall, and at most one per period.
+Every task needs exactly one worker. Construct the layers
+\[
+ s\ \xrightarrow{\ b_i\ }\ w_i
+ \ \xrightarrow{\ 1\ }\ w_{ij}
+ \ \xrightarrow{\ 1\ }\ d
+ \ \xrightarrow{\ 1\ }\ t,
+ \qquad d\in A_i,\quad p(d)=j.
+\]
+There is one $w_i$ per worker, one $w_{ij}$ per worker-period, one vertex per
+task, and no other arcs. The target is $D$.
+
+\paragraph{Both directions.}
+Given a feasible schedule, send one unit along the indicated path for each
+task's assigned worker. Total and period quotas enforce the first two
+capacities; each task is used once, enforcing the last two. Conservation
+holds along each path, so the flow has value $D$.
+Conversely, an integral flow of value $D$ saturates every task-to-sink arc.
+At each task, exactly one incoming assignment arc carries 1. Decode that
+worker as its assignee. Assignment arcs guarantee availability; capacity 1
+on $w_i\to w_{ij}$ enforces the period quota; capacity $b_i$ on $s\to w_i$
+enforces the total quota. Thus a feasible schedule exists iff maximum flow
+has value $D$. A fractional assignment is not a schedule, but the integral
+maximum-flow theorem supplies the required witness.
+
+\paragraph{ILP formulation.}
+Use binary $x_{id}$ only for available pairs $d\in A_i$:
+\[
+\begin{array}{rl}
+ \text{minimize}&0\\[1mm]
+ \text{subject to}&\displaystyle\sum_{i:d\in A_i}x_{id}=1
+                    \quad\text{for every task }d,\\[2mm]
+ &\displaystyle\sum_{d\in A_i}x_{id}\le b_i
+                    \quad\text{for every worker }i,\\[2mm]
+ &\displaystyle\sum_{d\in A_i:p(d)=j}x_{id}\le1
+                    \quad\text{for every worker-period }(i,j),\\[2mm]
+ &x_{id}\in\{0,1\}.
+\end{array}
+\]
+Unavailable variables are absent or fixed to zero. A period quota $b_{ij}$
+replaces 1 in the second-layer capacity and corresponding ILP constraint.
+The network has $O(rk+D)$ vertices and
+$O(r+rk+D+\sum_i|A_i|)$ arcs, so one polynomial-time max-flow computation
+suffices. If an original formulation allows redundant coverage and only
+imposes upper quotas, discard excess assignments first to get exactly one
+worker per task.
+
+\subsection{Minimum-cut structure and tie-breaking}\label{nf:cut-structure}
+\begin{theorem}[Every minimum cut is saturated by every maximum flow]
+Fix any maximum flow $f$. For every minimum cut $S$, all original arcs
+leaving $S$ satisfy $f_e=c_e$, and all original arcs entering $S$ satisfy
+$f_e=0$.
+\end{theorem}
+\begin{proof}
+Since $c(S)=|f|$, the left side of \eqref{nf:cut-slack} is zero.
+Every term on its right is nonnegative, so each is zero.
+\end{proof}
+\paragraph{No opposite crossings.}
+A positive-capacity arc cannot leave one minimum cut's source side and enter
+another's. Fix the \emph{same} maximum flow for both cuts: the first requires
+$f_e=c_e>0$, while the second requires $f_e=0$, a contradiction.
+The positive-capacity assumption is necessary for this argument.
+
+\paragraph{Minimum capacity first, then fewest outgoing arcs.}
+For integer capacities, define $c'_e=(m+1)c_e+1$ and compute a minimum cut
+under $c'$. Its transformed capacity is
+\[
+ c'(S)=(m+1)c(S)+|\delta^+(S)|.
+\]
+Any increase of at least 1 in original cut capacity raises the first term
+by at least $m+1$, which exceeds every possible difference in outgoing-arc
+count (at most $m$). Therefore a minimum transformed cut first minimizes
+$c(S)$ and, among ties, minimizes $|\delta^+(S)|$. The capacity encoding grows
+by only $O(\log(m+1))$ bits. Integrality is essential to the unit-gap argument;
+arbitrary real capacities need a separately justified gap bound.
+
+\subsection{Optional extension: lower bounds and vertex demands}\label{nf:demands}
+This construction extends the basic flow reductions. It is useful reference
+material; the supplied lecture only briefly mentions these extensions.
+Suppose each arc must satisfy $\ell_e\le f_e\le c_e$, and vertices require
+\emph{net inflow} $\operatorname{in}_f(v)-\operatorname{out}_f(v)=d(v)$.
+Here $d(v)>0$ means demand and $d(v)<0$ means supply. Check
+$0\le\ell_e\le c_e$ and $\sum_v d(v)=0$ first.
+Set $f_e=\ell_e+g_e$, so $0\le g_e\le c_e-\ell_e$, and define
+\[
+ d'(v)=d(v)-\sum_{e\in\delta^-(v)}\ell_e
+                  +\sum_{e\in\delta^+(v)}\ell_e.
+\]
+Then $g$ must satisfy $\operatorname{in}_g(v)-\operatorname{out}_g(v)=d'(v)$.
+Add a super-source $\sigma$ and super-sink $\tau$. For $d'(v)<0$, add
+$\sigma\to v$ of capacity $-d'(v)$; for $d'(v)>0$, add $v\to\tau$ of
+capacity $d'(v)$. Let
+$B=\sum_{d'(v)>0}d'(v)=\sum_{d'(v)<0}-d'(v)$.
+There is a feasible original flow iff the auxiliary maximum flow has value
+$B$, saturating all super-source and super-sink arcs.
+
+\paragraph{Why this works.}
+A valid $g$ extends to such a flow by placing $-d'(v)$ or $d'(v)$ on its
+auxiliary arc, restoring conservation. Conversely, saturating those arcs
+and applying conservation at $v$ gives net original inflow $d'(v)$.
+Deleting auxiliary arcs and adding $\ell$ recovers a feasible $f$.
+Integral data give an integral witness. For lower-bounded $s$--$t$ flow with
+unconstrained nonnegative value, add an auxiliary $t\to s$ arc with a
+sufficiently large capacity and solve circulation feasibility; its flow
+records the $s$--$t$ value. Maximizing that value requires a further
+augmentation step after feasibility, not just a feasibility test.

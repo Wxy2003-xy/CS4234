@@ -1,0 +1,349 @@
+===== PDF PAGE 1 =====
+NA TIONAL UNIVERSITY OF SINGAPORE
+CS4234—Optimization Algorithms
+Final Assessment
+Semester 1, AY2025/26
+Time Allowed: 2 hours
+INSTRUCTIONS TO STUDENTS
+1. The assessment paper containsFIVE (5) questionsand comprisesEIGHT (8) pages
+including this cover page.
+2. Students are required to answerALLquestions.
+3. Weightage of each question is given in square brackets. The maximum attainable score
+is60.
+4. This is anOPEN book assessment.
+5. Any kind of electronic device is not allowed.
+6. Please write your Student Number only on theANSWER BOOKLET. Do not write
+your name. Write all your answers in the space provided in theANSWER BOOKLET.
+7. You are allowed to write with pencils, as long as it is legible.
+8.Marks may be deductedfor i) unrecognizable handwriting, and/or ii) hand-wavy argu-
+ments.
+
+===== PDF PAGE 2 =====
+CS4234 Final Assessment
+This page is intentionally left blank.
+It may be used as scratch paper.
+2
+
+===== PDF PAGE 3 =====
+CS4234 Final Assessment
+Question 1: True-False [16 marks]
+For the following statements, please indicate if they areTrueorFalse.
+A.Consider a linear programLP 1 and its dualLP 2. IfLP 1 is infeasible, thenLP 2 must be
+infeasible. [1 mark]
+B.Consider the vertex cover LP we have seen in the lecture: We are given a vertex cover
+instanceG= (V,E). Then, for each vertexv∈V, take a variablex v. Then the objective is to
+minimize ∑v∈V xv, and for each edge(u,v)∈E, we have a constraintx u +x v ≥1. Further, for
+eachv∈V,x v ≥0. The above LP relaxation has an integrality gap of at least 2− 2
+|V| . [3 marks]
+C.Consider theMin-Un-2-SATproblem: Given a 2-CNF formula, the goal is to find an as-
+signment that minimizes the number of clauses not satisfied by that assignment. Now, consider
+the following simple randomized algorithm (that we have seen for the Max-SAT problem): For
+each variable, independently set it to be true with probability 1/2, and false with probability
+1/2. This randomized algorithm achieves a 4-approximation ratio (in expectation) for the Min-
+Un-2-SAT problem.
+[3 marks]
+D.For any directed graph with arbitrary edge weights and a designated source and sink
+vertex, the Ford-Fulkerson algorithm finds a maximum flow in polynomial time. [1 mark]
+E.The following is a valid linear program with variablesx 1,x 2,x 3:
+maximize 2x1 +3x 2 −4x 3 such that
+x1 −x 2 +3x 3 ≥3
+2x2 −5x 3 ≤2
+x1,x 2 ≥0
+x3 ∈R\ {0}.
+[2 marks]
+F .The set of all feasible solutions of an integer linear program is a convex set. [2 marks]
+G.The Simplex algorithm that we have seen in the lecture, may terminate in polynomial
+time for certain linear program instances. [1 mark]
+H.Consider a metric space with domainXand a distance functiond. You are given a set
+of pointsP⊆Xfrom that metric space. Additionally, you are guaranteed that there exists a set
+of at mostkcenters (C⊆Pwith|C| ≤k) such that if you assign each point inPto its closest
+center inC, then the maximum distance between a point inPand its assigned center inCis at
+most (≤)r.
+3
+
+===== PDF PAGE 4 =====
+CS4234 Final Assessment
+Now, you design an algorithm that does the following: Start with an empty setC ′. Pick an
+arbitrary point fromPand add it toC ′, and then, remove all the points fromPthat are at a
+distance of at most (≤) 2rfrom the picked point. You repeat the above step until all the points
+inPare removed.
+At the end of the execution of the above algorithm, itmayhappen that|C ′| ≥2k. [3 marks]
+Question 2: Maximum Independent Set [8 marks]
+Consider themaximum independent setproblem: Given an undirected graphG= (V,E), find a
+maximum-sized subsetI⊆Vsuch that for allu,v∈I,(u,v)̸∈E.
+Next, consider the following randomized algorithm for the above problem: Among all possi-
+ble orderings (permutations) of the vertices inV, pick one uniformly at random. Then start
+processing each vertex (one by one) based on this picked ordering. Initially, take an empty set
+I. Then at any particular step, while processingu∈Vif for all(u,v)∈E,v̸∈I, addutoI;
+otherwise, continue with the next vertex based on the previously selected ordering. Stop when
+all the vertices have been processed, and output the setI. See the pseudocode below.
+Algorithm 1Random-order Greedy Independent Set
+1:Input:Undirected graphG= (V,E)
+2:Output:SetI⊆V
+3:Generate a uniformly random permutationπof the verticesV
+4:I← /0
+5:foreach vertexuin orderπdo
+6:iffor all(u,v)∈E, it holds thatv/∈Ithen
+7:I←I∪ {u}
+8:end if
+9:end for
+10:returnI
+Show that the setIoutput by the algorithm is an independent set of expected size at least
+1
+d+1 OPT, whereOPTdenotes the size of a maximum independent set anddis the maximum
+degree of a vertex, i.e.,d=max v∈V degree(v). [8 marks]
+Question 3: Longest Common Subsequence [6 marks]
+Consider thelongest common subsequenceproblem: Given a set of ofnstringsS={x 1,x 2,· · ·,x n},
+where eachx i is anℓ-length string over an alphabet{a,b,c,d}(i.e.,x i ∈ {a,b,c,d} ℓ), the goal
+is to find a longest common subsequence, i.e., a sequence of maximum length that is a subse-
+quence ofx i, for allx i ∈S. (To remind you about when we call a sequence a valid subsequence
+of another sequence, consider the following examples: the sequenceabcis a valid subsequence
+ofadbbac; on the other hand,abcis not a valid subsequence ofaccaab. A longest common
+subsequence between two sequencesabccadandbdccacisbcca.)
+Design a deterministic 0.25-factor approximation algorithm for the above problem with running
+timeO(nℓ). [6 marks]
+4
+
+===== PDF PAGE 5 =====
+CS4234 Final Assessment
+Question 4: Scheduling Emergency Service [18 marks]
+Suppose you are working in a company that has an emergency service unit withnemployees.
+All of thesenemployees have their regular daily schedules on working days. In addition, the
+emergency service unit also needs to ensure that at least one employee covers each vacation
+day. Suppose there arekvacation periods in a year, each spanning several contiguous days
+(e.g., two days – Saturdays and Sundays – every week, two days during Chinese New Year,
+etc.). For eachvacation period j∈ {1,2,· · ·,k}, letD j denote the set of days included in the
+j-th vacation period.∪ k
+j=1D j constitutes the set of all vacation days in a year.
+At the beginning of each year, the employees provide their availability to work on that year’s
+vacation days. More specifically, each employeei∈ {1,2,· · ·,n}provides achoice set A i
+containing the vacation days he or she will be available to work. Note that this set may include
+certain days from a vacation period but not others in that period. For instance, employee 1
+may provide a setA 1 that contains the first and third days (but not the second day) of the 2-nd
+vacation period and only the first day of the 3-rd vacation period.
+A schedule is calledemployee-friendly vacation-coveredif
+• For every vacation day in∪ k
+j=1D j, at least (≥) one employee is assigned to work on that
+day; and
+• No employee is assigned to work on a vacation day outside his/her choice set; and
+• An employee is assigned to work for at most (≤) 5 vacation days; and
+• No employee is assigned to work on more than one (i.e.,>1) vacation day in any va-
+cation period (even if multiple days of a vacation period are given in the choice set by
+an employee). For instance, in the earlier example, even thoughA 1 contains the first and
+third days of the 2-nd vacation period, the employee 1 can only be assigned either on the
+first or third day, but not both, of the 2-nd vacation period.
+Givenn,k,D 1,· · ·,D k,A 1,· · ·,A n, your goal is to output an employee-friendly vacation-covered
+schedule if feasible; otherwise, output that such an employee-friendly vacation-covered sched-
+ule is not viable.
+For the purpose of designing a deterministic polynomial-time algorithm for the above problem,
+answer the following questions:
+A.Formulate the above problem in terms of the maximum flow problem in a directed graph
+so that there exists an employee-friendly vacation-covered scheduling in the given scheduling
+emergency service instance if and only if there is a feasible flow in your max-flow instance.
+Provide the construction of the graph – clearly specify node and edge set, source, sink, and
+edge-capacities. You may also need to use demands on nodes and lower bounds on the flows
+on edges; if so, clearly specify them. [4 marks]
+B.Draw the maximum flow instance (that you have described in the previous part) for the fol-
+lowing scheduling emergency service instance: You haven=2 employees,k=2 vacation peri-
+ods, bothD 1 andD 2 contain three days each, sayD 1 ={d 11,d 12,d 13}andD 2 ={d 21,d 22,d 23},
+andA 1 ={d 11,d 12,d 21,d 22},A 2 ={d 12,d 13,d 22,d 23}.
+5
+
+===== PDF PAGE 6 =====
+CS4234 Final Assessment
+(In your figure, clearly mark which nodes correspond to what, add direction of edges, specify
+edge-capacities, and also demands on nodes, and lower bounds on flows on edges if you use
+them.) [3 marks]
+C.Prove that if there is an employee-friendly vacation-covered scheduling, then there is a
+feasible flow in your constructed flow network. [3 marks]
+D.Prove that if there is a feasible flow in your constructed flow network, then there is an
+employee-friendly vacation-covered scheduling. [3 marks]
+E.Instead of reducing to the maximum flow problem, let us now try directly formulating
+the problem of scheduling emergency service using an integer linear program (ILP). Provide an
+ILP formulation by clearly specifying variables, the objective function, and all the constraints.
+[5 marks]
+Question 5: Constrained Max-CUT [12 marks]
+Consider the followingconstrained Max-CUTproblem: You are given an undirected graph
+G= (V,E)where each edgee∈Ehas a non-negative weightw e ≥0. In addition, you are given
+two subsets of pairs of verticesS 1 ⊆V×VandS 2 ⊆V×V. Your goal is to find a cut(S,V\S)
+of maximum total weight (i.e., maximize the total weights of the edges crossing the cut) such
+that
+• For every pair{u,v} ∈S 1, eitheru,v∈Soru,v∈V\S(i.e.,u,vare on the same side of
+the cut); and
+• For every pair{u,v} ∈S 2, eitheru∈Sandv∈V\S, orv∈Sandu∈V\S(i.e.,u,vare
+on different sides of the cut).
+A.Design a deterministic polynomial-time algorithm to check if the given instance of the
+constrained Max-CUT problem has a feasible solution or not. [3 marks]
+B.Assuming there is a feasible solution, provide a strict quadratic program to formulate the
+constrained Max-CUT problem. [3 marks]
+C.Write down the vector program relaxation of the quadratic program for the constrained
+Max-CUT you have written in the previous part. (Note: if your quadratic program is not a
+correct formulation for the constrained Max-CUT, you will also not get any marks in this part
+for its vector program relaxation.) [2 marks]
+D.Provide a rounding for the vector program relaxation you have got in the previous part to
+get a 0.878-approximation for the constrained Max-CUT problem. You only need to highlight
+how you modify the rounding of the SDP-based approximation algorithm for the Max-CUT
+problem we have seen in the lecture. (Note: again, if your vector program relaxation is not
+correct in the last part, you will also not get any marks in this part for its rounding.) [4 marks]
+6
+
+===== PDF PAGE 7 =====
+CS4234 Final Assessment
+This page is intentionally left blank.
+It may be used as scratch paper.
+7
+
+===== PDF PAGE 8 =====
+CS4234 Final Assessment
+This page is intentionally left blank.
+It may be used as scratch paper.
+— E N D O F P A P E R —
+8
+
+===== PDF PAGE 9 =====
+Solutions CS4234 Final Assessment — 24 Nov 2025
+Question 1AIfLP 1 is infeasible, thenLP 2 must be infeasible. [1 marks]
+True False
+Question 1BIntegrality gap of vertex cover LP is at least 2−2/|V|. [3 marks]
+True False
+Question 1CProposed algorithm attains 4-approximation for Min-Un-2-SAT. [3 marks]
+True False
+Question 1DMax flow in polynomial time using Ford-Fulkerson algorithm. [1 marks]
+True False
+Question 1EIt is a valid linear program. [2 marks]
+True False
+Question 1FFeasible region of an ILP is convex. [2 marks]
+True False
+Question 1GSimplex algorithm may terminate in polynomial time. [1 marks]
+True False
+Question 1HThe size of output center set could be≥2k. [3 marks]
+True False
+1
+
+===== PDF PAGE 10 =====
+Solutions CS4234 Final Assessment — 24 Nov 2025
+Question 2Show that the setIoutput by the algorithm is an independent set and establish
+its approximation factor as stated in the question. [8 marks]
+By the construction, the setIoutput by the algorithm is an independent set, since we add a
+vertex to it only if its neighbors have not been added.
+Note that a vertexuwill be added toIif it is the first vertex in its neighborhood to be processed.
+Given that the process order is selected uniformly at random, the probability that a vertex will
+be processed before all of its neighbors is at least 1/(degree(u) +1).
+LetX u be the indicator random variable denoting whetheru∈Ior not. Thus,
+E[|I|] = ∑
+u∈V
+E[Xu]≥ ∑
+u∈V
+1
+degree(u) +1 ≥ n
+d+1
+wheredis the maximum degree.
+Clearly,OPT≤n, and that completes the proof.
+2
+
+===== PDF PAGE 11 =====
+Solutions CS4234 Final Assessment — 24 Nov 2025
+Question 3Approximation algorithm for the longest common subsequence problem.
+[6 marks]
+For each characterp∈ {a,b,c,d}, find the minimum frequency, denoted byf p, in a string in
+S,f p :=min xi∈S |{j|x i[j] =p}|.
+Letp max be a character (break ties arbitrarily) with the maximum minimum frequency, i.e.,
+pmax =argmax p∈{a,b,c,d} f p.
+Output a string of allp max of lengthf pmax.
+To argue about the approximation factor: Consider any longest common subsequencey, let
+its length be denoted byOPT. Then there must exist a characterpof frequency at least
+OPT/4 iny. Clearly,f pmax ≥f p, and thus the above algorithm has an approximation factor of
+1/4=0.25.
+3
+
+===== PDF PAGE 12 =====
+Solutions CS4234 Final Assessment — 24 Nov 2025
+Question 4AProvide description of max-flow instance. [4 marks]
+Create a node ui for each employee i ∈ [n], and a node v for each vacation day in ∪ jD j. Also,
+create a node ui, j for each employee i ∈ [n] and vacation period j ∈ [k]. In addition, add a
+source s and a sink t.
+Next, add the following edges: Add edges from s to all ui’s, and edges from all the vacation
+day nodes tot. Then add an edge(ui, ui, j) for each employeei ∈ [n] and vacation period j ∈ [k].
+For each employee i ∈ [n] and vacation period j ∈ [k], add an edge (ui, j, v) iff v ∈ Ai ∩ D j.
+Set edge-capacities as follows: For each (s, ui) edge, set capacity to be 5. For each (ui, ui, j)
+edge, set capacity to be 1. For each (ui, j, v) edge (where v is a node corresponding to a
+vacation day), set the capacity to be 1. For each (v,t) edge (where v is a node corresponding
+to a vacation day), set the capacity to be 1.
+Set lower bounds on flows on edges as follows: For each (v,t) edge (where v is a node corre-
+sponding to a vacation day), set the lower bound to be 1.
+Set the following node demands: Let d = | ∪j D j|. Set a demand −d on s and +d on t.
+Question 4BDraw figure of your constructed instance. [3 marks]
+4
+
+
+===== PDF PAGE 13 =====
+Solutions CS4234 Final Assessment — 24 Nov 2025
+Question 4CProve that the feasibility of employee-friendly vacation-covered scheduling
+implies a feasible flow. [3 marks]
+Consider an employee-friendly vacation-covered scheduling.
+If an employeeiis assigned to a vacation dayv, then set the flow on edge(u i,v)to 1; otherwise
+0. Set the flow of a(u i,u i,j )edge to 1 ifiis assigned to a dayv∈D j; otherwise 0. Next, set
+the flow on(s,u i)edge such that it satisfies the conservation constraint on nodeu i.
+Set the flows of all(v,t)edges to 1. It is easy to see that the demands onsandtare satisfied,
+and the flow we get is a feasible flow.
+Question 4DProve that a feasible flow implies the feasibility of employee-friendly
+vacation-covered scheduling. [3 marks]
+Consider a feasible flow such that it is integral (already argued in the lecture). If an edge
+(ui,j ,v)has a flow of 1, then assign employeeito the vacation dayv.
+It now follows from capacities on(s,u i)and(u i,u i,j )edges and lower bounds on(v,t)edges
+that it is a feasible employee-friendly vacation-covered scheduling.
+5
+
+===== PDF PAGE 14 =====
+Solutions CS4234 Final Assessment — 24 Nov 2025
+Question 4EProvide an ILP formulation. [5 marks]
+Here, we need to write a feasibility ILP, so there is no objective to minimize or maximize
+(alternatively, one may minimize or maximize 0).
+For each employeeiand vacation dayv, consider a variablex i,v ∈ {0,1}(to denote whether
+to assignitovor not).
+Constraints are as follows:
+For eachi∈[n], ∑v xi,v ≤5.
+For eachi∈[n]andj∈[k], ∑v∈D j xi,v ≤1.
+For eachv∈ ∪ jD j, ∑i xi,v ≥1.
+For eachi∈[n]andv̸∈A i,x i,v =0.
+6
+
+===== PDF PAGE 15 =====
+Solutions CS4234 Final Assessment — 24 Nov 2025
+Question 5AAlgorithm to check feasibility of the constrained Max-CUT. [3 marks]
+There is a feasible solution if and only ifS 1 ∩S 2 = /0and there is no tuplea,b,csuch that all
+three pairs{a,b},{b,c},{c,a} ∈S 2 or exactly two of them, say{a,b},{b,c} ∈S 1 but other
+pair{c,a} ∈S 2.
+All of the above conditions can be checked by enumerating all tuples in polynomial time.
+Question 5BStrict quadratic program for the constrained Max-CUT. [3 marks]
+For each vertexi∈V, take a variabley i.
+We want to maximize 1
+2 ∑e=(i,j)∈E we(1−y iy j), subject to
+yiy j =1∀ {i,j}∈S 1,and
+yiy j =−1∀ {i,j}∈S 2,and
+y2
+i =1∀ i∈V,and
+yi ∈Z∀ i∈V.
+7
+
+===== PDF PAGE 16 =====
+Solutions CS4234 Final Assessment — 24 Nov 2025
+Question 5CVector program relaxation for the constrained Max-CUT. [2 marks]
+We want to maximize 1
+2 ∑e=(i,j)∈E we(1−v i ·v j), subject to
+vi ·v j =1∀ {i,j}∈S 1,and
+vi ·v j =−1∀ {i,j}∈S 2,and
+vi ·v i =1∀ i∈V,and
+vi ∈R n ∀i∈V(where|V|=n).
+Question 5DApproximation algorithm for the constrained Max-CUT. [4 marks]
+First, solve the vector program. We now observe the following:
+For each{i,j} ∈S 1, sincev i ·v j =1 and bothv i,v j are unit vectors, we have thatvi =v j (since
+cosθ i j =1).
+For each{i,j} ∈S 2, sincev i ·v j =−1 and bothv i,v j are unit vectors, we have thatv i =−v j
+(since cosθ i j =−1).
+Now, use the following randomized rounding: Pick a vectorrof dimensionnfrom the Normal
+distribution with mean 0 and variance 1. Then for eachi∈V, ifv i ·r≥0, add to the setS;
+otherwise, add to the setV\S.
+The probability that each edge is in the cut is arccos(vi ·v j)/π.
+Hence, the approximation factor (in expectation) is 0.878.
+8

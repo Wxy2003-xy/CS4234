@@ -1,0 +1,298 @@
+===== PDF PAGE 1 =====
+Optimization Algorithms
+Diptarka Chakraborty
+Week 4
+LP Relaxation, Vertex Cover, 
+Maximum Satisfiability
+CS4234
+
+===== PDF PAGE 2 =====
+An ILP optimizes a linear objective with integer decisions
+2
+Variables x ∈ ℤⁿ, often binary: xⱼ ∈ {0,1}.
+Objective maximize cᵀx  (or minimize cᵀx).
+Constraints Ax ≤ b, where every expression is linear.
+Integrality models discrete choices—but usually makes optimization hard.
+
+===== PDF PAGE 3 =====
+An LP (linear program)relaxation allows fractional decisions
+3
+ILP
+Ax ≤ b
+xⱼ ∈ {0,1}
+Discrete feasible points
+LP relaxation
+Ax ≤ b
+0 ≤ xⱼ ≤ 1
+Continuous feasible region
+For maximization: 𝑶𝑷𝑻𝑳𝑷 ≥ 𝑶𝑷𝑻𝑰𝑳𝑷 because the LP has every integer feasible solution plus more (fractional) feasible solutions.
+
+===== PDF PAGE 4 =====
+A two-variable example shows the relaxation gap
+4
+maximize   3x₁ + 2x₂
+subject to
+2x₁ + x₂ ≤ 2
+x₁ + 2x₂ ≤ 2
+ILP
+x₁,x₂ ∈ {0,1}
+Best point: (1,0)
+value = 3
+LP
+0 ≤ x₁,x₂ ≤ 1
+Best point: (2/3,2/3)
+value = 10/3
+Relaxation enlarges the feasible set, so its optimum can be strictly better.
+
+===== PDF PAGE 5 =====
+LP relaxation follows a four-stage recipe
+5
+1
+Model the problem as an 
+ILP .
+2
+Relax integrality to obtain 
+an LP .
+3
+Solve the LP in polynomial 
+time.
+4
+Round the fractional 
+solution.
+The analysis compares the rounded solution with the LP upper bound.
+
+
+===== PDF PAGE 6 =====
+Vertex Cover: select vertices that touch every edge
+6
+A set C ⊆ V is a vertex cover if every edge has at least one endpoint in C.
+Goal: minimize |C|.
+a
+b
+d
+e
+f
+c
+Green vertices form a vertex cover
+
+===== PDF PAGE 7 =====
+Vertex Cover ILP: variables select vertices
+7
+Variables xᵥ ∈ {0,1} for every vertex v ∈ V.
+Objective minimize  ∑ᵥ xᵥ
+Constraints xᵤ + xᵥ ≥ 1 for every edge {u,v} ∈ E.
+xᵥ = 1 selects v; each edge requires at least one selected endpoint.
+
+===== PDF PAGE 8 =====
+Threshold rounding gives a 2-approximation
+8
+1   Solve the LP and obtain x*.
+2   Select every vertex v with xᵥ* ≥ 1/2.
+3   Return the selected set C.
+Feasible
+xᵤ* + xᵥ* ≥ 1 ⇒ endpoint ≥ 1/2
+Cost
+|C| ≤ 2∑ᵥ xᵥ*
+= 2·OPTₗₚ ≤ 2·OPT
+Threshold 1/2 covers every edge and increases the LP cost by at most factor 2.
+
+===== PDF PAGE 9 =====
+Max-SAT asks us to satisfy as many clauses of a CNFas possible
+16
+Literal A Boolean variable xⱼ or its negation ¬xⱼ.
+Clause An OR of literals, e.g. Cᵢ = x₁ ∨ ¬x₂ ∨ x₄.
+CNF An AND of clauses: Φ = C₁ ∧ C₂ ∧ ··· ∧ Cₘ.
+Max-SAT Choose an assignment maximizing the satisfied clause weight.
+SAT asks whether all clauses can be satisfied; Max-SAT optimizes how many.
+
+===== PDF PAGE 10 =====
+Weighted Max-SAT uses clause values
+10
+Weight Each clause Cᵢ has nonnegative weight wᵢ.
+Indicator τ(Cᵢ) = 1 if the assignment satisfies Cᵢ; otherwise 0.
+Objective cost(τ) = ∑ᵢ wᵢ τ(Cᵢ).
+Goal Choose τ maximizing cost(τ).
+Linearity of expectation also works for weighted clauses.
+
+===== PDF PAGE 11 =====
+Max-SAT ILP: variables record truth and satisfaction
+11
+Truth xⱼ ∈ {0,1}: whether Boolean variable xⱼ is true.
+Clause yᵢ ∈ {0,1}: whether clause Cᵢ is satisfied.
+Objective maximize ∑ᵢ wᵢ yᵢ.
+The objective pays for each clause whose satisfaction variable reaches 1.
+
+===== PDF PAGE 12 =====
+One linear constraint certifies each satisfied clause
+12
+Consider a clause 𝐶𝑖.
+෍
+𝒋:𝑥𝒋∈𝐶𝒊
+𝑥𝒋 + ෍
+𝒋: ҧ𝑥𝒋∈𝐶𝒊
+(1 − 𝑥𝒋) ≥ 𝑦𝒊
+Together with xⱼ,yᵢ∈{0,1}, yᵢ can be 1 only if at least one literal is true.
+The ILP is exact: every Boolean assignment corresponds to a feasible integer solution.
+
+===== PDF PAGE 13 =====
+Relax, solve, and round the Max-SAT ILP(let OPT is optimal ILP)
+13
+1
+Replace xⱼ,yᵢ∈{0,1} by 
+xⱼ,yᵢ∈[0,1].
+2
+Solve the LP to get x* and 
+y*.
+3
+Set xⱼ=true independently 
+with probability xⱼ*.
+4
+Compare the rounded value 
+with 𝑂𝑃𝑇𝐿𝑃 ≥ OPT.
+Fractional variables become probabilities for randomized rounding.
+
+===== PDF PAGE 14 =====
+Randomized rounding uses the LP values as coin biases
+14
+1   Solve the LP and obtain xⱼ* for every variable.
+2   Independently set xⱼ=true with probability xⱼ*.
+3   Evaluate and return the resulting assignment τ.
+LP value:
+𝑶𝑷𝑻𝑳𝑷 = ∑ᵢwᵢyᵢ*
+The LP solution guides a nonuniform random assignment.
+
+===== PDF PAGE 15 =====
+A clause fails only if every literal rounds false
+15
+For clause Cᵢ:
+Pr[Cᵢ not satisfied] =?
+Independence turns the joint failure event into a product.
+Clause analysis again reduces to one local probability.
+
+===== PDF PAGE 16 =====
+A clause fails only if every literal rounds false
+16
+For clause Cᵢ:
+Pr[Cᵢ not satisfied] = ς𝒋:𝑥𝒋∈𝐶𝒊 1 − 𝑥𝒋
+∗ ς𝒋:𝑥𝒋∈𝐶𝒊 𝑥𝒋
+∗
+Independence turns the joint failure event into a product.
+Clause analysis again reduces to one local probability.
+
+===== PDF PAGE 17 =====
+Expected clause value is one minus the failure product
+17
+E[τ(Cᵢ)] = 1 − ς𝒋:𝑥𝒋∈𝐶𝒊 1 − 𝑥𝒋
+∗ ς𝒋:𝑥𝒋∈𝐶𝒊 𝑥𝒋
+∗
+We now upper-bound the failure product using the LP constraint.
+The randomized-rounding guarantee is hidden inside this product.
+
+===== PDF PAGE 18 =====
+Analyzing Randomized Rounding
+• AM-GM inequality: For non-negative 𝑎1, 𝑎2, ⋯ , 𝑎𝑘
+ෑ
+𝑖
+𝑎𝑖
+1/𝑘
+≤ 1
+𝑘 ෍
+𝑖
+𝑎𝑖
+• Fact on Concave Function: For any concave function 𝑓(𝑥) on [0,1],
+suppose 𝑓 0 = 𝑎 and 𝑓 1 = 𝑎 + 𝑏, then 𝑓 𝑥 ≥ 𝑏𝑥 + 𝑎 for x ∈ [0,1]
+18
+
+
+===== PDF PAGE 19 =====
+Analyzing Randomized Rounding
+19
+
+===== PDF PAGE 20 =====
+Analyzing Randomized Rounding
+• 𝔼 𝜏 𝐶𝑖 = 1 − ς𝑗:𝑥𝑗∈𝐶𝑖 1 − 𝑥𝑗
+∗ ς𝑗:𝑥𝑗∈𝐶𝑖 𝑥𝑗
+∗ (𝐶𝑖 has ℓ𝑖 literals)
+≥ 1 −
+1
+ℓ𝑖
+(σ𝑗:𝑥𝑗∈𝐶𝑖(1 − 𝑥𝑗
+∗) + σ𝑗:𝑥𝑗∈𝐶𝑖 𝑥𝑗
+∗)
+ℓ𝑖
+(By AM-GM)
+= 1 − 1 −
+1
+ℓ𝑖
+σ𝑗:𝑥𝑗∈𝐶𝑖 𝑥𝑗
+∗ + σ𝑗:𝑥𝑗∈𝐶𝑖(1 − 𝑥𝑗
+∗)
+ℓ𝑖
+≥ 1 − 1 −
+𝑦𝑖
+∗
+ℓ𝑖
+ℓ𝑖
+(By LP constraint)
+≥ 1 − 1 −
+1
+ℓ𝑖
+ℓ𝑖
+𝑦𝑖
+∗ (By concave function fact)
+≥ 1 −
+1
+𝑒 𝑦𝑖
+∗
+20
+
+===== PDF PAGE 21 =====
+The LP constraint controls the clause failure probability
+21
+E[τ(Cᵢ)] = 1 − 1 −
+𝑦𝑖
+∗
+ℓ𝑖
+ℓ𝑖
+Hence E[τ(Cᵢ)] ≥ 1 − 1 −
+1
+ℓ𝑖
+ℓ𝑖
+𝑦𝑖
+∗  ≤ 1 −
+1
+𝑒 𝑦𝑖
+∗
+Concavity turns the nonlinear clause probability into a linear fraction of yᵢ*.
+For clause Cᵢ containing ℓ𝑖 literals
+
+===== PDF PAGE 22 =====
+Summing clauses gives a 1−1/e guarantee
+22
+E[cost(τ)] ≥ (1−1/e)∑ᵢwᵢyᵢ* = (1−1/e)𝑶𝑷𝑻𝑳𝑷 ≥ (1−1/e)OPT
+Numerically, 1−1/e ≈ 0.632.
+LP relaxation plus randomized rounding is a 1.582-approximation for Max-SAT.
+
+===== PDF PAGE 23 =====
+Combining two algorithms reaches factor 3/4
+23
+Output Best of the following two:
+Algo1 (flipping unbiased coins), and 
+LP with randomized rounding
+Summing over clause weights gives E[cost] ≥  ¾ · OPT.
+
+
+===== PDF PAGE 24 =====
+Three techniques recur throughout approximation algorithms
+24
+Randomize Use indicators and expectation to analyze simple local choices.
+Derandomize Preserve conditional expectation while fixing decisions.
+Relax + round Solve a tractable fractional problem, then convert it to a discrete solution.
+Design the algorithm around a bound that can pay for every rounding loss.
+
+===== PDF PAGE 25 =====
+References
+• Max-SAT: 
+Chapter 5 of [Williamson and Shmoys]
+Chapter 16 of [Vazirani]
+25

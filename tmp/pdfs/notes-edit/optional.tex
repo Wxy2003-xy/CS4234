@@ -1,0 +1,56 @@
+\subsection{Random-endpoint vertex cover: an optional expectation proof}
+\label{app:randomvc}
+For an unweighted graph, repeatedly choose any uncovered edge and select one of its two
+endpoints uniformly at random, then remove all edges incident to the selected vertex.
+Return the selected vertices. Each iteration removes at least its chosen edge, and every
+removed edge is covered, so the output is feasible.
+
+Fix a minimum cover $C^*$. There are at most $n$ iterations, since selected vertices are
+distinct. For each $i\in\{1,\ldots,n\}$, let $A_i$ indicate that iteration $i$ occurs,
+and let $Y_i$ indicate that it selects a vertex of $C^*$; after termination set both to zero.
+Conditional on the history of any active iteration, the chosen edge has at least one
+endpoint in $C^*$, so
+\[
+\mathbb E[Y_i\mid\text{history}]\ge\tfrac12 A_i.
+\]
+Taking expectations and summing gives
+\[
+\tfrac12\mathbb E[|C|]=\tfrac12\sum_i\mathbb E[A_i]
+\le\mathbb E\!\left[\sum_iY_i\right]\le |C^*|.
+\]
+Thus $\mathbb E[|C|]\le2\OPT$. This does not claim a factor-2 bound for every run.
+Maintaining active edges and removing a vertex's incident edges gives polynomial time.
+The simpler maximal-matching algorithm in the main notes is deterministic and has the
+same approximation factor.
+
+\section{Source Notes and Scope}
+\label{app:sources}
+The core material follows the supplied L1--L4 approximation/LP decks, Network Flow I--III,
+and Tutorials 1--4. The merged tutorial PDF includes Tutorial 4 on PDF pages 21--28.
+Network Flow III slide 36 announces the Week 6 cutoff. The sample finals are used for
+practice style; their exam instructions do not determine the midterm's rules.
+
+\begin{itemize}
+\item \textbf{L1, slide 23:} knapsack's capacity constraint is $\sum_i w_ix_i\le W$.
+The opposite sign printed there is inconsistent with the problem and surrounding slides.
+\item \textbf{L4-LP, slide 21:} the displayed clause expression is a lower bound in
+general, and the final comparison with $(1-1/e)y_i^*$ is $\ge$, not $\le$.
+\item \textbf{Network Flow III, scaling pseudocode:} initialize the threshold to a power
+of two, or otherwise ensure threshold 1 is processed. Real halving from an arbitrary
+integer maximum capacity can skip it. Describe flow algorithms by their path-selection
+rules as well as their names, since labels differ across sources.
+\item \textbf{AY25/26 final, solution Q4C:} the assignment arc in its layered network
+is $(u_{i,j},v)$, not $(u_i,v)$. If a schedule covers a day redundantly and all employee
+constraints are upper bounds, discard excess assignments before constructing a unit
+flow per day.
+\item \textbf{AY25/26 final, solution Q5A:} checking only conflicting pairs and triangles
+does not suffice for same-side/opposite-side constraints. A 5-cycle of opposite-side
+constraints is infeasible but has no triangle. Correct feasibility propagates parity by
+BFS/DFS across every constraint edge, rejecting any inconsistent assignment. The SDP
+parts of that question are not developed in the supplied Week 1--6 decks.
+\item \textbf{AY24/25 final, solution Q6:} strong LP duality equates the fractional
+matching/cover optima. Identifying these values with the integral combinatorial problems
+also uses the integrality property for bipartite graphs. Matching via flow is part of the
+supplied scope; the LP-duality argument is additional material.
+\end{itemize}
+
