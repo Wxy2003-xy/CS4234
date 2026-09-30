@@ -1,184 +1,199 @@
-\contentsline {section}{\numberline {1}Exam Reference and Proof Toolkit}{3}{section.1}%
-\contentsline {subsection}{\numberline {1.1}Choose a technique}{3}{subsection.1.1}%
-\contentsline {subsection}{\numberline {1.2}What every solution must state}{3}{subsection.1.2}%
-\contentsline {subsection}{\numberline {1.3}Guarantee conventions and relaxation directions}{3}{subsection.1.3}%
-\contentsline {subsection}{\numberline {1.4}Probability and inequalities used in the course}{3}{subsection.1.4}%
-\contentsline {subsection}{\numberline {1.5}Small counterexamples and quantifiers to remember}{3}{subsection.1.5}%
-\contentsline {section}{\numberline {2}Greedy Approximation and Scaling}{4}{section.2}%
-\contentsline {subsection}{\numberline {2.1}Greedy algorithms for 0/1 knapsack}{4}{subsection.2.1}%
-\contentsline {subsection}{\numberline {2.2}The best-of-candidates argument}{4}{subsection.2.2}%
-\contentsline {subsection}{\numberline {2.3}Subset sum and group admission}{4}{subsection.2.3}%
-\contentsline {paragraph}{Read-only array and constant extra space.}{5}{section*.7}%
-\contentsline {subsection}{\numberline {2.4}Knapsack FPTAS: value-indexed dynamic programming}{5}{subsection.2.4}%
-\contentsline {paragraph}{Exact pseudo-polynomial DP.}{5}{section*.8}%
-\contentsline {paragraph}{Scale the value coordinate, not the weights.}{5}{section*.9}%
-\contentsline {subsection}{\numberline {2.5}PTAS and asymptotic PTAS}{5}{subsection.2.5}%
-\contentsline {subsubsection}{\numberline {2.5.1}One-dimensional bin packing: asymptotic PTAS}{5}{subsubsection.2.5.1}%
-\contentsline {subsubsection}{\numberline {2.5.2}Fixed-dimensional knapsack: profit guessing and LP rounding}{5}{subsubsection.2.5.2}%
-\contentsline {subsection}{\numberline {2.6}Weighted set cover: greedy charging}{5}{subsection.2.6}%
-\contentsline {paragraph}{Running time.}{6}{section*.14}%
-\contentsline {subsection}{\numberline {2.7}Vertex cover from a maximal matching}{6}{subsection.2.7}%
-\contentsline {paragraph}{Why complements do not preserve approximation.}{6}{section*.15}%
-\contentsline {subsection}{\numberline {2.8}Triangle deletion and disjoint-obstruction packing}{6}{subsection.2.8}%
-\contentsline {paragraph}{Reusable generalization.}{7}{section*.16}%
-\contentsline {paragraph}{Greedy by number of triangles removed.}{7}{section*.17}%
-\contentsline {section}{\numberline {3}Metric TSP and Eulerian Structure}{8}{section.3}%
-\contentsline {subsection}{\numberline {3.1}General TSP, metric TSP, and the shortcut rule}{8}{subsection.3.1}%
-\contentsline {paragraph}{Why the metric assumption matters.}{8}{section*.18}%
-\contentsline {subsection}{\numberline {3.2}Euler circuits, open trails, and orientation}{8}{subsection.3.2}%
-\contentsline {paragraph}{Orienting an even-degree connected graph.}{8}{section*.19}%
-\contentsline {subsection}{\numberline {3.3}Double-tree: a 2-approximation}{8}{subsection.3.3}%
-\contentsline {paragraph}{Four-vertex metric counterexample to optimality.}{8}{section*.20}%
-\contentsline {subsection}{\numberline {3.4}Christofides: a $3/2$-approximation}{8}{subsection.3.4}%
-\contentsline {subsection}{\numberline {3.5}Held--Karp exact dynamic programming}{8}{subsection.3.5}%
-\contentsline {section}{\numberline {4}Randomization and Derandomization}{9}{section.4}%
-\contentsline {subsection}{\numberline {4.1}The indicator-variable proof template}{9}{subsection.4.1}%
-\contentsline {subsection}{\numberline {4.2}Weighted MAX-CUT, MAX-$k$-CUT, and MAX-DICUT}{9}{subsection.4.2}%
-\contentsline {subsection}{\numberline {4.3}Conditional expectation: how to remove randomness}{9}{subsection.4.3}%
-\contentsline {subsection}{\numberline {4.4}Weighted MAX-SAT by fair and biased assignment}{9}{subsection.4.4}%
-\contentsline {section}{\numberline {5}Linear Programming and Rounding}{9}{section.5}%
-\contentsline {subsection}{\numberline {5.1}Modelling, relaxation, and the direction of the bound}{9}{subsection.5.1}%
-\contentsline {subsection}{\numberline {5.2}FOL feasibility and ILP formulation reference}{10}{subsection.5.2}%
-\contentsline {paragraph}{Reusable exact tree ILP.}{10}{section*.25}%
-\contentsline {subsubsection}{\numberline {5.2.1}Metric TSP}{10}{subsubsection.5.2.1}%
-\contentsline {subsubsection}{\numberline {5.2.2}Single-machine scheduling}{10}{subsubsection.5.2.2}%
-\contentsline {subsubsection}{\numberline {5.2.3}Parallel-machine scheduling}{11}{subsubsection.5.2.3}%
-\contentsline {subsubsection}{\numberline {5.2.4}Bin packing}{11}{subsubsection.5.2.4}%
-\contentsline {subsubsection}{\numberline {5.2.5}Set packing}{11}{subsubsection.5.2.5}%
-\contentsline {subsubsection}{\numberline {5.2.6}Prize-collecting Steiner tree}{11}{subsubsection.5.2.6}%
-\contentsline {subsubsection}{\numberline {5.2.7}Balanced cut}{11}{subsubsection.5.2.7}%
-\contentsline {subsubsection}{\numberline {5.2.8}$k$-minimum spanning tree}{11}{subsubsection.5.2.8}%
-\contentsline {subsubsection}{\numberline {5.2.9}Capacitated minimum spanning tree}{11}{subsubsection.5.2.9}%
-\contentsline {subsubsection}{\numberline {5.2.10}Feedback vertex set}{11}{subsubsection.5.2.10}%
-\contentsline {subsubsection}{\numberline {5.2.11}Shortest superstring}{12}{subsubsection.5.2.11}%
-\contentsline {subsubsection}{\numberline {5.2.12}3-dimensional matching}{12}{subsubsection.5.2.12}%
-\contentsline {subsubsection}{\numberline {5.2.13}Fair matching with group quotas}{12}{subsubsection.5.2.13}%
-\contentsline {subsubsection}{\numberline {5.2.14}Capacitated facility location}{12}{subsubsection.5.2.14}%
-\contentsline {subsubsection}{\numberline {5.2.15}Maximum independent set}{12}{subsubsection.5.2.15}%
-\contentsline {subsubsection}{\numberline {5.2.16}Capacitated knapsack}{12}{subsubsection.5.2.16}%
-\contentsline {subsubsection}{\numberline {5.2.17}Higher-dimensional knapsack}{12}{subsubsection.5.2.17}%
-\contentsline {paragraph}{Model-checking reminders.}{12}{section*.26}%
-\contentsline {paragraph}{Further formulation references.}{13}{section*.27}%
-\contentsline {subsection}{\numberline {5.3}Weighted vertex cover: threshold rounding}{13}{subsection.5.3}%
-\contentsline {subsection}{\numberline {5.4}Set cover: bounded frequency}{13}{subsection.5.4}%
-\contentsline {subsection}{\numberline {5.5}Weighted MAX-SAT: LP rounding}{13}{subsection.5.5}%
-\contentsline {subsection}{\numberline {5.6}MAX-DICUT: two $1/2$ rounding proofs}{13}{subsection.5.6}%
-\contentsline {subsection}{\numberline {5.7}Randomized set cover: repeat until feasible}{14}{subsection.5.7}%
-\contentsline {section}{\numberline {6}Network Flow}{15}{section.6}%
-\contentsline {subsection}{\numberline {6.1}Integer network flow and residual graph}{15}{subsection.6.1}%
-\contentsline {paragraph}{Residual graph $G_f$.}{15}{section*.33}%
-\contentsline {paragraph}{Why reverse arcs are necessary.}{15}{section*.34}%
-\contentsline {paragraph}{Comparing two flows: use the residual network.}{15}{section*.35}%
-\contentsline {subsection}{\numberline {6.2}$s$--$t$ cuts and max-flow/min-cut}{15}{subsection.6.2}%
-\contentsline {subsection}{\numberline {6.3}Ford--Fulkerson and integral flows}{15}{subsection.6.3}%
-\contentsline {paragraph}{Integer bad example: $2C$ augmentations instead of two.}{15}{section*.36}%
-\contentsline {subsection}{\numberline {6.4}Capacity scaling: $O(m^2(1+\log C))$}{15}{subsection.6.4}%
-\contentsline {paragraph}{Correctness.}{16}{section*.37}%
-\contentsline {paragraph}{At most $2m$ augmentations per phase.}{16}{section*.38}%
-\contentsline {subsection}{\numberline {6.5}Shortest augmenting paths: $O(nm^2)$}{16}{subsection.6.5}%
-\contentsline {subsection}{\numberline {6.6}Flow decomposition and reduction templates}{16}{subsection.6.6}%
-\contentsline {paragraph}{Decomposition.}{16}{section*.39}%
-\contentsline {paragraph}{Reduction checklist.}{16}{section*.40}%
-\contentsline {paragraph}{Vertex capacities.}{16}{section*.41}%
-\contentsline {paragraph}{Multiple sources/sinks and exact supplies.}{16}{section*.42}%
-\contentsline {subsection}{\numberline {6.7}Bipartite matching: Hall's and K\H {o}nig's theorems}{16}{subsection.6.7}%
-\contentsline {paragraph}{Flow reduction.}{16}{section*.43}%
-\contentsline {paragraph}{Deficiency formula and how to use it.}{17}{section*.46}%
-\contentsline {paragraph}{Recover the actual cover from a maximum matching.}{17}{section*.48}%
-\contentsline {paragraph}{Independent-set corollary and pitfalls.}{17}{section*.49}%
-\contentsline {paragraph}{Weighted bipartite vertex cover is also exactly solvable.}{17}{section*.50}%
-\contentsline {paragraph}{Worked certificate: matching, Hall obstruction, and cover.}{17}{section*.51}%
-\contentsline {subsection}{\numberline {6.8}Vertex-disjoint paths and Menger's theorem}{17}{subsection.6.8}%
-\contentsline {subsection}{\numberline {6.9}Layered scheduling with two quota levels}{17}{subsection.6.9}%
-\contentsline {paragraph}{Both directions.}{18}{section*.52}%
-\contentsline {paragraph}{ILP formulation.}{18}{section*.53}%
-\contentsline {subsection}{\numberline {6.10}Minimum-cut structure and tie-breaking}{18}{subsection.6.10}%
-\contentsline {paragraph}{No opposite crossings.}{18}{section*.54}%
-\contentsline {paragraph}{Smallest/largest source sides and uniqueness.}{18}{section*.55}%
-\contentsline {paragraph}{Minimum capacity first, then fewest outgoing arcs.}{18}{section*.56}%
-\contentsline {paragraph}{Lower bounds and vertex demands.}{18}{section*.57}%
-\contentsline {section}{\numberline {A}Targeted Practice Questions}{19}{appendix.A}%
-\contentsline {subsection}{\numberline {A.1}Questions}{19}{subsection.A.1}%
-\contentsline {paragraph}{Q1. Scheduling with two levels of quotas (10 marks).}{19}{section*.58}%
-\contentsline {paragraph}{Q2. Bounded-frequency weighted covering (8 marks).}{19}{section*.59}%
-\contentsline {paragraph}{Q3. Randomized cut, then remove the randomness (8 marks).}{19}{section*.60}%
-\contentsline {paragraph}{Q4. Randomized set cover with a stopping rule (10 marks).}{19}{section*.61}%
-\contentsline {paragraph}{Q5. Minimum-cut structure and tie-breaking (8 marks).}{19}{section*.62}%
-\contentsline {paragraph}{Q6. MAX-DICUT rounding and a changed probability (8 marks).}{19}{section*.63}%
-\contentsline {paragraph}{Q7. MAX-SAT clause lengths and combination (10 marks).}{19}{section*.64}%
-\contentsline {paragraph}{Q8. Metric TSP and the role of assumptions (8 marks).}{19}{section*.65}%
-\contentsline {paragraph}{Q9. Knapsack scaling (8 marks).}{19}{section*.66}%
-\contentsline {paragraph}{Q10. Vertex-disjoint routes (8 marks).}{19}{section*.67}%
-\contentsline {paragraph}{Q11. Repair a flow algorithm (8 marks).}{19}{section*.68}%
-\contentsline {paragraph}{Q12. An unfamiliar objective with a familiar proof (6 marks).}{19}{section*.69}%
-\contentsline {subsection}{\numberline {A.2}Quick true/false drill}{19}{subsection.A.2}%
-\contentsline {subsection}{\numberline {A.3}Answer sketches}{20}{subsection.A.3}%
-\contentsline {paragraph}{Q1. Scheduling.}{20}{section*.70}%
-\contentsline {paragraph}{Q2. Bounded-frequency covering.}{20}{section*.71}%
-\contentsline {paragraph}{Q3. MAX-$k$-CUT and conditional expectation.}{20}{section*.72}%
-\contentsline {paragraph}{Q4. Set cover with rejection sampling.}{20}{section*.73}%
-\contentsline {paragraph}{Q5. Cuts.}{20}{section*.74}%
-\contentsline {paragraph}{Q6. MAX-DICUT.}{20}{section*.75}%
-\contentsline {paragraph}{Q7. MAX-SAT.}{20}{section*.76}%
-\contentsline {paragraph}{Q8. TSP.}{20}{section*.77}%
-\contentsline {paragraph}{Q9. Knapsack.}{21}{section*.78}%
-\contentsline {paragraph}{Q10. Vertex form of Menger's theorem.}{21}{section*.79}%
-\contentsline {paragraph}{Q11. Flow algorithms.}{21}{section*.80}%
-\contentsline {paragraph}{Q12. Common subsequence.}{21}{section*.81}%
-\contentsline {subsection}{\numberline {A.4}True/false answers}{21}{subsection.A.4}%
-\contentsline {section}{\numberline {B}Background and Prerequisites}{21}{appendix.B}%
-\contentsline {subsection}{\numberline {B.1}The optimization viewpoint}{21}{subsection.B.1}%
-\contentsline {paragraph}{A standard model.}{21}{section*.82}%
-\contentsline {subsection}{\numberline {B.2}Asymptotics, input size, and cost models}{21}{subsection.B.2}%
-\contentsline {paragraph}{Bit complexity.}{21}{section*.83}%
-\contentsline {paragraph}{Cost accounting.}{22}{section*.84}%
-\contentsline {subsection}{\numberline {B.3}Proof obligations for algorithms}{22}{subsection.B.3}%
-\contentsline {paragraph}{Reusable proof patterns.}{22}{section*.85}%
-\contentsline {subsection}{\numberline {B.4}Algorithm-design tools retained from CS3230}{22}{subsection.B.4}%
-\contentsline {paragraph}{Dynamic programming.}{22}{section*.86}%
-\contentsline {paragraph}{Greedy algorithms.}{22}{section*.87}%
-\contentsline {paragraph}{Graph subroutines.}{22}{section*.88}%
-\contentsline {subsection}{\numberline {B.5}Probability toolkit for randomized optimization}{22}{subsection.B.5}%
-\contentsline {subsection}{\numberline {B.6}Logic and constraint modelling from CS4269}{22}{subsection.B.6}%
-\contentsline {paragraph}{Constraint-encoding recipe.}{22}{section*.89}%
-\contentsline {subsection}{\numberline {B.7}From Boolean constraints to binary optimization}{22}{subsection.B.7}%
-\contentsline {paragraph}{Example: minimum vertex cover.}{22}{section*.90}%
-\contentsline {subsection}{\numberline {B.8}Complexity classes and reductions}{23}{subsection.B.8}%
-\contentsline {paragraph}{Decision versus optimization hardness.}{23}{section*.91}%
-\contentsline {subsection}{\numberline {B.9}A checklist for the rest of CS4234}{23}{subsection.B.9}%
-\contentsline {section}{\numberline {C}Extended Probability and Mathematical Reference}{23}{appendix.C}%
-\contentsline {subsection}{\numberline {C.1}Basic Probability Identities}{23}{subsection.C.1}%
-\contentsline {subsection}{\numberline {C.2}Indicator Trick \& Linearity}{23}{subsection.C.2}%
-\contentsline {subsection}{\numberline {C.3}Expectation/Variance Identities}{23}{subsection.C.3}%
-\contentsline {subsection}{\numberline {C.4}Inequalities (Concentration)}{23}{subsection.C.4}%
-\contentsline {subsection}{\numberline {C.5}Common Inequalities for Mathematical Proofs}{23}{subsection.C.5}%
-\contentsline {paragraph}{Master Chain of Useful Inequalities.}{23}{section*.92}%
-\contentsline {paragraph}{Notes.}{24}{section*.108}%
-\contentsline {subsection}{\numberline {C.6}Common Taylor Series Expansions}{24}{subsection.C.6}%
-\contentsline {subsection}{\numberline {C.7}Common Distributions (means/vars)}{25}{subsection.C.7}%
-\contentsline {subsection}{\numberline {C.8}Asymptotic Approximations}{25}{subsection.C.8}%
-\contentsline {subsection}{\numberline {C.9}Classic “Balls-into-Bins” Facts}{25}{subsection.C.9}%
-\contentsline {subsection}{\numberline {C.10}Coupon Collector}{25}{subsection.C.10}%
-\contentsline {subsection}{\numberline {C.11}Conditioning \& Decomposition}{25}{subsection.C.11}%
-\contentsline {subsection}{\numberline {C.12}Jensen \& Convexity}{25}{subsection.C.12}%
-\contentsline {subsection}{\numberline {C.13}“With High Probability” (w.h.p.)}{25}{subsection.C.13}%
-\contentsline {section}{\numberline {D}Discrete Mathematics Reference}{25}{appendix.D}%
-\contentsline {subsection}{\numberline {D.1}Divisibility, GCD, and Bézout}{25}{subsection.D.1}%
-\contentsline {subsection}{\numberline {D.2}Modular Arithmetic \& Inverses}{25}{subsection.D.2}%
-\contentsline {subsection}{\numberline {D.3}Chinese Remainder Theorem (CRT)}{25}{subsection.D.3}%
-\contentsline {subsection}{\numberline {D.4}Prime Factorization Facts}{25}{subsection.D.4}%
-\contentsline {subsection}{\numberline {D.5}Primitive Roots \& Orders}{25}{subsection.D.5}%
-\contentsline {subsection}{\numberline {D.6}Combinatorics Mod Prime}{25}{subsection.D.6}%
-\contentsline {subsection}{\numberline {D.7}Base Representation \& Digit Properties}{26}{subsection.D.7}%
-\contentsline {subsection}{\numberline {D.8}Sieve \& Multiplicative Precomputation}{26}{subsection.D.8}%
-\contentsline {subsection}{\numberline {D.9}Miscellaneous Handy Facts}{26}{subsection.D.9}%
-\contentsline {subsection}{\numberline {D.10}Planar Graph: Definition: Kuratowski's theorem}{26}{subsection.D.10}%
-\contentsline {section}{\numberline {E}Boolean-to-ILP Encoding Reference}{26}{appendix.E}%
-\contentsline {subsection}{\numberline {E.1}Binary encodings of logical constraints}{26}{subsection.E.1}%
-\contentsline {section}{\numberline {F}Flow Extensions: Lower Bounds and Demands}{26}{appendix.F}%
-\contentsline {paragraph}{Why this works.}{26}{section*.127}%
-\contentsline {section}{\numberline {G}Additional Algorithm Examples}{26}{appendix.G}%
-\contentsline {subsection}{\numberline {G.1}An infinite Ford--Fulkerson augmentation sequence}{26}{subsection.G.1}%
-\contentsline {paragraph}{Pathological augmenting-path sequence.}{27}{section*.128}%
-\contentsline {paragraph}{Why the outer arcs never become the bottleneck.}{27}{section*.129}%
-\contentsline {subsection}{\numberline {G.2}Random-endpoint vertex cover: an optional expectation proof}{27}{subsection.G.2}%
+\contentsline {section}{\numberline {1}Exam Reference and Proof Toolkit}{2}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Choose a technique}{2}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}What every solution must state}{2}{subsection.1.2}%
+\contentsline {subsection}{\numberline {1.3}Guarantee conventions and relaxation directions}{2}{subsection.1.3}%
+\contentsline {subsection}{\numberline {1.4}Probability and inequalities used in the course}{2}{subsection.1.4}%
+\contentsline {subsection}{\numberline {1.5}Small counterexamples and quantifiers to remember}{2}{subsection.1.5}%
+\contentsline {section}{\numberline {2}Greedy Approximation and Scaling}{2}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Greedy algorithms for 0/1 knapsack}{2}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}The best-of-candidates argument}{3}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Subset sum and group admission}{3}{subsection.2.3}%
+\contentsline {paragraph}{Read-only array and constant extra space.}{3}{section*.7}%
+\contentsline {subsection}{\numberline {2.4}Knapsack FPTAS: value-indexed dynamic programming}{3}{subsection.2.4}%
+\contentsline {paragraph}{Exact pseudo-polynomial DP.}{3}{section*.8}%
+\contentsline {paragraph}{Scale the value coordinate, not the weights.}{4}{section*.9}%
+\contentsline {subsection}{\numberline {2.5}PTAS and asymptotic PTAS}{4}{subsection.2.5}%
+\contentsline {subsubsection}{\numberline {2.5.1}One-dimensional bin packing: asymptotic PTAS}{4}{subsubsection.2.5.1}%
+\contentsline {subsubsection}{\numberline {2.5.2}Fixed-dimensional knapsack: profit guessing and LP rounding}{4}{subsubsection.2.5.2}%
+\contentsline {subsection}{\numberline {2.6}Weighted set cover: greedy charging}{4}{subsection.2.6}%
+\contentsline {paragraph}{Running time.}{5}{section*.14}%
+\contentsline {subsection}{\numberline {2.7}Vertex cover from a maximal matching}{5}{subsection.2.7}%
+\contentsline {paragraph}{Why complements do not preserve approximation.}{5}{section*.15}%
+\contentsline {subsection}{\numberline {2.8}Triangle deletion and disjoint-obstruction packing}{5}{subsection.2.8}%
+\contentsline {paragraph}{Reusable generalization.}{5}{section*.16}%
+\contentsline {paragraph}{Greedy by number of triangles removed.}{5}{section*.17}%
+\contentsline {section}{\numberline {3}Metric TSP and Eulerian Structure}{5}{section.3}%
+\contentsline {subsection}{\numberline {3.1}General TSP, metric TSP, and the shortcut rule}{5}{subsection.3.1}%
+\contentsline {paragraph}{Why the metric assumption matters.}{6}{section*.18}%
+\contentsline {subsection}{\numberline {3.2}Euler circuits, open trails, and orientation}{6}{subsection.3.2}%
+\contentsline {paragraph}{Orienting an even-degree connected graph.}{6}{section*.19}%
+\contentsline {subsection}{\numberline {3.3}Double-tree: a 2-approximation}{6}{subsection.3.3}%
+\contentsline {paragraph}{Four-vertex metric counterexample to optimality.}{6}{section*.20}%
+\contentsline {subsection}{\numberline {3.4}Christofides: a $3/2$-approximation}{6}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.5}Held--Karp exact dynamic programming}{6}{subsection.3.5}%
+\contentsline {section}{\numberline {4}Randomization and Derandomization}{7}{section.4}%
+\contentsline {subsection}{\numberline {4.1}The indicator-variable proof template}{7}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Weighted MAX-CUT, MAX-$k$-CUT, and MAX-DICUT}{7}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Conditional expectation: how to remove randomness}{7}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Weighted MAX-SAT by fair and biased assignment}{7}{subsection.4.4}%
+\contentsline {section}{\numberline {5}Linear Programming and Rounding}{7}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Modelling, relaxation, and the direction of the bound}{7}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}FOL feasibility and ILP formulation reference}{8}{subsection.5.2}%
+\contentsline {paragraph}{Reusable exact tree ILP.}{8}{section*.25}%
+\contentsline {subsubsection}{\numberline {5.2.1}Metric TSP}{8}{subsubsection.5.2.1}%
+\contentsline {subsubsection}{\numberline {5.2.2}Single-machine scheduling}{8}{subsubsection.5.2.2}%
+\contentsline {subsubsection}{\numberline {5.2.3}Parallel-machine scheduling}{9}{subsubsection.5.2.3}%
+\contentsline {subsubsection}{\numberline {5.2.4}Bin packing}{9}{subsubsection.5.2.4}%
+\contentsline {subsubsection}{\numberline {5.2.5}Set packing}{9}{subsubsection.5.2.5}%
+\contentsline {subsubsection}{\numberline {5.2.6}Prize-collecting Steiner tree}{9}{subsubsection.5.2.6}%
+\contentsline {subsubsection}{\numberline {5.2.7}Balanced cut}{9}{subsubsection.5.2.7}%
+\contentsline {subsubsection}{\numberline {5.2.8}$k$-minimum spanning tree}{9}{subsubsection.5.2.8}%
+\contentsline {subsubsection}{\numberline {5.2.9}Capacitated minimum spanning tree}{9}{subsubsection.5.2.9}%
+\contentsline {subsubsection}{\numberline {5.2.10}Feedback vertex set}{9}{subsubsection.5.2.10}%
+\contentsline {subsubsection}{\numberline {5.2.11}Shortest superstring}{10}{subsubsection.5.2.11}%
+\contentsline {subsubsection}{\numberline {5.2.12}3-dimensional matching}{10}{subsubsection.5.2.12}%
+\contentsline {subsubsection}{\numberline {5.2.13}Fair matching with group quotas}{10}{subsubsection.5.2.13}%
+\contentsline {subsubsection}{\numberline {5.2.14}Capacitated facility location}{10}{subsubsection.5.2.14}%
+\contentsline {subsubsection}{\numberline {5.2.15}Maximum independent set}{10}{subsubsection.5.2.15}%
+\contentsline {subsubsection}{\numberline {5.2.16}Capacitated knapsack}{10}{subsubsection.5.2.16}%
+\contentsline {subsubsection}{\numberline {5.2.17}Higher-dimensional knapsack}{10}{subsubsection.5.2.17}%
+\contentsline {paragraph}{Model-checking reminders.}{10}{section*.26}%
+\contentsline {paragraph}{Further formulation references.}{10}{section*.27}%
+\contentsline {subsection}{\numberline {5.3}Weighted vertex cover: threshold rounding}{11}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.4}Set cover: bounded frequency}{11}{subsection.5.4}%
+\contentsline {subsection}{\numberline {5.5}Weighted MAX-SAT: LP rounding}{11}{subsection.5.5}%
+\contentsline {subsection}{\numberline {5.6}MAX-DICUT: two $1/2$ rounding proofs}{11}{subsection.5.6}%
+\contentsline {subsection}{\numberline {5.7}Randomized set cover: repeat until feasible}{12}{subsection.5.7}%
+\contentsline {section}{\numberline {6}Network Flow}{12}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Integer network flow and residual graph}{12}{subsection.6.1}%
+\contentsline {paragraph}{Residual graph $G_f$.}{12}{section*.33}%
+\contentsline {paragraph}{Why reverse arcs are necessary.}{12}{section*.34}%
+\contentsline {paragraph}{Comparing two flows: use the residual network.}{12}{section*.35}%
+\contentsline {subsection}{\numberline {6.2}$s$--$t$ cuts and max-flow/min-cut}{12}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}Ford--Fulkerson and integral flows}{13}{subsection.6.3}%
+\contentsline {paragraph}{Integer bad example: $2C$ augmentations instead of two.}{13}{section*.36}%
+\contentsline {subsection}{\numberline {6.4}Capacity scaling: $O(m^2(1+\log C))$}{13}{subsection.6.4}%
+\contentsline {paragraph}{Correctness.}{13}{section*.37}%
+\contentsline {paragraph}{At most $2m$ augmentations per phase.}{13}{section*.38}%
+\contentsline {subsection}{\numberline {6.5}Shortest augmenting paths: $O(nm^2)$}{13}{subsection.6.5}%
+\contentsline {subsection}{\numberline {6.6}Flow decomposition and reduction templates}{13}{subsection.6.6}%
+\contentsline {paragraph}{Decomposition.}{13}{section*.39}%
+\contentsline {paragraph}{Reduction checklist.}{13}{section*.40}%
+\contentsline {paragraph}{Vertex capacities.}{13}{section*.41}%
+\contentsline {paragraph}{Multiple sources/sinks and exact supplies.}{14}{section*.42}%
+\contentsline {subsection}{\numberline {6.7}Bipartite matching: Hall's and K\H {o}nig's theorems}{14}{subsection.6.7}%
+\contentsline {paragraph}{Flow reduction.}{14}{section*.43}%
+\contentsline {paragraph}{Deficiency formula and how to use it.}{14}{section*.46}%
+\contentsline {paragraph}{Recover the actual cover from a maximum matching.}{14}{section*.48}%
+\contentsline {paragraph}{Independent-set corollary and pitfalls.}{14}{section*.49}%
+\contentsline {paragraph}{Weighted bipartite vertex cover is also exactly solvable.}{14}{section*.50}%
+\contentsline {paragraph}{Worked certificate: matching, Hall obstruction, and cover.}{15}{section*.51}%
+\contentsline {subsection}{\numberline {6.8}Vertex-disjoint paths and Menger's theorem}{15}{subsection.6.8}%
+\contentsline {subsection}{\numberline {6.9}Layered scheduling with two quota levels}{15}{subsection.6.9}%
+\contentsline {paragraph}{Both directions.}{15}{section*.52}%
+\contentsline {paragraph}{ILP formulation.}{15}{section*.53}%
+\contentsline {subsection}{\numberline {6.10}Minimum-cut structure and tie-breaking}{15}{subsection.6.10}%
+\contentsline {paragraph}{No opposite crossings.}{15}{section*.54}%
+\contentsline {paragraph}{Smallest/largest source sides and uniqueness.}{15}{section*.55}%
+\contentsline {paragraph}{Minimum capacity first, then fewest outgoing arcs.}{15}{section*.56}%
+\contentsline {paragraph}{Lower bounds and vertex demands.}{15}{section*.57}%
+\contentsline {section}{\numberline {A}Targeted Practice Questions}{15}{appendix.A}%
+\contentsline {subsection}{\numberline {A.1}Questions}{15}{subsection.A.1}%
+\contentsline {paragraph}{Q1. Scheduling with two levels of quotas (10 marks).}{15}{section*.58}%
+\contentsline {paragraph}{Q2. Bounded-frequency weighted covering (8 marks).}{16}{section*.59}%
+\contentsline {paragraph}{Q3. Randomized cut, then remove the randomness (8 marks).}{16}{section*.60}%
+\contentsline {paragraph}{Q4. Randomized set cover with a stopping rule (10 marks).}{16}{section*.61}%
+\contentsline {paragraph}{Q5. Minimum-cut structure and tie-breaking (8 marks).}{16}{section*.62}%
+\contentsline {paragraph}{Q6. MAX-DICUT rounding and a changed probability (8 marks).}{16}{section*.63}%
+\contentsline {paragraph}{Q7. MAX-SAT clause lengths and combination (10 marks).}{16}{section*.64}%
+\contentsline {paragraph}{Q8. Metric TSP and the role of assumptions (8 marks).}{16}{section*.65}%
+\contentsline {paragraph}{Q9. Knapsack scaling (8 marks).}{16}{section*.66}%
+\contentsline {paragraph}{Q10. Vertex-disjoint routes (8 marks).}{16}{section*.67}%
+\contentsline {paragraph}{Q11. Repair a flow algorithm (8 marks).}{16}{section*.68}%
+\contentsline {paragraph}{Q12. An unfamiliar objective with a familiar proof (6 marks).}{16}{section*.69}%
+\contentsline {subsection}{\numberline {A.2}Quick true/false drill}{16}{subsection.A.2}%
+\contentsline {subsection}{\numberline {A.3}Answer sketches}{17}{subsection.A.3}%
+\contentsline {paragraph}{Q1. Scheduling.}{17}{section*.70}%
+\contentsline {paragraph}{Q2. Bounded-frequency covering.}{17}{section*.71}%
+\contentsline {paragraph}{Q3. MAX-$k$-CUT and conditional expectation.}{17}{section*.72}%
+\contentsline {paragraph}{Q4. Set cover with rejection sampling.}{17}{section*.73}%
+\contentsline {paragraph}{Q5. Cuts.}{17}{section*.74}%
+\contentsline {paragraph}{Q6. MAX-DICUT.}{17}{section*.75}%
+\contentsline {paragraph}{Q7. MAX-SAT.}{17}{section*.76}%
+\contentsline {paragraph}{Q8. TSP.}{17}{section*.77}%
+\contentsline {paragraph}{Q9. Knapsack.}{18}{section*.78}%
+\contentsline {paragraph}{Q10. Vertex form of Menger's theorem.}{18}{section*.79}%
+\contentsline {paragraph}{Q11. Flow algorithms.}{18}{section*.80}%
+\contentsline {paragraph}{Q12. Common subsequence.}{18}{section*.81}%
+\contentsline {subsection}{\numberline {A.4}True/false answers}{18}{subsection.A.4}%
+\contentsline {section}{\numberline {B}Pseudo-Polynomial / Exponential DP}{18}{appendix.B}%
+\contentsline {subsection}{\numberline {B.1}0/1 Knapsack --- $O(nW)$}{18}{subsection.B.1}%
+\contentsline {subsection}{\numberline {B.2}$d$-Dimensional Knapsack --- $O(n\DOTSB \prod@ \slimits@ _j W_j)$}{18}{subsection.B.2}%
+\contentsline {subsection}{\numberline {B.3}Subset Sum --- $O(nB)$}{18}{subsection.B.3}%
+\contentsline {subsection}{\numberline {B.4}Partition --- $O(nS)$}{19}{subsection.B.4}%
+\contentsline {subsection}{\numberline {B.5}TSP: Held--Karp --- $O(n^2 2^n)$}{19}{subsection.B.5}%
+\contentsline {subsection}{\numberline {B.6}Minimum Vertex Cover --- $O^*(2^n)$ Memoized DP}{19}{subsection.B.6}%
+\contentsline {subsection}{\numberline {B.7}Maximum Independent Set --- $O^*(2^n)$}{19}{subsection.B.7}%
+\contentsline {subsection}{\numberline {B.8}Shortest Superstring --- $O(n^2 2^n)$}{19}{subsection.B.8}%
+\contentsline {subsection}{\numberline {B.9}Set Cover --- $O(m2^n)$}{19}{subsection.B.9}%
+\contentsline {subsection}{\numberline {B.10}Weighted Set Cover --- $O(m2^n)$}{19}{subsection.B.10}%
+\contentsline {subsection}{\numberline {B.11}Minimum Graph Coloring --- $O^*(3^n)$ Simple Subset DP}{19}{subsection.B.11}%
+\contentsline {subsection}{\numberline {B.12}Bin Packing --- $O(n2^n)$}{20}{subsection.B.12}%
+\contentsline {subsection}{\numberline {B.13}Hamiltonian Path --- $O(n^2 2^n)$}{20}{subsection.B.13}%
+\contentsline {subsection}{\numberline {B.14}Steiner Tree --- $O(3^k n + 2^k n^2)$}{20}{subsection.B.14}%
+\contentsline {section}{\numberline {C}Background and Prerequisites}{20}{appendix.C}%
+\contentsline {subsection}{\numberline {C.1}The optimization viewpoint}{20}{subsection.C.1}%
+\contentsline {paragraph}{A standard model.}{20}{section*.82}%
+\contentsline {subsection}{\numberline {C.2}Asymptotics, input size, and cost models}{20}{subsection.C.2}%
+\contentsline {paragraph}{Bit complexity.}{20}{section*.83}%
+\contentsline {paragraph}{Cost accounting.}{20}{section*.84}%
+\contentsline {subsection}{\numberline {C.3}Proof obligations for algorithms}{20}{subsection.C.3}%
+\contentsline {paragraph}{Reusable proof patterns.}{21}{section*.85}%
+\contentsline {subsection}{\numberline {C.4}Algorithm-design tools retained from CS3230}{21}{subsection.C.4}%
+\contentsline {paragraph}{Dynamic programming.}{21}{section*.86}%
+\contentsline {paragraph}{Greedy algorithms.}{21}{section*.87}%
+\contentsline {paragraph}{Graph subroutines.}{21}{section*.88}%
+\contentsline {subsection}{\numberline {C.5}Probability toolkit for randomized optimization}{21}{subsection.C.5}%
+\contentsline {subsection}{\numberline {C.6}Logic and constraint modelling from CS4269}{21}{subsection.C.6}%
+\contentsline {paragraph}{Constraint-encoding recipe.}{21}{section*.89}%
+\contentsline {subsection}{\numberline {C.7}From Boolean constraints to binary optimization}{21}{subsection.C.7}%
+\contentsline {paragraph}{Example: minimum vertex cover.}{21}{section*.90}%
+\contentsline {subsection}{\numberline {C.8}Complexity classes and reductions}{21}{subsection.C.8}%
+\contentsline {paragraph}{Decision versus optimization hardness.}{21}{section*.91}%
+\contentsline {subsection}{\numberline {C.9}A checklist for the rest of CS4234}{22}{subsection.C.9}%
+\contentsline {section}{\numberline {D}Extended Probability and Mathematical Reference}{22}{appendix.D}%
+\contentsline {subsection}{\numberline {D.1}Basic Probability Identities}{22}{subsection.D.1}%
+\contentsline {subsection}{\numberline {D.2}Indicator Trick \& Linearity}{22}{subsection.D.2}%
+\contentsline {subsection}{\numberline {D.3}Expectation/Variance Identities}{22}{subsection.D.3}%
+\contentsline {subsection}{\numberline {D.4}Inequalities (Concentration)}{22}{subsection.D.4}%
+\contentsline {subsection}{\numberline {D.5}Common Inequalities for Mathematical Proofs}{22}{subsection.D.5}%
+\contentsline {paragraph}{Master Chain of Useful Inequalities.}{22}{section*.92}%
+\contentsline {paragraph}{Notes.}{23}{section*.108}%
+\contentsline {subsection}{\numberline {D.6}Common Taylor Series Expansions}{23}{subsection.D.6}%
+\contentsline {subsection}{\numberline {D.7}Common Distributions (means/vars)}{23}{subsection.D.7}%
+\contentsline {subsection}{\numberline {D.8}Asymptotic Approximations}{23}{subsection.D.8}%
+\contentsline {subsection}{\numberline {D.9}Classic “Balls-into-Bins” Facts}{23}{subsection.D.9}%
+\contentsline {subsection}{\numberline {D.10}Coupon Collector}{23}{subsection.D.10}%
+\contentsline {subsection}{\numberline {D.11}Conditioning \& Decomposition}{24}{subsection.D.11}%
+\contentsline {subsection}{\numberline {D.12}Jensen \& Convexity}{24}{subsection.D.12}%
+\contentsline {subsection}{\numberline {D.13}“With High Probability” (w.h.p.)}{24}{subsection.D.13}%
+\contentsline {section}{\numberline {E}Discrete Mathematics Reference}{24}{appendix.E}%
+\contentsline {subsection}{\numberline {E.1}Divisibility, GCD, and Bézout}{24}{subsection.E.1}%
+\contentsline {subsection}{\numberline {E.2}Modular Arithmetic \& Inverses}{24}{subsection.E.2}%
+\contentsline {subsection}{\numberline {E.3}Chinese Remainder Theorem (CRT)}{24}{subsection.E.3}%
+\contentsline {subsection}{\numberline {E.4}Prime Factorization Facts}{24}{subsection.E.4}%
+\contentsline {subsection}{\numberline {E.5}Primitive Roots \& Orders}{24}{subsection.E.5}%
+\contentsline {subsection}{\numberline {E.6}Combinatorics Mod Prime}{24}{subsection.E.6}%
+\contentsline {subsection}{\numberline {E.7}Base Representation \& Digit Properties}{24}{subsection.E.7}%
+\contentsline {subsection}{\numberline {E.8}Sieve \& Multiplicative Precomputation}{24}{subsection.E.8}%
+\contentsline {subsection}{\numberline {E.9}Miscellaneous Handy Facts}{24}{subsection.E.9}%
+\contentsline {subsection}{\numberline {E.10}Planar Graph: Definition: Kuratowski's theorem}{24}{subsection.E.10}%
+\contentsline {section}{\numberline {F}Boolean-to-ILP Encoding Reference}{25}{appendix.F}%
+\contentsline {subsection}{\numberline {F.1}Binary encodings of logical constraints}{25}{subsection.F.1}%
+\contentsline {section}{\numberline {G}Flow Extensions: Lower Bounds and Demands}{25}{appendix.G}%
+\contentsline {paragraph}{Why this works.}{25}{section*.127}%
+\contentsline {section}{\numberline {H}Additional Algorithm Examples}{25}{appendix.H}%
+\contentsline {subsection}{\numberline {H.1}An infinite Ford--Fulkerson augmentation sequence}{25}{subsection.H.1}%
+\contentsline {paragraph}{Pathological augmenting-path sequence.}{25}{section*.128}%
+\contentsline {paragraph}{Why the outer arcs never become the bottleneck.}{25}{section*.129}%
+\contentsline {subsection}{\numberline {H.2}Random-endpoint vertex cover: an optional expectation proof}{26}{subsection.H.2}%

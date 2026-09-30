@@ -61,8 +61,14 @@ int main() {
         // The first shortest path uses 1->3. Reaching flow 2 requires cancelling it.
         check({6, {{0,1,1},{0,2,1},{1,3,1},{1,4,1},{2,3,1},{3,5,1},{4,5,1}}}, 2);
         require(nf::edges_for_density(8, 0) == 7, "Sparse density endpoint");
-        require(nf::edges_for_density(8, 1) == 56, "Dense density endpoint");
-        require(nf::edges_for_density(8, 0.5f) == 32, "Density rounding");
+        require(nf::edges_for_density(8, 1) == 43, "Dense density endpoint");
+        require(nf::edges_for_density(8, 0.5f) == 25, "Density rounding");
+        require(nf::edges_for_density(2, 1) == 1, "Two-terminal edge limit");
+        require(nf::edges_for_density(3, 1) == 3, "One internal vertex edge limit");
+        require(nf::edges_for_density(8, 0, true) == 7, "Simple sparse density endpoint");
+        require(nf::edges_for_density(8, 1, true) == 28, "Simple dense density endpoint");
+        require(nf::edges_for_density(8, 0.5f, true) == 18, "Simple density rounding");
+        int moderate[2]{}, extreme[2]{};
         for (int n = 2; n <= 8; ++n) {
             for (unsigned seed = 0; seed < 60; ++seed) {
                 for (bool decimal : {false, true}) {
@@ -72,8 +78,11 @@ int main() {
                     std::set<std::pair<int,int>> edges;
                     for (const auto& e : graph.edges) {
                         require(e.from != e.to && edges.insert({e.from,e.to}).second, "Loop or duplicate edge");
+                        require(e.to != 0 && e.from != n - 1, "Edge enters source or leaves sink");
                         require(e.capacity > 0 && e.capacity <= 20, "Generated capacity range");
                         if (!decimal) near(e.capacity, std::round(e.capacity), "Noninteger capacity");
+                        if (e.capacity > 5 && e.capacity <= 15) ++moderate[decimal];
+                        else ++extreme[decimal];
                     }
                     auto repeated = nf::generate(n, count, decimal, seed);
                     for (std::size_t i = 0; i < graph.edges.size(); ++i) {
@@ -86,14 +95,63 @@ int main() {
                 }
             }
         }
+        // Equal-width middle and tail ranges distinguish the requested bias
+        // from uniform sampling, using the deterministic seed pool above.
+        require(moderate[0] > 2 * extreme[0], "Integer capacities do not favor moderate weights");
+        require(moderate[1] > 2 * extreme[1], "Decimal capacities do not favor moderate weights");
+        for (int n = 2; n <= 8; ++n) {
+            for (unsigned seed = 0; seed < 10; ++seed) {
+                for (bool decimal : {false, true}) {
+                    for (float density : {0.0f, 0.5f, 1.0f}) {
+                        const int count = nf::edges_for_density(n, density, true);
+                        auto graph = nf::generate(n, count, decimal, seed, true);
+                        require(static_cast<int>(graph.edges.size()) == count, "Wrong simple edge count");
+                        std::set<std::pair<int,int>> edges;
+                        for (const auto& e : graph.edges) {
+                            require(e.from != e.to, "Simple graph has a loop");
+                            require(e.to != 0 && e.from != n - 1, "Simple edge enters source or leaves sink");
+                            require(!edges.count({e.to, e.from}), "Simple graph has antiparallel edges");
+                            require(edges.insert({e.from, e.to}).second, "Simple graph has duplicate edges");
+                        }
+                        auto repeated = nf::generate(n, count, decimal, seed, true);
+                        for (std::size_t i = 0; i < graph.edges.size(); ++i)
+                            require(graph.edges[i].from == repeated.edges[i].from &&
+                                    graph.edges[i].to == repeated.edges[i].to &&
+                                    graph.edges[i].capacity == repeated.edges[i].capacity,
+                                    "Simple graph seed not reproducible");
+                        const double expected = cut_oracle(graph);
+                        require(expected > 0, "Simple graph lacks source-to-sink path");
+                        check(graph, expected);
+                    }
+                }
+            }
+        }
+        // At 6 vertices / 10 edges, uniform directed sampling gives each
+        // terminal about 2.25 incident edges. Both modes should favor more.
+        for (bool simple : {false, true}) {
+            constexpr unsigned samples = 200;
+            unsigned source_out = 0, sink_in = 0;
+            for (unsigned seed = 0; seed < samples; ++seed) {
+                auto graph = nf::generate(6, 10, false, seed, simple);
+                require(graph.edges.size() == 10, "Wrong default-sized graph edge count");
+                for (const auto& edge : graph.edges) {
+                    if (edge.from == 0) ++source_out;
+                    if (edge.to == 5) ++sink_in;
+                }
+            }
+            require(source_out * 10 > 28 * samples, "Generator does not favor outgoing source edges");
+            require(sink_in * 10 > 28 * samples, "Generator does not favor incoming sink edges");
+        }
         rejects([] { nf::generate(1, 0, false, 0); });
+        rejects([] { nf::generate(2, 2, false, 0); });
         rejects([] { nf::generate(4, 2, false, 0); });
-        rejects([] { nf::generate(4, 13, false, 0); });
+        rejects([] { nf::generate(4, 8, false, 0); });
+        rejects([] { nf::generate(4, 7, false, 0, true); });
         rejects([] { nf::edges_for_density(4, -0.1f); });
         rejects([] { nf::edges_for_density(4, std::numeric_limits<float>::quiet_NaN()); });
         rejects([] { nf::solve({2, {{0,1,0.001f}}}, 0, 1, nf::Algorithm::Dinic); });
         rejects([] { nf::solve({2, {}}, 0, 0, nf::Algorithm::Dinic); });
-        std::cout << "Passed: known flows, cancellation, fractions, validation, and 840 random graphs\n";
+        std::cout << "Passed: known flows, validation, capacity/terminal bias, and 1260 flow-oracle graphs\n";
     } catch (const std::exception& e) {
         std::cerr << "FAIL: " << e.what() << '\n';
         return 1;

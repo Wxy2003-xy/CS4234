@@ -8,6 +8,7 @@
 #include <queue>
 #include <random>
 #include <stdexcept>
+#include <string>
 #include <utility>
 
 namespace nf {
@@ -16,6 +17,11 @@ namespace nf {
     namespace {
         void check_vertices(int n) {
             if (n < 2 || n > 1000) throw std::invalid_argument("Vertex count must be between 2 and 1000.");
+        }
+        int maximum_generated_edges(int n, bool simple) {
+            // No edges enter source 0 or leave sink n-1. In simple mode,
+            // every unordered pair still has at least one allowed orientation.
+            return simple ? n * (n - 1) / 2 : (n - 1) * (n - 2) + 1;
         }
         struct Arc { int to, reverse; float residual; };
         using Residual = std::vector<std::vector<Arc>>;
@@ -28,25 +34,33 @@ namespace nf {
         }
     } // namespace
 
-    int edges_for_density(int vertices, float density) {
+    int edges_for_density(int vertices, float density, bool simple) {
         check_vertices(vertices);
         if (!std::isfinite(density) || density < 0 || density > 1)
             throw std::invalid_argument("Density must be between 0 and 1.");
         const int minimum = vertices - 1;
-        const int maximum = vertices * (vertices - 1);
+        const int maximum = maximum_generated_edges(vertices, simple);
         return minimum + static_cast<int>(std::lround(density * (maximum - minimum)));
     }
 
-    Graph generate(int vertices, int edge_count, bool decimal, std::uint32_t seed) {
+    Graph generate(int vertices, int edge_count, bool decimal, std::uint32_t seed, bool simple) {
         check_vertices(vertices);
-        if (edge_count < vertices - 1 || edge_count > vertices * (vertices - 1))
-            throw std::invalid_argument("Edge count must be between V-1 and V*(V-1).");
+        const int maximum = maximum_generated_edges(vertices, simple);
+        if (edge_count < vertices - 1 || edge_count > maximum)
+            throw std::invalid_argument("Edge count must be between " + std::to_string(vertices - 1) +
+                                        " and " + std::to_string(maximum) +
+                                        (simple ? " for a simple graph." : " for a general graph."));
         std::mt19937 rng(seed);
         Graph graph{vertices, {}};
         std::vector<std::vector<bool>> used(vertices, std::vector<bool>(vertices));
-        std::uniform_int_distribution<int> capacity(1, decimal ? 2000 : 20);
+        const int capacity_levels = decimal ? 2000 : 20;
+        // Two half-range draws give a symmetric triangular distribution:
+        // middle capacities are common, while both extremes remain possible.
+        std::uniform_int_distribution<int> capacity_left(0, capacity_levels / 2 - 1);
+        std::uniform_int_distribution<int> capacity_right(0, capacity_levels / 2);
         auto add = [&](int u, int v) {
-            graph.edges.push_back({u, v, capacity(rng) / (decimal ? 100.0f : 1.0f)});
+            const int capacity = 1 + capacity_left(rng) + capacity_right(rng);
+            graph.edges.push_back({u, v, capacity / (decimal ? 100.0f : 1.0f)});
             used[u][v] = true;
         };
         // A randomized spanning path ensures a useful source-to-sink exercise.
@@ -54,13 +68,24 @@ namespace nf {
         std::iota(order.begin(), order.end(), 0);
         std::shuffle(order.begin() + 1, order.end() - 1, rng);
         for (int i = 1; i < vertices; ++i) add(order[i - 1], order[i]);
-        std::vector<std::pair<int, int>> candidates;
-        for (int u = 0; u < vertices; ++u)
-            for (int v = 0; v < vertices; ++v)
-                if (u != v && !used[u][v]) candidates.emplace_back(u, v);
-        std::shuffle(candidates.begin(), candidates.end(), rng);
-        for (const auto& [u, v] : candidates) {
+        struct Candidate { int from, to; double priority; };
+        std::vector<Candidate> candidates;
+        std::exponential_distribution<double> priority(1.0);
+        for (int u = 0; u < vertices - 1; ++u)
+            for (int v = 1; v < vertices; ++v)
+                if (u != v && !used[u][v] && (!simple || !used[v][u])) {
+                    // Weighted sampling without replacement: terminal edges
+                    // have four times the selection weight of internal edges.
+                    const double weight = (u == 0 || v == vertices - 1) ? 4.0 : 1.0;
+                    candidates.push_back({u, v, priority(rng) / weight});
+                }
+        std::sort(candidates.begin(), candidates.end(), [](const Candidate& a, const Candidate& b) {
+            return a.priority < b.priority;
+        });
+        for (const auto& candidate : candidates) {
             if (static_cast<int>(graph.edges.size()) == edge_count) break;
+            const int u = candidate.from, v = candidate.to;
+            if (simple && used[v][u]) continue;
             add(u, v);
         }
         return graph;

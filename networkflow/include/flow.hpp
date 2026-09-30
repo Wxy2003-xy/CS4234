@@ -23,7 +23,7 @@ struct Result {
 };
 
 float hundredths(float value);
-int edges_for_density(int vertices, float density);
-Graph generate(int vertices, int edge_count, bool decimal, std::uint32_t seed);
+int edges_for_density(int vertices, float density, bool simple = false);
+Graph generate(int vertices, int edge_count, bool decimal, std::uint32_t seed, bool simple = false);
 Result solve(const Graph& graph, int source, int sink, Algorithm algorithm);
 } // namespace nf

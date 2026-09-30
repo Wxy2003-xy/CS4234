@@ -28,9 +28,15 @@ struct Color { float r,g,b; };
 constexpr Color background{0.047f,0.071f,0.11f}, surface{0.075f,0.102f,0.15f};
 constexpr Color ink{0.88f,0.92f,0.97f}, muted{0.49f,0.59f,0.70f};
 constexpr Color teal{0.24f,0.89f,0.72f}, blue{0.36f,0.64f,1.0f}, gold{1.0f,0.73f,0.35f};
+constexpr Color white{1.0f,1.0f,1.0f}, black{0.0f,0.0f,0.0f};
+constexpr Color red{0.72f,0.0f,0.0f}, light_gray{0.9f,0.9f,0.9f}, dark_gray{0.28f,0.28f,0.28f};
 void color(Color c) { glColor3f(c.r,c.g,c.b); }
 void rect(float x,float y,float w,float h,Color c) {
     color(c); glBegin(GL_QUADS);
+    glVertex2f(x,y); glVertex2f(x+w,y); glVertex2f(x+w,y+h); glVertex2f(x,y+h); glEnd();
+}
+void outline(float x,float y,float w,float h,Color c) {
+    color(c); glBegin(GL_LINE_LOOP);
     glVertex2f(x,y); glVertex2f(x+w,y); glVertex2f(x+w,y+h); glVertex2f(x,y+h); glEnd();
 }
 void circle(Vec p,float r,Color c) {
@@ -81,6 +87,21 @@ void text(float x,float y,const std::string& value,Color c=ink,float scale=1.5f)
     }
     glEnd();
 }
+void text_with_red_numbers(float x,float y,const std::string& value,float scale=1.5f) {
+    auto is_digit=[](char c) { return c>='0' && c<='9'; };
+    auto is_numeric=[&](std::size_t i) {
+        return is_digit(value[i]) ||
+               (value[i]=='.' && i>0 && i+1<value.size() &&
+                is_digit(value[i-1]) && is_digit(value[i+1]));
+    };
+    for(std::size_t start=0;start<value.size();) {
+        const bool numeric=is_numeric(start);
+        std::size_t end=start+1;
+        while(end<value.size() && is_numeric(end)==numeric) ++end;
+        text(x+start*6*scale,y,value.substr(start,end-start),numeric?red:black,scale);
+        start=end;
+    }
+}
 std::string number(double value,bool decimal) {
     std::ostringstream out; out<<std::fixed<<std::setprecision(decimal?2:0)<<value; return out.str();
 }
@@ -93,12 +114,13 @@ struct Field { std::string label,value; Box box; };
 class App {
 public:
     int width=1240,height=820;
-    std::array<Field,4> fields{{{"VERTICES  (2-40)","8",{24,144,264,36}},
-                               {"EDGES","14",{24,260,264,36}},
-                               {"DENSITY  (0-1)","0.14",{24,318,264,36}},
+    std::array<Field,4> fields{{{"VERTICES  (2-40)","6",{24,144,264,36}},
+                               {"EDGES","10",{24,260,264,36}},
+                               {"DENSITY  (0-1)","0.3125",{24,318,264,36}},
                                {"SEED","4234",{24,440,264,36}}}};
-    bool by_density=false,decimal=false,solved=false,used_only=false,labels=true;
-    bool graph_decimal=false;
+    bool by_density=false,decimal=false,simple=false,solved=false,used_only=false,labels=true;
+    bool high_contrast=false;
+    bool graph_decimal=false,graph_simple=false;
     bool labels_dirty=true;
     int active=-1,drag=-1,hover=-1;
     bool replace=false;
@@ -109,6 +131,11 @@ public:
     std::vector<Vec> label_positions;
     std::string status="Set parameters, then generate.";
     std::string error;
+
+    Color canvas_color() const { return high_contrast?white:background; }
+    Color panel_color() const { return high_contrast?white:surface; }
+    Color ink_color() const { return high_contrast?black:ink; }
+    Color muted_color() const { return high_contrast?dark_gray:muted; }
 
     int integer(int i) const {
         const std::string& s=fields[i].value;
@@ -145,9 +172,9 @@ public:
             if(n<2 || n>40) throw std::invalid_argument("Choose 2 to 40 vertices for the visualizer.");
             int seed=integer(3);
             if(new_seed) seed=seed==2147483647?0:seed+1;
-            int count=by_density?nf::edges_for_density(n,density()):integer(1);
-            auto next=nf::generate(n,count,decimal,static_cast<std::uint32_t>(seed));
-            graph=std::move(next); graph_decimal=decimal;
+            int count=by_density?nf::edges_for_density(n,density(),simple):integer(1);
+            auto next=nf::generate(n,count,decimal,static_cast<std::uint32_t>(seed),simple);
+            graph=std::move(next); graph_decimal=decimal; graph_simple=simple;
             fields[3].value=std::to_string(seed);
             fields[1].value=std::to_string(count);
             solved=false; used_only=false; hover=-1; drag=-1; result={}; error.clear();
@@ -161,6 +188,12 @@ public:
     }
     void reset() { solved=false; used_only=false; labels_dirty=true; result={}; status="Flow hidden. SPACE reveals the answer."; }
     void button(Box b,const std::string& label,bool selected=false) {
+        if(high_contrast) {
+            rect(b.x,b.y,b.w,b.h,selected?black:light_gray);
+            if(!selected) outline(b.x,b.y,b.w,b.h,black);
+            text(b.x+12,b.y+(b.h-10.5f)/2,label,selected?white:black);
+            return;
+        }
         rect(b.x,b.y,b.w,b.h,selected?Color{0.12f,0.32f,0.32f}:Color{0.12f,0.17f,0.23f});
         text(b.x+12,b.y+(b.h-10.5f)/2,label,selected?teal:ink);
     }
@@ -174,6 +207,9 @@ public:
         else if(Box{160,204,128,30}.contains(p)) by_density=true;
         else if(Box{24,386,128,30}.contains(p)) decimal=false;
         else if(Box{160,386,128,30}.contains(p)) decimal=true;
+        else if(Box{24,735,128,30}.contains(p)) simple=false;
+        else if(Box{160,735,128,30}.contains(p)) simple=true;
+        else if(Box{panel+28,85,228,30}.contains(p)) high_contrast=!high_contrast;
         else if(Box{24,494,264,38}.contains(p)) generate();
         else if(Box{24,548,264,38}.contains(p)) run();
         else if(Box{24,598,128,30}.contains(p)) reset();
@@ -220,6 +256,8 @@ public:
             else if(key==SDLK_l) labels=!labels;
             else if(key==SDLK_u && solved) { used_only=!used_only; labels_dirty=true; }
             else if(key==SDLK_c) layout();
+            else if(key==SDLK_s) simple=!simple;
+            else if(key==SDLK_h) high_contrast=!high_contrast;
         }
     }
     Vec point(int i,float t) const {
@@ -236,8 +274,8 @@ public:
         float distance=length(positions[e.to]-positions[e.from]);
         if(distance<50) return;
         float start=22/distance, end=1-24/distance;
-        Color c=highlighted?gold:(flowing?teal:(solved?Color{0.19f,0.25f,0.33f}:Color{0.34f,0.43f,0.55f}));
-        color(c); glLineWidth(highlighted?3.0f:(flowing?2.5f:1.25f)); glBegin(GL_LINE_STRIP);
+        Color c=high_contrast?black:(highlighted?gold:(flowing?teal:(solved?Color{0.19f,0.25f,0.33f}:Color{0.34f,0.43f,0.55f})));
+        color(c); glLineWidth(highlighted?3.0f:(flowing?2.5f:(high_contrast?1.75f:1.25f))); glBegin(GL_LINE_STRIP);
         for(int j=0;j<=32;++j) { Vec p=point(i,start+(end-start)*j/32); glVertex2f(p.x,p.y); } glEnd();
         Vec tip=point(i,end), prev=point(i,end-0.025f), direction=tip-prev;
         direction=direction*(1/std::max(0.001f,length(direction))); Vec normal{-direction.y,direction.x};
@@ -249,8 +287,8 @@ public:
         bool flowing=solved && result.flow[i]>nf::epsilon;
         std::string label=solved?number(result.flow[i],graph_decimal)+"/"+number(e.capacity,graph_decimal):number(e.capacity,graph_decimal);
         Vec p=label_positions[i]; float size=highlighted?1.5f:1.25f, w=text_width(label,size);
-        rect(p.x-w/2-4,p.y-7,w+8,15,background);
-        text(p.x-w/2,p.y-4.5f,label,highlighted?gold:(flowing?teal:muted),size);
+        rect(p.x-w/2-4,p.y-7,w+8,15,canvas_color());
+        text(p.x-w/2,p.y-4.5f,label,high_contrast?red:(highlighted?gold:(flowing?teal:muted)),size);
     }
     void place_labels() {
         if(!labels_dirty) return;
@@ -282,30 +320,42 @@ public:
         }
     }
     void draw() {
-        glClearColor(background.r,background.g,background.b,1); glClear(GL_COLOR_BUFFER_BIT);
-        rect(0,0,panel,static_cast<float>(height),surface);
-        text(24,30,"FLOW LAB",teal,3); text(24,65,"MANUAL TRACING PRACTICE",muted,1.3f);
-        text(24,108,"01 / GENERATE",ink,1.5f);
+        const Color canvas=canvas_color(), pane=panel_color(), primary=ink_color(), secondary=muted_color();
+        glClearColor(canvas.r,canvas.g,canvas.b,1); glClear(GL_COLOR_BUFFER_BIT);
+        rect(0,0,panel,static_cast<float>(height),pane);
+        if(high_contrast) rect(panel-1,0,1,static_cast<float>(height),black);
+        text(24,30,"FLOW LAB",high_contrast?black:teal,3);
+        text(24,65,"MANUAL TRACING PRACTICE",secondary,1.3f);
+        text(24,108,"01 / GENERATE",primary,1.5f);
         button({24,204,128,30},"EDGE COUNT",!by_density); button({160,204,128,30},"DENSITY",by_density);
-        text(24,366,"CAPACITY TYPE",muted,1.25f);
+        text(24,366,"CAPACITY TYPE",secondary,1.25f);
         button({24,386,128,30},"INTEGER",!decimal); button({160,386,128,30},"DECIMAL",decimal);
         for(int i=0;i<4;++i) {
             auto& f=fields[i]; bool enabled=!((i==1&&by_density)||(i==2&&!by_density));
-            text(f.box.x,f.box.y-15,f.label,enabled?muted:Color{0.28f,0.34f,0.42f},1.25f);
-            rect(f.box.x,f.box.y,f.box.w,f.box.h,active==i?Color{0.13f,0.27f,0.31f}:background);
-            text(f.box.x+12,f.box.y+12,f.value+(active==i?"_":""),enabled?ink:muted);
+            text(f.box.x,f.box.y-15,f.label,enabled?secondary:(high_contrast?dark_gray:Color{0.28f,0.34f,0.42f}),1.25f);
+            rect(f.box.x,f.box.y,f.box.w,f.box.h,high_contrast?white:(active==i?Color{0.13f,0.27f,0.31f}:background));
+            if(high_contrast) outline(f.box.x,f.box.y,f.box.w,f.box.h,black);
+            text(f.box.x+12,f.box.y+12,f.value+(active==i?"_":""),high_contrast?red:(enabled?ink:muted));
         }
         button({24,494,264,38},"G  GENERATE GRAPH",true);
         button({24,548,264,38},"SPACE  REVEAL MAX FLOW",solved);
         button({24,598,128,30},"R  RESET"); button({160,598,128,30},"U  USED",used_only);
-        text(24,653,"N  NEW SEED + GRAPH",muted,1.25f);
-        text(24,677,"L  TOGGLE EDGE LABELS",muted,1.25f);
-        text(24,701,"C  RESET LAYOUT",muted,1.25f);
-        text(24,735,"CLICK FIELDS TO EDIT",muted,1.25f);
-        text(24,757,"DRAG VERTICES TO UNTANGLE",muted,1.25f);
-        text(panel+28,30,graph_decimal?"DINIC / DINITZ":"EDMONDS-KARP",ink,2.2f);
-        text(panel+28,62,"SOURCE 0  >  SINK "+std::to_string(graph.vertices-1)+"     "+std::to_string(graph.vertices)+" VERTICES / "+std::to_string(graph.edges.size())+" EDGES",muted,1.3f);
-        if(solved) text(width-270.0f,32,"MAX FLOW "+number(result.value,graph_decimal),teal,1.6f);
+        text(24,653,"N  NEW SEED + GRAPH",secondary,1.25f);
+        text(24,677,"L  TOGGLE EDGE LABELS",secondary,1.25f);
+        text(24,701,"C  RESET LAYOUT",secondary,1.25f);
+        text(24,716,"GRAPH TYPE  (S TO TOGGLE)",secondary,1.25f);
+        button({24,735,128,30},"GENERAL",!simple); button({160,735,128,30},"SIMPLE",simple);
+        text(panel+28,30,graph_decimal?"DINIC / DINITZ":"EDMONDS-KARP",primary,2.2f);
+        const std::string graph_info="SOURCE 0  >  SINK "+std::to_string(graph.vertices-1)+"     "+std::to_string(graph.vertices)+" VERTICES / "+std::to_string(graph.edges.size())+" EDGES     "+(graph_simple?"SIMPLE":"GENERAL");
+        if(high_contrast) text_with_red_numbers(panel+28,62,graph_info,1.3f);
+        else text(panel+28,62,graph_info,secondary,1.3f);
+        button({panel+28,85,228,30},"H  HIGH CONTRAST",high_contrast);
+        if(solved) {
+            if(high_contrast) {
+                text(width-270.0f,32,"MAX FLOW ",black,1.6f);
+                text(width-270.0f+text_width("MAX FLOW ",1.6f),32,number(result.value,graph_decimal),red,1.6f);
+            } else text(width-270.0f,32,"MAX FLOW "+number(result.value,graph_decimal),teal,1.6f);
+        }
         hover=-1; float nearest=10;
         for(int i=0;i<static_cast<int>(graph.edges.size());++i) {
             if(used_only && result.flow[i]<=nf::epsilon) continue;
@@ -322,17 +372,20 @@ public:
         }
         if(hover>=0) { edge(hover,true); edge_label(hover,true); }
         for(int i=0;i<graph.vertices;++i) {
-            Vec p=positions[i]; Color accent=i==0?teal:(i==graph.vertices-1?gold:blue);
-            circle(p,23,accent); circle(p,20,surface);
-            std::string label=std::to_string(i); text(p.x-text_width(label,1.7f)/2,p.y-6,label,ink,1.7f);
+            Vec p=positions[i]; Color accent=high_contrast?black:(i==0?teal:(i==graph.vertices-1?gold:blue));
+            circle(p,23,accent); circle(p,20,pane);
+            std::string label=std::to_string(i);
+            text(p.x-text_width(label,1.7f)/2,p.y-6,label,high_contrast?red:ink,1.7f);
             if(i==0 || i==graph.vertices-1) {
                 std::string role=i==0?"SOURCE":"SINK";
                 text(p.x-text_width(role,1.1f)/2,p.y+31,role,accent,1.1f);
             }
         }
-        rect(panel,height-75.0f,width-panel,75,surface);
-        std::string footer=solved?"TEAL = POSITIVE FLOW    LABEL = FLOW / CAPACITY":"ARROW = DIRECTION    LABEL = CAPACITY";
-        text(panel+24,height-58.0f,footer,solved?teal:muted,1.25f);
+        rect(panel,height-75.0f,width-panel,75,pane);
+        if(high_contrast) rect(panel,height-75.0f,width-panel,1,black);
+        std::string footer=solved?(high_contrast?"THICK = POSITIVE FLOW    RED = FLOW / CAPACITY":"TEAL = POSITIVE FLOW    LABEL = FLOW / CAPACITY")
+                                 :(high_contrast?"BLACK ARROW = DIRECTION    RED = CAPACITY":"ARROW = DIRECTION    LABEL = CAPACITY");
+        text(panel+24,height-58.0f,footer,high_contrast?black:(solved?teal:muted),1.25f);
         if(hover>=0) {
             const auto& e=graph.edges[hover];
             footer="EDGE "+std::to_string(e.from)+" > "+std::to_string(e.to)+"    CAPACITY "+number(e.capacity,graph_decimal);
@@ -340,8 +393,13 @@ public:
         } else footer=error.empty()?status:error;
         // Wrap validation text on narrow windows.
         std::size_t limit=static_cast<std::size_t>((width-panel-48)/7.5f);
-        text(panel+24,height-34.0f,footer.substr(0,limit),error.empty()?ink:gold,1.25f);
-        if(footer.size()>limit) text(panel+24,height-19.0f,footer.substr(limit,limit),gold,1.25f);
+        if(high_contrast) {
+            text_with_red_numbers(panel+24,height-34.0f,footer.substr(0,limit),1.25f);
+            if(footer.size()>limit) text_with_red_numbers(panel+24,height-19.0f,footer.substr(limit,limit),1.25f);
+        } else {
+            text(panel+24,height-34.0f,footer.substr(0,limit),error.empty()?ink:gold,1.25f);
+            if(footer.size()>limit) text(panel+24,height-19.0f,footer.substr(limit,limit),gold,1.25f);
+        }
     }
 };
 
@@ -385,19 +443,25 @@ int main(int argc,char** argv) {
             if(smoke) {
                 // Exercise the same input handlers as interactive keyboard and mouse use.
                 auto key=[&](SDL_Keycode code) { SDL_Event e{}; e.type=SDL_KEYDOWN; e.key.keysym.sym=code; app.event(e); };
+                if(frame==0 && (app.graph.vertices!=6 || app.graph.edges.size()!=10))
+                    throw std::runtime_error("Default graph smoke test failed");
                 if(frame==1) key(SDLK_SPACE);
                 if(frame==2) {
+                    app.click({panel+40,98});
+                    app.click({170,750});
                     app.click({170,400}); app.click({170,218});
                     app.click({30,330}); SDL_Event e{}; e.type=SDL_TEXTINPUT;
                     SDL_strlcpy(e.text.text,"0.08",sizeof(e.text.text)); app.event(e); key(SDLK_RETURN); key(SDLK_g); key(SDLK_SPACE);
-                    if(!app.graph_decimal || !app.solved || app.graph.edges.size()!=11) throw std::runtime_error("UI smoke test failed");
+                    if(!app.high_contrast || !app.graph_decimal || !app.graph_simple ||
+                       !app.solved || app.graph.edges.size()!=6)
+                        throw std::runtime_error("UI smoke test failed");
                 }
             }
             app.draw();
             if(smoke) {
                 screenshot(std::string(argv[2])+"-"+std::to_string(frame)+".ppm",w,h);
                 if(glGetError()!=GL_NO_ERROR) throw std::runtime_error("OpenGL render error");
-                if(++frame==3) { std::cout<<"OpenGL UI smoke test passed (integer, flow, decimal density).\n"; running=false; }
+                if(++frame==3) { std::cout<<"OpenGL UI smoke test passed (integer, flow, simple graph, high contrast).\n"; running=false; }
             }
             SDL_GL_SwapWindow(window); SDL_Delay(16);
         }
