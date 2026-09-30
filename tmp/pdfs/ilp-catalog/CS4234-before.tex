@@ -1,4 +1,4 @@
-\documentclass[8pt]{extarticle}
+\documentclass[10pt]{article}
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -15,7 +15,7 @@
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta,positioning}
 \usepackage{hyperref}
-\geometry{top=0.25in,bottom=0.25in,left=0.2in,right=0.2in}
+\geometry{top=0.65in,bottom=0.65in,left=0.2in,right=0.2in}
 \hypersetup{
   pdftitle={CS4234: Optimization Algorithms - Midterm Notes},
   pdfauthor={Wxy2003-xy},
@@ -24,17 +24,8 @@
   urlcolor=cyan!50!black,
   linktoc=all
 }
-\setlength{\parskip}{-1pt}  % No extra paragraph spacing
-\setlength{\abovedisplayskip}{-1pt}  % Reduce space before equations
-\setlength{\belowdisplayskip}{-1pt}  % Reduce space after equations
-\setlength{\parindent}{0pt}
-\setlength{\columnsep}{10pt}
-\setlength{\columnseprule}{0.2pt}
+
 \setlength{\multicolsep}{0pt}
-\setlength{\abovedisplayskip}{2pt}
-\setlength{\belowdisplayskip}{2pt}
-\setlength{\abovedisplayshortskip}{1pt}
-\setlength{\belowdisplayshortskip}{1pt}
 
 \setlist{nosep,leftmargin=*}
 \renewcommand{\arraystretch}{1.2}
@@ -69,7 +60,7 @@
 \date{}
 
 
-\setcounter{tocdepth}{3}
+\setcounter{tocdepth}{2}
 \emergencystretch=2em
 \allowdisplaybreaks[1]
 
@@ -404,68 +395,6 @@ overweight items must be discarded \emph{before} defining $V$.
 \end{proof}
 Scaling values does not reduce the state space of a weight-indexed $O(nW)$ DP. Neither
 $V$ nor $W$ is a constant; the improvement comes from bounding the scaled coordinate.
-
-\subsection{PTAS and asymptotic PTAS}\label{gre:ptas}
-For each fixed $\epsilon>0$, a PTAS runs in polynomial time and returns at least
-$(1-\epsilon)\OPT$ for maximization or at most $(1+\epsilon)\OPT$ for
-minimization. Its exponent may depend on $1/\epsilon$; an FPTAS is also
-polynomial in $1/\epsilon$. Both schemes below assume the items are explicitly
-listed and their numerical data have polynomial bit length.
-
-\subsubsection{One-dimensional bin packing: asymptotic PTAS}\label{gre:bin-aptas}
-For sizes $s_i\in(0,1]$ and unit bins (model in \S\ref{form:bin}), the
-guarantee is \emph{asymptotic}: for every fixed $\epsilon\in(0,1)$, use
-$\delta=\epsilon/3$ to obtain at most $(1+\epsilon)\OPT+1$ bins.
-An absolute PTAS is impossible unless $P=NP$: a ratio below $3/2$
-would decide whether a bin-packing instance needs two or at least three bins.
-
-\begin{enumerate}[leftmargin=*,nosep]
-\item Split items into large ($s_i>\delta$) and small ($s_i\le\delta$).
-Sort the $N$ large items by decreasing size. If $N=0$, skip to step 4.
-\item Put the sorted large items into consecutive groups of size at most
-$g=\lceil N/K\rceil$, where $K=\lceil\delta^{-2}\rceil$. Set aside the
-first (largest) group. In every other group, round each size \emph{up} to
-the largest size in its group.
-\item Pack the rounded items optimally by enumerating bin configurations
-and their multiplicities; then restore their original sizes and pack each
-set-aside item alone. There are at most $K$ rounded sizes and at most
-$\lfloor1/\delta\rfloor$ large items per bin, so the number of
-configurations depends only on $\epsilon$. Enumerating at most $N$ copies
-of each takes $n^{O_\epsilon(1)}$ time.
-\item Insert small items by first fit into all existing bins, opening a
-new bin only when none has room.
-\end{enumerate}
-\textbf{Why it works.} A rounded item in group $j\ge2$ fits in a slot
-occupied by an original item of group $j-1$. Shifting all groups this way
-shows that the rounded items need at most $\OPT$ bins. The first group
-adds at most $g\le\delta\OPT+1$ bins, since $N\delta<\sum_{\rm large}s_i
-\le\OPT$. If no new bin is opened for small items, the count is at most
-$(1+\delta)\OPT+1$. Otherwise every bin except possibly the last ends
-more than $1-\delta$ full, so the count is at most
-$\OPT/(1-\delta)+1\le(1+\epsilon)\OPT+1$.
-
-\subsubsection{Fixed-dimensional knapsack: profit guessing and LP rounding}\label{gre:multi-ptas}
-Use the $d$-resource 0/1 model in \S\ref{form:multiknapsack}, with
-nonnegative profits and \emph{fixed} $d$. Let $k=\lceil d/\epsilon\rceil$.
-Enumerate every feasible subset of at most $k$ items as a candidate solution.
-For each feasible $k$-item set $T$, let $q=\min_{i\in T}v_i$. Force $T$
-into the solution, discard other items with $v_i>q$, subtract $T$'s resource
-use from each capacity, and solve the residual LP with $0\le x_i\le1$.
-Choose an optimal \emph{basic} LP solution and round every fractional $x_i$
-down to zero. Return the best solution over all guesses.
-
-\textbf{Why it works.} If an optimum has fewer than $k$ items, it is an
-enumerated candidate. Otherwise one guess $T$ consists of its $k$
-highest-profit items, so its remaining items all survive the profit cutoff.
-The residual LP therefore upper-bounds the optimum's remaining profit.
-A basic solution has at most $d$ fractional variables: with more, some
-fractional coordinates could move while preserving the at most $d$
-resource constraints. Rounding down preserves feasibility and loses at
-most $dq\le(d/k)\OPT\le\epsilon\OPT$, because $\OPT\ge kq$.
-Thus the result has value at least $(1-\epsilon)\OPT$ in
-$n^{O(d/\epsilon)}\operatorname{poly}(\text{input bits})$ time. The
-fixed-$d$ condition matters: this bound is not a PTAS when $d$ is part
-of the input.
 
 
 
@@ -1084,530 +1013,6 @@ pushed up even at an optimum; the decoded solution and optimal value remain
 correct. Add equivalence constraints if the variable's exact meaning is
 required independently of the objective.
 
-\subsection{FOL feasibility and ILP formulation reference}\label{lp:catalog}
-Each entry fixes a problem variant, gives logical feasibility conditions,
-and then a linear objective and integer constraints. Costs, profits, and
-capacities are nonnegative unless stated otherwise. All graphs are finite;
-undirected graphs are simple. A binary variable is the indicator of its
-corresponding selection predicate. Quantifiers range over the indicated
-input sets. The objective is separate from the FOL feasibility formula.
-Separate displayed conditions are conjoined. Numerical comparisons use
-the input's fixed arithmetic structure; scheduling times are integer-valued.
-
-\begin{center}
-\small\setlength{\tabcolsep}{3pt}
-\begin{tabularx}{\linewidth}{@{}Y{1.8}Y{0.2}@{}}
-\toprule
-\textbf{Formulation} & \textbf{Page}\\\midrule
-Metric TSP & \pageref{form:tsp}\\
-Single-machine scheduling & \pageref{form:single}\\
-Parallel-machine scheduling & \pageref{form:parallel}\\
-Bin packing & \pageref{form:bin}\\
-Set packing & \pageref{form:setpack}\\
-Prize-collecting Steiner tree & \pageref{form:pcst}\\
-Balanced cut & \pageref{form:cut}\\
-$k$-minimum spanning tree & \pageref{form:kmst}\\
-Capacitated minimum spanning tree & \pageref{form:cmst}\\
-Feedback vertex set & \pageref{form:fvs}\\
-Shortest superstring & \pageref{form:string}\\
-3-dimensional matching & \pageref{form:3dm}\\
-Fair matching with group quotas & \pageref{form:fair}\\
-Capacitated facility location & \pageref{form:facility}\\
-Maximum independent set & \pageref{form:independent}\\
-Capacitated knapsack & \pageref{form:knapsack}\\
-Higher-dimensional knapsack & \pageref{form:multiknapsack}\\
-\bottomrule
-\end{tabularx}
-\end{center}
-
-\subsubsection*{How to read the logical notation}
-\textbf{Candidate interpretations.} Predicates such as $P(i)$ (select item)
-and $A(i,j)$ (assign $i$ to $j$) describe a candidate solution. The displayed
-FOL formula tests that interpretation. Searching over interpretations is
-an additional optimization step; existentially quantifying a predicate
-would be \emph{second-order}, not ordinary FOL.
-
-\textbf{Counting.} $\exists^{=k}z\in D:P(z)$ abbreviates ``exactly $k$'',
-using $k$ distinct witnesses satisfying $P$ and asserting that every
-$P$-element equals one of them. For $k=0$, it means $\forall z\in D:\neg P(z)$.
-Likewise, $\exists^{\le k}$ forbids $k+1$ distinct witnesses, and
-$\exists^{\ge k}$ requires $k$ distinct witnesses. All these are finite
-FOL expansions for a fixed input integer $k$.
-
-\textbf{Capacity.} For nonnegative weights $w_i$ and bound $B$, write
-\[
- \operatorname{Cap}_{D,w,B}(P):=
- \bigwedge_{\substack{A\subseteq D\\\sum_{i\in A}w_i>B}}
-       \left(\bigvee_{i\in A}\neg P(i)\right).
-\]
-It forbids selecting every member of any overweight set, and is equivalent
-to $\sum_{i\in D}w_i\mathbf1_{P(i)}\le B$. In $\operatorname{Cap}(A(\cdot,j))$,
-the dot is the quantified object and $j$ is fixed.
-The conjunction over subsets is a \emph{finite input-indexed schema},
-not a first-order variable ranging over arbitrary sets. Expanding it can
-be exponential even when the resulting ILP has just one capacity inequality.
-
-\textbf{Connectivity and trees.} Let $Z(v)$ select vertices and $X(e)$
-select edges. Write $E(S)$ for edges internal to $S$, $\delta(S)$ for edges
-with exactly one endpoint in $S$, and $\delta(v)=\delta(\{v\})$.
-Require selected edges to have selected endpoints:
-\[
- \operatorname{Ends}(Z,X):=
- \bigwedge_{uv\in E}\bigl(X(uv)\Rightarrow Z(u)\land Z(v)\bigr).
-\]
-For each fixed $\varnothing\ne S\subsetneq V$, connectivity requires
-\[
- \begin{aligned}
- &(\exists u\in S:Z(u))\land(\exists v\notin S:Z(v))\\
- &\hspace{12mm}\Rightarrow\bigvee_{e\in\delta(S)}X(e).
- \end{aligned}
-\]
-Call the conjunction of these formulas $\operatorname{Conn}(Z,X)$.
-For the input graph's simple cycles $\mathcal C(G)$, define
-\[
- \operatorname{Acyc}(X):=
- \bigwedge_{C\in\mathcal C(G)}\bigvee_{e\in E(C)}\neg X(e).
-\]
-Then $\operatorname{Tree}(Z,X)$ means Ends, Conn, Acyc, and
-$\exists v:Z(v)$. Here too, the cut/cycle lists are fixed finite schemas;
-these abbreviations do not claim that general reachability has a uniform
-ordinary-FOL definition.
-
-\paragraph{Reusable exact tree ILP.}\label{form:tree-template}
-With $x_e,y_v\in\{0,1\}$, let $\mathcal T(x,y)$ denote
-\[
-\begin{aligned}
- x_{uv}&\le y_u,\quad x_{uv}\le y_v &&(uv\in E),\\
- \sum_{e\in E(S)}x_e&\le |S|-1 &&(S\subseteq V,\ |S|\ge2),\\
- \sum_{e\in E}x_e&=\sum_{v\in V}y_v-1,\qquad
- \sum_{v\in V}y_v\ge1.
-\end{aligned}
-\]
-The subset inequalities make the selected graph a forest; a forest on
-$q$ selected vertices has $q-c$ edges for $c$ components. The edge count
-therefore forces $c=1$. This is exact, including singleton trees, but has
-exponentially many subset constraints. Merely imposing $q-1$ edges is
-insufficient: a cycle plus an isolated selected vertex can satisfy that count.
-
-\subsubsection{Metric TSP}\label{form:tsp}
-\textbf{Variant.} A complete undirected graph on $n\ge3$ cities, with
-symmetric costs satisfying $c_{uw}\le c_{uv}+c_{vw}$. Select a minimum-cost
-Hamiltonian cycle. Let $X(uv)$ mean that the tour uses edge $uv$.
-
-\textbf{FOL.} With $Z(v)$ always true,
-\[
- \bigl(\forall v:\exists^{=2}u\ne v:X(uv)\bigr)
- \land\operatorname{Conn}(Z,X).
-\]
-\textbf{ILP.} Binary $x_e$; minimize $\sum_e c_ex_e$, subject to
-\[
-\begin{aligned}
- \sum_{e\in\delta(v)}x_e&=2 &&(v\in V),\\
- \sum_{e\in\delta(S)}x_e&\ge2 &&(\varnothing\ne S\subsetneq V).
-\end{aligned}
-\]
-Degree 2 gives a collection of cycles; the cut constraints force a single
-tour. Triangle inequality supports the approximation algorithms, while
-the same integer formulation also models nonmetric TSP.
-
-\subsubsection{Single-machine scheduling}\label{form:single}
-\textbf{Variant.} Jobs $J$, positive integer processing times $p_i$, weights
-$w_i\ge0$, release time 0, no preemption or setup times. Minimize total
-weighted completion time $\sum_iw_iC_i$. Put $H=\sum_i p_i$.
-
-\textbf{FOL.} A candidate gives integer start times $S_i$ in the finite
-time domain $\{0,\ldots,H\}$. Using the fixed arithmetic relations,
-\[
-\begin{aligned}
- &\forall i:\quad 0\le S_i,\quad S_i+p_i\le H,\\
- &\forall i\ne j:\quad
- (S_i+p_i\le S_j)\lor(S_j+p_j\le S_i).
-\end{aligned}
-\]
-\textbf{ILP.} For each $i<j$, binary $z_{ij}=1$ means $i$ precedes $j$.
-Minimize $\sum_iw_i(S_i+p_i)$, subject to
-\[
-\begin{aligned}
- S_i+p_i&\le S_j+H(1-z_{ij}) &&(i<j),\\
- S_j+p_j&\le S_i+Hz_{ij} &&(i<j),\\
- 0\le S_i&\le H-p_i,\quad S_i\in\mathbb Z &&(i\in J).
-\end{aligned}
-\]
-The bound $H$ makes the unused ordering inequality redundant. Positive
-processing times exclude cyclic precedences. An optimal schedule can have
-no idle time, so this horizon and integer start times lose no optimal
-solution. A pure makespan objective on this one-machine, all-jobs-available
-variant would always have optimum $H$.
-
-\subsubsection{Parallel-machine scheduling}\label{form:parallel}
-\textbf{Variant.} $m$ identical machines, all jobs available at time 0,
-positive integer $p_i$, no preemption, precedences, or setup times.
-Minimize makespan $T$ and put $H=\sum_i p_i$. Let $A(i,h)$ assign job $i$
-to machine $h$.
-
-\textbf{FOL.} With integer $0\le S_i$ and $S_i+p_i\le T\le H$,
-\[
-\begin{aligned}
- &\forall i:\exists!h:A(i,h),\\
- &\forall i\ne j,\,h:\quad A(i,h)\land A(j,h)\\
- &\hspace{8mm}\Rightarrow
- (S_i+p_i\le S_j)\lor(S_j+p_j\le S_i).
-\end{aligned}
-\]
-\textbf{ILP.} Binary $x_{ih}$ and integer $0\le T\le H$:
-\[
-\begin{aligned}
- \min\quad &T,\\
- \sum_{h=1}^m x_{ih}&=1 &&(i\in J),\\
- \sum_{i\in J}p_ix_{ih}&\le T &&(h=1,\ldots,m).
-\end{aligned}
-\]
-Start-time variables are unnecessary in this ILP: run each machine's assigned
-jobs consecutively in any order. Its completion time equals its load.
-For unrelated machines replace $p_i$ by $p_{ih}$ and choose a valid horizon;
-release times or precedences require additional scheduling constraints.
-
-\subsubsection{Bin packing}\label{form:bin}
-\textbf{Variant.} Pack $n$ items of sizes $0\le a_i\le B$ into as few
-capacity-$B$ bins as possible; at most $n$ bins are needed. $A(i,b)$ means
-assignment and $U(b)$ means bin $b$ is used.
-
-\textbf{FOL.}
-\[
-\begin{aligned}
- &\forall i:\exists!b:A(i,b),\\
- &\forall i,b:\quad A(i,b)\Rightarrow U(b),\\
- &\forall b:\quad\operatorname{Cap}_{J,a,B}(A(\cdot,b)).
-\end{aligned}
-\]
-\textbf{ILP.} Binary $x_{ib},y_b$; minimize $\sum_{b=1}^n y_b$:
-\[
-\begin{aligned}
- \sum_{b=1}^n x_{ib}&=1 &&(i\in J),\\
- x_{ib}&\le y_b &&(i\in J,\ b=1,\ldots,n),\\
- \sum_i a_ix_{ib}&\le By_b &&(b=1,\ldots,n).
-\end{aligned}
-\]
-The linking constraint also handles zero-size items correctly. Optional
-symmetry breaking $y_b\ge y_{b+1}$ orders the used bins without changing OPT.
-
-\subsubsection{Set packing}\label{form:setpack}
-\textbf{Variant.} Given subsets $S_j\subseteq U$ and profits $w_j$, select
-a pairwise disjoint subfamily of maximum total profit. Use $P(j)$ for selection.
-
-\textbf{FOL.}
-\[
- \forall j\ne k:\quad
- (P(j)\land P(k))\Rightarrow S_j\cap S_k=\varnothing.
-\]
-Here disjointness is a fixed input relation, equivalently
-$\neg\exists u:(u\in S_j\land u\in S_k)$.
-
-\textbf{ILP.} Binary $x_j$:
-\[
- \max\sum_j w_jx_j,\qquad
- \sum_{j:u\in S_j}x_j\le1\quad(u\in U).
-\]
-Every element can belong to at most one chosen set. Taking $w_j=1$ gives
-maximum-cardinality set packing.
-
-\subsubsection{Prize-collecting Steiner tree}\label{form:pcst}
-\textbf{Variant.} Given an undirected graph, edge costs $c_e\ge0$, and
-penalties $\pi_v\ge0$, select a nonempty tree; pay $\pi_v$ for each omitted
-vertex. Nonterminals can have penalty 0. Use $Z(v)$ and $X(e)$ for selected
-vertices and edges.
-
-\textbf{FOL.} $\operatorname{Tree}(Z,X)$; for a rooted variant also require
-$Z(r)$. Mandatory terminals satisfy $Z(v)$ regardless of their penalty.
-
-\textbf{ILP.} Binary $x_e,y_v$, with the full tree system
-$\mathcal T(x,y)$ from page~\pageref{form:tree-template}:
-\[
- \min\quad\sum_{e\in E}c_ex_e+\sum_{v\in V}\pi_v(1-y_v).
-\]
-Add $y_r=1$ only when a root is prescribed. Internal Steiner vertices count
-as selected vertices even when their penalty is zero. Connectivity is
-essential: otherwise isolated selected vertices avoid penalties for free.
-If the variant also requires collected prize at least $Q$, with prizes
-$p_v$, add $\sum_vp_vy_v\ge Q$; prizes and omission penalties need not agree.
-
-\subsubsection{Balanced cut}\label{form:cut}
-\textbf{Variant.} Minimum-weight bisection of an undirected graph: choose
-one side of size $q=\lfloor |V|/2\rfloor$. Let $P(v)$ select that side and
-$D(uv)$ indicate a crossing edge.
-
-\textbf{FOL.}
-\[
-\begin{aligned}
- &\exists^{=q}v:P(v),\\
- &\forall uv\in E:\quad D(uv)\Leftrightarrow(P(u)\mathbin\oplus P(v)).
-\end{aligned}
-\]
-\textbf{ILP.} Binary $x_v,d_{uv}$; minimize $\sum_{uv\in E}c_{uv}d_{uv}$:
-\[
-\begin{aligned}
- \sum_v x_v&=q,\\
- d_{uv}&\ge x_u-x_v,\quad d_{uv}\ge x_v-x_u,\\
- d_{uv}&\le x_u+x_v,\quad d_{uv}\le2-x_u-x_v
-                         &&(uv\in E).
-\end{aligned}
-\]
-The four inequalities enforce XOR at every feasible binary point.
-For a balance interval $L\le |S|\le U$, replace the equality by
-$L\le\sum_vx_v\le U$ and use the corresponding counting bounds in FOL.
-
-\subsubsection{\texorpdfstring{$k$}{k}-minimum spanning tree}\label{form:kmst}
-\textbf{Variant.} Minimum-cost tree spanning exactly $k$ selected vertices
-of $G$, where $1\le k\le |V|$. Vertices not in the tree are omitted.
-
-\textbf{FOL.}
-\[
- \operatorname{Tree}(Z,X)\land(\exists^{=k}v:Z(v)).
-\]
-\textbf{ILP.} Binary $x_e,y_v$:
-\[
- \min\sum_e c_ex_e,\qquad
- \mathcal T(x,y),\qquad \sum_v y_v=k.
-\]
-In particular $\sum_ex_e=k-1$. A rooted variant adds $y_r=1$.
-Check the convention: ``$k$ nonroot vertices'' means $k+1$ total vertices.
-For nonnegative costs, an at-least-$k$ tree can be pruned to $k$ vertices
-without increasing cost (preserving a required root), so the optimum values
-agree under those assumptions.
-
-\subsubsection{Capacitated minimum spanning tree}\label{form:cmst}
-\textbf{Variant.} Root $r$, positive integer demands $q_v$ for $v\ne r$,
-$q_r=0$, and branch capacity $Q$. Every component after deleting $r$ from
-the spanning tree must have total demand at most $Q$.
-
-\textbf{FOL.} With $Z(v)$ always true, require $\operatorname{Tree}(Z,X)$ and
-\[
- \forall b\in N(r):\quad X(rb)\Rightarrow
- \operatorname{Cap}_{V\setminus\{r\},q,Q}(\operatorname{Branch}_b).
-\]
-Here $\operatorname{Branch}_b(v)$ means a selected-edge path from $b$ to $v$
-avoiding $r$; expand it as the finite disjunction of path lengths
-$0,\ldots,|V|-1$, with first-order quantified intermediate vertices.
-
-\textbf{ILP.} Replace edges by both arcs but omit arcs entering $r$.
-Binary $x_{uv}$ selects an arc directed away from $r$; integer $f_{uv}\ge0$
-carries demand. Put $D=\sum_{v\ne r}q_v$. Minimize
-$\sum_{uv}c_{uv}x_{uv}$, subject to
-\[
-\begin{aligned}
- \sum_{u:uv}x_{uv}&=1 &&(v\ne r),\\
- \sum_{u:uv}f_{uv}-\sum_{w:vw}f_{vw}&=q_v &&(v\ne r),\\
- \sum_{w:rw}f_{rw}&=D,\\
- 0\le f_{uv}&\le Qx_{uv} &&(uv\text{ an arc}).
-\end{aligned}
-\]
-Positive demands exclude disconnected directed cycles; one parent per
-nonroot vertex then gives a rooted tree. Each root arc carries exactly its
-branch demand. If zero demands are allowed, add connectivity/acyclicity
-constraints explicitly. Unit demands give the branch-size version.
-
-\subsubsection{Feedback vertex set}\label{form:fvs}
-\textbf{Variant.} Delete a minimum-cost vertex set so the remaining
-undirected graph is acyclic. Let $D(v)$ indicate deletion and $w_v$ its cost.
-
-\textbf{FOL.}
-\[
- \bigwedge_{C\in\mathcal C(G)}\bigvee_{v\in V(C)}D(v).
-\]
-Every input cycle must contain a deleted vertex.
-
-\textbf{ILP.} Binary $d_v$:
-\[
- \min\sum_vw_vd_v,\qquad
- \sum_{v\in V(C)}d_v\ge1\quad(C\in\mathcal C(G)).
-\]
-These cycle inequalities can be exponential in number. For the directed
-variant use directed cycles. Feedback vertex set differs from vertex cover:
-a tree has feedback vertex set size 0, even though its edges may need a
-nonempty vertex cover.
-
-\subsubsection{Shortest superstring}\label{form:string}
-\textbf{Variant.} Given nonempty strings $s_i$ over alphabet $\Sigma$, find
-a shortest word containing each as a contiguous substring. Let
-$\ell_i=|s_i|$ and $H=\sum_i\ell_i$; concatenation proves this length bound.
-
-\textbf{FOL.} A candidate has length $L\in\{0,\ldots,H\}$ and a character
-function $a$ on its positions. Require
-\[
-\begin{gathered}
- \forall i\;\exists t:\quad
- \bigl[1\le t\ \land\ t+\ell_i-1\le L\\
- \land\ (\forall k\in\{1,\ldots,\ell_i\}:\ a(t+k-1)=s_i[k])\bigr].
-\end{gathered}
-\]
-Minimize $L$. The position and alphabet domains are finite; arithmetic and
-input characters are fixed relations/functions.
-
-\textbf{ILP (direct position model).} Binary $u_p$ activates position $p$;
-$z_{p,a}$ puts character $a$ there; $o_{it}$ chooses an occurrence of $s_i$
-starting at $t$. For $p=1,\ldots,H$, minimize $\sum_pu_p$ with
-\[
-\begin{aligned}
- \sum_{a\in\Sigma}z_{p,a}&=u_p &&(p=1,\ldots,H),\\
- u_p&\ge u_{p+1} &&(p<H),\\
- \sum_{t=1}^{H-\ell_i+1}o_{it}&\ge1 &&(\text{each }i),\\
- o_{it}&\le z_{t+k-1,s_i[k]} &&(\text{each valid }i,t,k).
-\end{aligned}
-\]
-Here $1\le t\le H-\ell_i+1$ and $1\le k\le\ell_i$ in the last line.
-The active positions form one prefix; exactly one character occupies each.
-Every chosen occurrence must match all its characters. Conversely, every
-superstring of length at most $H$ gives these variables. Contained strings
-and duplicate strings are allowed by this model.
-
-\subsubsection{3-dimensional matching}\label{form:3dm}
-\textbf{Variant.} Disjoint coordinate sets $A,B,C$ and allowed triples
-$\mathcal R\subseteq A\times B\times C$. Choose a maximum-weight collection
-sharing no coordinate; $P(t)$ selects triple $t$.
-
-\textbf{FOL.}
-\[
- \forall u\in A\cup B\cup C:\quad
- \exists^{\le1}t\in\mathcal R:\bigl(P(t)\land u\in t\bigr).
-\]
-Membership $u\in t$ means that $u$ is one of the triple's coordinates.
-
-\textbf{ILP.} Binary $x_t$:
-\[
- \max\sum_{t\in\mathcal R}w_tx_t,\qquad
- \sum_{t\in\mathcal R:u\in t}x_t\le1\quad(u\in A\cup B\cup C).
-\]
-Set $w_t=1$ for maximum cardinality. In the \emph{perfect} version,
-$|A|=|B|=|C|$ and every coordinate must be used: change $\le1$ to $=1$
-in both the counting formula and ILP and solve feasibility.
-
-\subsubsection{Fair matching with group quotas}\label{form:fair}
-\textbf{Variant.} Bipartite $G=(L\cup R,E)$, matching profits $w_e$, and
-fixed groups $E_g\subseteq E$ with integer quotas $0\le\ell_g\le u_g$.
-For a group of left vertices $L_g$, use $E_g=\{uv\in E:u\in L_g\}$;
-then the group count equals the number of its matched vertices.
-
-\textbf{FOL.} With $M(e)$ denoting selection,
-\[
-\begin{aligned}
- &\forall v:\exists^{\le1}e\in\delta(v):M(e),\\
- &\forall g:\quad
- (\exists^{\ge\ell_g}e\in E_g:M(e))\land
- (\exists^{\le u_g}e\in E_g:M(e)).
-\end{aligned}
-\]
-\textbf{ILP.} Binary $x_e$:
-\[
-\begin{aligned}
- \max\quad &\sum_{e\in E}w_ex_e,\\
- \sum_{e\in\delta(v)}x_e&\le1 &&(v\in L\cup R),\\
- \ell_g\le\sum_{e\in E_g}x_e&\le u_g &&(\text{each group }g).
-\end{aligned}
-\]
-Groups may overlap; quotas may make the model infeasible. Set $w_e=1$ for
-maximum cardinality. Proportional quotas can instead use
-$\alpha_g\sum_ex_e\le\sum_{e\in E_g}x_e\le\beta_g\sum_ex_e$,
-which is still linear for fixed rational $\alpha_g,\beta_g$.
-Extra quotas do not automatically preserve the ordinary bipartite matching
-LP's integrality.
-
-\subsubsection{Capacitated facility location}\label{form:facility}
-\textbf{Variant.} Clients $I$ have demands $d_i>0$; facilities $J$ have
-capacities $Q_j$ and opening costs $f_j$. Each client uses exactly one open
-facility. Let $c_{ij}$ be the \emph{total} cost of serving client $i$ at $j$.
-
-\textbf{FOL.} Assignment $A(i,j)$ and opening $O(j)$ satisfy
-\[
-\begin{aligned}
- &\forall i:\exists!j:A(i,j),\\
- &\forall i,j:\quad A(i,j)\Rightarrow O(j),\\
- &\forall j:\quad\operatorname{Cap}_{I,d,Q_j}(A(\cdot,j)).
-\end{aligned}
-\]
-\textbf{ILP (unsplittable demand).} Binary $x_{ij},y_j$:
-\[
-\begin{aligned}
- \min\quad &\sum_jf_jy_j+\sum_{i,j}c_{ij}x_{ij},\\
- \sum_jx_{ij}&=1 &&(i\in I),\\
- x_{ij}&\le y_j &&(i\in I,\ j\in J),\\
- \sum_i d_ix_{ij}&\le Q_jy_j &&(j\in J).
-\end{aligned}
-\]
-If shipping costs are \emph{per unit}, use $d_ic_{ij}$ in the objective.
-For splittable demand, use shipment variables $a_{ij}\ge0$ with
-$\sum_ja_{ij}=d_i$, $\sum_ia_{ij}\le Q_jy_j$, and $a_{ij}\le d_iy_j$;
-continuous shipments give a MILP rather than a pure ILP.
-
-\subsubsection{Maximum independent set}\label{form:independent}
-\textbf{Variant.} Select a maximum-weight set of pairwise nonadjacent
-vertices; use weights 1 for maximum cardinality.
-
-\textbf{FOL.}
-\[
- \forall u,v:\quad uv\in E\Rightarrow\neg(P(u)\land P(v)).
-\]
-\textbf{ILP.} Binary $x_v$:
-\[
- \max\sum_vw_vx_v,\qquad x_u+x_v\le1\quad(uv\in E).
-\]
-The complement is a vertex cover, but approximation factors do not
-transfer simply by complementing an approximate solution.
-
-\subsubsection{Capacitated knapsack}\label{form:knapsack}
-\textbf{Variant.} One knapsack of capacity $B$, indivisible items with
-sizes $a_i\ge0$ and profits $v_i\ge0$, each available once.
-
-\textbf{FOL.} $\operatorname{Cap}_{J,a,B}(P)$ for the selected-item predicate
-$P(i)$. Maximize the sum of selected profits.
-
-\textbf{ILP.}
-\[
- \max\sum_i v_ix_i,\qquad
- \sum_i a_ix_i\le B,\qquad x_i\in\{0,1\}.
-\]
-For bounded multiplicities replace the domain by
-$x_i\in\{0,1,\ldots,b_i\}$; the FOL version can select individual copies.
-With unlimited copies use $x_i\in\mathbb Z_{\ge0}$ and check for
-zero-size, positive-profit items, which make the objective unbounded.
-
-\subsubsection{Higher-dimensional knapsack}\label{form:multiknapsack}
-\textbf{Variant.} Each selected item simultaneously consumes $a_{ri}\ge0$
-units of each resource $r=1,\ldots,d$, with capacity $B_r$. Each item is
-available once; its profit is $v_i$.
-
-\textbf{FOL.}
-\[
- \bigwedge_{r=1}^d\operatorname{Cap}_{J,a_r,B_r}(P).
-\]
-\textbf{ILP.}
-\[
- \max\sum_i v_ix_i,\qquad
- \sum_i a_{ri}x_i\le B_r\quad(r=1,\ldots,d),
- \qquad x_i\in\{0,1\}.
-\]
-There is one capacity constraint per resource and one shared selection
-variable per item. This models multiple resource budgets, not geometric
-placement of rectangles or boxes. For several separate knapsacks with
-assignment choices, introduce $x_{ib}$ and require $\sum_bx_{ib}\le1$.
-
-\paragraph{Model-checking reminders.}
-Keep domains, quantifier ranges, objective direction, and the precise
-variant with each formulation. Cut/cycle schemas may be exponential.
-Connectivity, acyclicity, and capacity are separate obligations; degree or
-edge-count constraints alone rarely establish all three. Dropping all
-integrality restrictions gives a relaxation, not automatically an exact
-polynomial-time algorithm for the original problem.
-
-\paragraph{Further formulation references.}
-The formulations above are written out for the stated variants. Useful
-primary references are the SCIP modelling book's
-\href{https://scipbook.readthedocs.io/en/latest/routing.html}{TSP formulations},
-\href{https://github.com/joaopedroso/scipbook/blob/master/docs/bpp.rst}{bin-packing model},
-and \href{https://scipbook.readthedocs.io/en/latest/flp.html}{facility-location models};
-the \href{https://dimacs11.zib.de/downloads.html}{DIMACS prize-collecting Steiner definitions};
-the \href{https://optimization-online.org/wp-content/uploads/2006/05/1404.pdf}{CMST branch-capacity definition};
-and \href{https://arxiv.org/abs/2301.03862}{proportionally fair matching}.
-
 \subsection{Weighted vertex cover: threshold rounding}\label{lp:vc}
 For nonnegative vertex costs $c_v$, let $x_v$ indicate selection. The ILP is
 \[
@@ -1858,44 +1263,40 @@ because cost and success may be correlated.
 
 \section{Network Flow}\label{nf:chapter}
 
-\subsection{Integer network flow and residual graph}\label{nf:model}
+\subsection{Model, residual arcs, and augmentation}\label{nf:model}
 Let $G=(V,E)$ be a directed network with distinct source $s$, sink $t$,
-capacities $c(u,v)\ge0$ for $(u,v)\in E$, $n=|V|$, and $m=|E|$.
-Write $f(u,v)$ for flow on the original arc $(u,v)$. If parallel arcs occur,
-give each a distinct identity and apply this notation to that named arc.
-The original feasibility constraints are
+capacities $c_e\ge0$, $n=|V|$, and $m=|E|$. Parallel and antiparallel arcs
+are allowed; each original arc has its own identity. A feasible flow satisfies
 \[
-  0\le f(u,v)\le c(u,v)\quad((u,v)\in E),
-\]
-\[
-  f_{\mathrm{in}}(v)=\sum_{(u,v)\in E}f(u,v)
-  =\sum_{(v,z)\in E}f(v,z)=f_{\mathrm{out}}(v)
+  0\le f_e\le c_e\quad(e\in E),\qquad
+  \sum_{e\in\delta^-(v)}f_e=\sum_{e\in\delta^+(v)}f_e
   \quad(v\ne s,t).
 \]
-The objective is the \emph{net} source outflow
-$\operatorname{value}(f)=f_{\mathrm{out}}(s)-f_{\mathrm{in}}(s)$.
-It equals net inflow at $t$. As in the original notes, when no arcs enter
-$s$, $\operatorname{value}(f)=\sum_{(s,v)\in E}f(s,v)$.
+Here $\delta^+(S)$ and $\delta^-(S)$ are the original arcs leaving and entering
+$S$, respectively. The objective is the \emph{net} source outflow
+\[
+  |f|=\sum_{e\in\delta^+(s)}f_e-\sum_{e\in\delta^-(s)}f_e.
+\]
+It equals net inflow at $t$. If there are no arcs entering $s$, it is simply
+source outflow. Nonnegativity is part of feasibility.
 
 \paragraph{Residual graph $G_f$.}
 For each original arc $e=(u,v)$, keep two \emph{labelled} residual arcs:
 \[
 \begin{array}{c|c|c}
 \text{label and direction}&\text{residual capacity}&\text{augmentation by }\Delta\\\hline
- e^+:u\to v&c(u,v)-f(u,v)&f(u,v)\gets f(u,v)+\Delta\\
- e^-:v\to u&f(u,v)&f(u,v)\gets f(u,v)-\Delta
+ e^+:u\to v&c_e-f_e&f_e\gets f_e+\Delta\\
+ e^-:v\to u&f_e&f_e\gets f_e-\Delta
 \end{array}
 \]
 Only positive-capacity residual arcs are available. In particular, when
 $(u,v)$ and $(v,u)$ are both original arcs, an arc directed $u\to v$ may
 mean increasing one original flow or decreasing the other. Its label, not
-membership of $(u,v)$ in $E$, determines the update. Thus the old
-$c_f(u,v)$ notation is unambiguous only when the residual arc's original
-arc and forward/reverse label are clear.
+membership of $(u,v)$ in $E$, determines the update.
 For a simple residual $s$--$t$ path $P$, set
 $\Delta=\min_{a\in P}c_f(a)$ and apply its labelled updates.
-Bounds $0\le f(u,v)\le c(u,v)$ remain valid; every internal path vertex has
-zero change in net outflow; $\operatorname{value}(f)$ increases by $\Delta$.
+Bounds $0\le f_e\le c_e$ remain valid; every internal path vertex has zero
+change in net outflow; $|f|$ increases by $\Delta$.
 
 \paragraph{Why reverse arcs are necessary.}
 Take unit-capacity arcs $s\to a,s\to b,a\to b,a\to t,b\to t$.
@@ -1905,78 +1306,50 @@ $s\to b\to a\to t$ uses the reverse of $a\to b$, cancels that unit, and
 produces the two direct unit routes $s\to a\to t$ and $s\to b\to t$.
 
 \paragraph{Comparing two flows: use the residual network.}
-For feasible original flows $f,g$, set
-$h(e^+)=\max\{g(u,v)-f(u,v),0\}$ and
-$h(e^-)=\max\{f(u,v)-g(u,v),0\}$ for each original arc $e=(u,v)$.
-These values respect residual capacities;
+For feasible original flows $f,g$, set $h(e^+)=\max\{g_e-f_e,0\}$ and
+$h(e^-)=\max\{f_e-g_e,0\}$. These values respect residual capacities;
 conservation follows by subtracting the two original conservation equations,
-and $\operatorname{value}(h)=\operatorname{value}(g)-\operatorname{value}(f)$.
-Conversely, a residual flow $h$ updates the original flow by
-$f'(u,v)=f(u,v)+h(e^+)-h(e^-)$, with $0\le f'(u,v)\le c(u,v)$ and
-$\operatorname{value}(f')=\operatorname{value}(f)+\operatorname{value}(h)$.
-Thus residual flow models possible improvement.
+and $|h|=|g|-|f|$. Conversely, a residual flow $h$ updates the original flow by
+$f'_e=f_e+h(e^+)-h(e^-)$, with $0\le f'_e\le c_e$ and
+$|f'|=|f|+|h|$. Thus residual flow models possible improvement.
 The ordinary vector $g-f$ need not be a nonnegative flow in $G$: an arc may
 carry less under $g$ than under $f$. Its negative component belongs on the
 corresponding reverse residual arc.
 
-\subsection{\texorpdfstring{$s$--$t$}{s-t} cuts and max-flow/min-cut}\label{nf:cuts}
-An $s$--$t$ cut is a partition $(A,\bar A)$ where
-$\bar A=V\setminus A$, $s\in A$, and $t\in\bar A$. More generally,
-$\bar X=V\setminus X$ for any vertex set $X$. Its capacity counts
-only arcs directed \emph{out of} $A$:
-\[
- c(A,\bar A)=\sum_{\substack{(u,v)\in E\\u\in A,\,v\in\bar A}}c(u,v).
-\]
-Define $f_{\mathrm{out}}(A)$ and $f_{\mathrm{in}}(A)$ by summing flows on
-arcs leaving and entering $A$, respectively. For compact formulas below,
-$\delta^+(A)$ and $\delta^-(A)$ denote those sets of original arcs.
-\begin{lemma}[Generalized conservation across a cut]\label{nf:cut-conservation}
-For every feasible flow and every $s$--$t$ cut $(A,\bar A)$,
-$f_{\mathrm{out}}(A)-f_{\mathrm{in}}(A)=\operatorname{value}(f)$.
-\end{lemma}
-\begin{proof}
-Sum $f_{\mathrm{out}}(v)-f_{\mathrm{in}}(v)$ over $v\in A$.
-Each arc with both endpoints in $A$ appears once with each sign and cancels.
-The surviving terms are exactly $f_{\mathrm{out}}(A)-f_{\mathrm{in}}(A)$.
-Conservation makes each internal vertex's contribution zero; $t\notin A$,
-so only $s$ contributes $\operatorname{value}(f)$.
-\end{proof}
-Because $f_{\mathrm{in}}(A)\ge0$ and each outgoing flow is at most its
-capacity, this proves the bound against \emph{every} cut:
+\subsection{Cut identities and max-flow/min-cut}\label{nf:cuts}
+An $s$--$t$ cut is a partition $(S,V\setminus S)$ with $s\in S$, $t\notin S$;
+its capacity counts only arcs directed \emph{out of} $S$:
+$c(S)=\sum_{e\in\delta^+(S)}c_e$.
+Summing net outflow over all $v\in S$ cancels every internal arc and gives
 \begin{equation}\label{nf:cut-identity}
- \boxed{\operatorname{value}(f)
- =f_{\mathrm{out}}(A)-f_{\mathrm{in}}(A)\le c(A,\bar A).}
+ \boxed{|f|=\sum_{e\in\delta^+(S)}f_e-\sum_{e\in\delta^-(S)}f_e\le c(S).}
 \end{equation}
 An especially useful equivalent identity is
 \begin{equation}\label{nf:cut-slack}
- \boxed{c(A,\bar A)-\operatorname{value}(f)
- =[c(A,\bar A)-f_{\mathrm{out}}(A)]+f_{\mathrm{in}}(A).}
+ \boxed{c(S)-|f|=
+ \sum_{e\in\delta^+(S)}(c_e-f_e)+\sum_{e\in\delta^-(S)}f_e.}
 \end{equation}
-The bracket is the sum of $c(u,v)-f(u,v)$ over outgoing arcs; the final
-term is the sum of $f(v,u)$ over incoming arcs. Thus every summand is
-nonnegative, and the right side is exactly the total residual capacity
-leaving $A$.
+All terms on the right are nonnegative. This is also the total capacity
+of the residual arcs leaving $S$, with each original crossing arc contributing
+exactly one term.
 
 \begin{theorem}[Augmenting paths and optimality]\label{nf:mfmc}
 For a feasible flow $f$, the following are equivalent:
 \begin{enumerate}
  \item $f$ is maximum;
  \item $G_f$ has no $s$--$t$ path;
- \item $\operatorname{value}(f)=c(A,\bar A)$ for some $s$--$t$ cut $A$.
+ \item $|f|=c(S)$ for some $s$--$t$ cut $S$.
 \end{enumerate}
 Consequently maximum flow value equals minimum cut capacity.
 \end{theorem}
 \begin{proof}
 A residual path permits a strictly positive augmentation, so a maximum flow
 has no such path. If none exists, define
-$S=\{v:v\text{ is reachable from }s\text{ in }G_f\}$ and $T=V\setminus S$.
-Then $s\in S,t\in T$. For an original arc $(u,v)$ from $S$ to $T$,
-$c(u,v)-f(u,v)=0$;
+$S=\{v:v\text{ is reachable from }s\text{ in }G_f\}$.
+Then $s\in S,t\notin S$. For an original arc leaving $S$, $c_e-f_e=0$;
 otherwise its forward residual arc would make its head reachable.
-For an original arc $(v,u)$ from $T$ to $S$, $f(v,u)=0$;
-otherwise its reverse residual arc would do the same.
-Equation~\eqref{nf:cut-slack}, applied to $(S,T)$, gives
-$c(S,T)=\operatorname{value}(f)$.
+For an original arc entering $S$, $f_e=0$; otherwise its reverse residual arc
+would do the same. Equation~\eqref{nf:cut-slack} gives $c(S)=|f|$.
 Finally, equality certifies optimality of both $f$ and $S$ by
 \eqref{nf:cut-identity}. A maximum exists because the feasible set is nonempty,
 closed, and bounded; applying the equivalence to it proves the equality of
@@ -1990,8 +1363,8 @@ head's non-reachability, not necessarily non-reachability of $t$ directly.
 
 \begin{algorithm}[H]
 \caption{Ford--Fulkerson: arbitrary residual augmenting paths}
-\KwIn{Network $G$, capacities $c(u,v)\ge0$, source $s$, sink $t$}
-$f(u,v)\gets0$ for every original arc $(u,v)\in E$\;
+\KwIn{Network $G$, capacities $c_e\ge0$, source $s$, sink $t$}
+$f_e\gets0$ for every $e\in E$\;
 \While{a residual $s$--$t$ path exists}{
  Find a simple $s$--$t$ path $P$ in $G_f$\;
  $\Delta\gets\min_{a\in P}c_f(a)$\;
@@ -2002,8 +1375,7 @@ $f(u,v)\gets0$ for every original arc $(u,v)\in E$\;
 If it terminates, the algorithm is correct by Theorem~\ref{nf:mfmc}.
 With integer capacities, all flows, residual capacities, and bottlenecks stay
 integral; each augmentation increases value by at least 1. Thus there are at
-most $F^*=\operatorname{value}(f^*)$ augmentations and time
-$O(m(1+F^*))$ after discarding isolated
+most $F^*=|f^*|$ augmentations and time $O(m(1+F^*))$ after discarding isolated
 vertices. This is \emph{pseudo-polynomial}: a binary capacity $C$ occupies
 $O(\log C)$ bits, not $C$ bits. Rational capacities also give termination after
 scaling by a common denominator, without a polynomial iteration bound from
@@ -2021,8 +1393,8 @@ augmentations before reaching value $2C$, exponential in the bit length of
 $C$. Taking the two direct paths would require only two augmentations.
 
 \begin{theorem}[Edgewise integrality]\label{nf:integrality}
-With integer capacities, there exists a maximum flow with
-$f(u,v)\in\mathbb Z$ for \emph{every} original arc $(u,v)$.
+With integer capacities, there exists a maximum flow with $f_e\in\mathbb Z$
+for \emph{every} original arc $e$.
 \end{theorem}
 \begin{proof}
 Start at zero and use Ford--Fulkerson. Every augmentation is integral, and
@@ -2035,8 +1407,7 @@ An integral maximum also exists. An integer \emph{total value} alone is not
 enough to decode a matching or an indivisible assignment.
 
 \subsection{Capacity scaling: \texorpdfstring{$O(m^2(1+\log C))$}{O(m squared log C)}}\label{nf:scaling}
-Assume integer capacities and $C=\max_{(u,v)\in E}c(u,v)$
-(return zero if $E$ is empty or
+Assume integer capacities and $C=\max_e c_e$ (return zero if $E$ is empty or
 $C=0$). For a threshold $k$, retain only labelled residual arcs of capacity
 at least $k$; call this graph $G_f^{\ge k}$.
 
@@ -2067,12 +1438,12 @@ At the end of a $k$ phase, let $S$ be the vertices reachable in
 $G_f^{\ge k}$. Each residual arc leaving $S$ has capacity less than $k$.
 Each original crossing arc contributes once to \eqref{nf:cut-slack}, so
 \[
- F^*-\operatorname{value}(f)\le c(S,\bar S)-\operatorname{value}(f)<mk\qquad(m>0).
+ F^*-|f|\le c(S)-|f|<mk\qquad(m>0).
 \]
 At the start of the next phase, whose threshold is $k/2$, the gap is less
 than $2m(k/2)$. Equivalently, a phase with threshold $k$ starts with gap
 less than $2mk$. This also holds for the first phase since
-$F^*\le\sum_{(s,v)\in E}c(s,v)\le mC<2mk$.
+$F^*\le\sum_{e\in\delta^+(s)}c_e\le mC<2mk$.
 Every augmentation adds at least $k$, so a phase has fewer than $2m$
 augmentations. The phase need not itself reach the optimum.
 There are $1+\lfloor\log_2 C\rfloor$ phases and each path search/update costs
@@ -2173,8 +1544,7 @@ supply bound, and arcs $b_j\to t_0$ for sink receipt bounds.
 If exact supplies $a_i$ and demands $b_j$ sum to $B$, target value $B$ forces
 all these arcs to be saturated and gives the prescribed amounts.
 For unrestricted auxiliary arcs, use a finite upper bound on all possible
-flow (for example $1+\sum_{(u,v)\in E}c(u,v)$), rather than an
-unspecified infinity.
+flow (for example $1+\sum_e c_e$), rather than an unspecified infinity.
 
 \begin{theorem}[Edge form of Menger]\label{nf:edge-menger}
 For distinct vertices $s,t$, the maximum number of pairwise edge-disjoint
@@ -2460,18 +1830,18 @@ worker per task.
 
 \subsection{Minimum-cut structure and tie-breaking}\label{nf:cut-structure}
 \begin{theorem}[Every minimum cut is saturated by every maximum flow]
-Fix any maximum flow $f$. For every minimum cut $S$, each original arc
-$(u,v)$ leaving $S$ satisfies $f(u,v)=c(u,v)$, and each original arc
-$(v,u)$ entering $S$ satisfies $f(v,u)=0$.
+Fix any maximum flow $f$. For every minimum cut $S$, all original arcs
+leaving $S$ satisfy $f_e=c_e$, and all original arcs entering $S$ satisfy
+$f_e=0$.
 \end{theorem}
 \begin{proof}
-Since $c(S,\bar S)=\operatorname{value}(f)$, the left side of \eqref{nf:cut-slack} is zero.
+Since $c(S)=|f|$, the left side of \eqref{nf:cut-slack} is zero.
 Every term on its right is nonnegative, so each is zero.
 \end{proof}
 \paragraph{No opposite crossings.}
 A positive-capacity arc cannot leave one minimum cut's source side and enter
 another's. Fix the \emph{same} maximum flow for both cuts: the first requires
-$f(u,v)=c(u,v)>0$, while the second requires $f(u,v)=0$, a contradiction.
+$f_e=c_e>0$, while the second requires $f_e=0$, a contradiction.
 The positive-capacity assumption is necessary for this argument.
 
 \begin{theorem}[Residual characterization and closure of minimum cuts]\label{nf:cut-lattice}
@@ -2483,7 +1853,7 @@ minimum-cut source sides are also minimum-cut source sides.
 \begin{proof}
 No residual arc leaves $S$ exactly when every original outgoing arc is
 saturated and every original incoming arc has zero flow.
-Equation~\eqref{nf:cut-slack} makes this equivalent to $c(S,\bar S)=\operatorname{value}(f)$.
+Equation~\eqref{nf:cut-slack} makes this equivalent to $c(S)=|f|$.
 For intersection and union, use the same residual network: a vertex in
 $S_1\cap S_2$ cannot reach outside either set by one residual arc, and a
 vertex in $S_1\cup S_2$ stays in whichever set contains it. Both sets
@@ -2509,21 +1879,21 @@ Containment alone does not make an intermediate set a minimum cut;
 it must also have no outgoing residual arc.
 
 \paragraph{Minimum capacity first, then fewest outgoing arcs.}
-For integer capacities, define $c'(u,v)=(m+1)c(u,v)+1$ and compute a minimum cut
+For integer capacities, define $c'_e=(m+1)c_e+1$ and compute a minimum cut
 under $c'$. Its transformed capacity is
 \[
- c'(S,\bar S)=(m+1)c(S,\bar S)+|\delta^+(S)|.
+ c'(S)=(m+1)c(S)+|\delta^+(S)|.
 \]
 Any increase of at least 1 in original cut capacity raises the first term
 by at least $m+1$, which exceeds every possible difference in outgoing-arc
 count (at most $m$). Therefore a minimum transformed cut first minimizes
-$c(S,\bar S)$ and, among ties, minimizes $|\delta^+(S)|$. The capacity encoding grows
+$c(S)$ and, among ties, minimizes $|\delta^+(S)|$. The capacity encoding grows
 by only $O(\log(m+1))$ bits. Integrality is essential to the unit-gap argument;
 arbitrary real capacities need a separately justified gap bound.\par
 
 
 \paragraph{Lower bounds and vertex demands.}
-The variants $\ell(u,v)\le f(u,v)\le c(u,v)$ and
+The variants $\ell_e\le f_e\le c_e$ and
 $\operatorname{in}_f(v)-\operatorname{out}_f(v)=d(v)$ impose minimum arc flows
 and net supply/demand at vertices. Their full feasibility reduction is in
 Appendix~\ref{nf:demands}.
@@ -2934,7 +2304,44 @@ by an $O(q)$ final scan; no $O(q)$ reset per string is needed.
   \item \textbf{False.} Linearity of expectation requires no independence.
 \end{enumerate}
 
+
+\clearpage
+
 \section{Background and Prerequisites}\label{app:background}
+\subsection{Prerequisite map}
+
+\begin{center}
+\small
+\setlength{\tabcolsep}{3pt}
+\begin{tabularx}{\linewidth}{@{}>{\bfseries}Y{0.60}Y{1.10}Y{1.30}@{}}
+\toprule
+Source & Reusable idea & Role in CS4234 \\
+\midrule
+CS3230
+& Asymptotic analysis, recurrences, and input encoding
+& State running times in the true input length and distinguish polynomial
+  from pseudo-polynomial algorithms. \\
+CS3230
+& Loop invariants, induction, exchange arguments, and optimal substructure
+& Prove feasibility, optimality, approximation ratios, and termination. \\
+CS3230
+& Greedy algorithms, dynamic programming, graph algorithms, and randomization
+& Supply exact subroutines and recurring algorithm-design patterns. \\
+CS3230/\newline CS4269
+& Polynomial-time reductions and NP-completeness
+& Explain why an exact polynomial-time algorithm may be unlikely and motivate
+  relaxations, approximation, or restricted cases. \\
+CS4269
+& Propositional semantics, satisfiability, and formula encodings
+& Turn combinatorial choices into Boolean or $0$--$1$ variables with explicit
+  constraints. \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+Topics such as compactness, Hilbert systems, first-order logic, and
+computability remain useful background, but they are not part of this compact
+optimization prerequisite.
 
 \subsection{The optimization viewpoint}
 
@@ -3256,6 +2663,8 @@ For each new problem or algorithm, record the following before doing algebra:
 
 
 
+
+\clearpage
 
 \section{Extended Probability and Mathematical Reference}\label{app:formulas}
 \subsection{Basic Probability Identities}
@@ -3636,9 +3045,14 @@ For convex $g$: $\ \mathbb{E}[g(X)]\ge g(\mathbb{E}[X])$. Frequently used with $
 A statement holds w.h.p. if $\Pr[\text{event}]\ge 1 - n^{-c}$ for some constant $c>0$. Typical pattern: apply a union bound over $n$ events after a Chernoff/Hoeffding bound on each.
 
 \smallskip
+\noindent\textit{Nitpicks that save points:}
 (i) \textbf{Linearity} never needs independence; \textbf{variance additivity} does. 
 (ii) State the range/independence assumptions before using Chernoff/Hoeffding. 
 (iii) For hashing/“pairwise independence,” Chernoff may fail; use Chebyshev or limited-independence bounds.
+
+
+
+\clearpage
 
 \section{Discrete Mathematics Reference}\label{app:discrete}
 \textit{Focus: primes, modular arithmetic, and base conversion/manipulation. Short statements you can drop into proofs or code comments.}
@@ -3763,6 +3177,10 @@ Subdivision appear as subgraph
 \subsubsection*{Homeomorphic graph}
 Containing common subdivision
 
+
+
+\clearpage
+
 \section{Boolean-to-ILP Encoding Reference}\label{app:boolean}
 \subsection{Binary encodings of logical constraints}
 \begin{enumerate}
@@ -3836,6 +3254,9 @@ $\displaystyle
 
 All variables in the table are binary. These encode constraints on assignments; an LP relaxation need not preserve logical equivalence.
 
+
+\clearpage
+
 \section{Flow Extensions: Lower Bounds and Demands}\label{nf:demands}
 This construction extends the basic flow reductions. It is useful reference
 material; the supplied lecture only briefly mentions these extensions.
@@ -3870,6 +3291,8 @@ network. Its forward capacity is $c_e-f_e$ and its backward capacity is
 $f_e-\ell_e$, so cancellation never violates the lower bound. Continue until no
 augmenting path remains. Feasibility alone does not certify maximum value.
 
+
+\clearpage
 
 \section{Additional Algorithm Examples}\label{app:extra}
 \subsection{An infinite Ford--Fulkerson augmentation sequence}

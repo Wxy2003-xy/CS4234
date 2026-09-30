@@ -1,0 +1,519 @@
+\subsection{FOL feasibility and ILP formulation reference}\label{lp:catalog}
+Each entry fixes a problem variant, gives logical feasibility conditions,
+and then a linear objective and integer constraints. Costs, profits, and
+capacities are nonnegative unless stated otherwise. All graphs are finite;
+undirected graphs are simple. A binary variable is the indicator of its
+corresponding selection predicate. Quantifiers range over the indicated
+input sets. The objective is separate from the FOL feasibility formula.
+
+\begin{center}
+\small\setlength{\tabcolsep}{3pt}
+\begin{tabularx}{\linewidth}{@{}Y{1.8}Y{0.2}@{}}
+\toprule
+\textbf{Formulation} & \textbf{Page}\\\midrule
+Metric TSP & \pageref{form:tsp}\\
+Single-machine scheduling & \pageref{form:single}\\
+Parallel-machine scheduling & \pageref{form:parallel}\\
+Bin packing & \pageref{form:bin}\\
+Set packing & \pageref{form:setpack}\\
+Prize-collecting Steiner tree & \pageref{form:pcst}\\
+Balanced cut & \pageref{form:cut}\\
+$k$-minimum spanning tree & \pageref{form:kmst}\\
+Capacitated minimum spanning tree & \pageref{form:cmst}\\
+Feedback vertex set & \pageref{form:fvs}\\
+Shortest superstring & \pageref{form:string}\\
+3-dimensional matching & \pageref{form:3dm}\\
+Fair matching with group quotas & \pageref{form:fair}\\
+Capacitated facility location & \pageref{form:facility}\\
+Maximum independent set & \pageref{form:independent}\\
+Capacitated knapsack & \pageref{form:knapsack}\\
+Higher-dimensional knapsack & \pageref{form:multiknapsack}\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsubsection*{How to read the logical notation}
+\textbf{Candidate interpretations.} Predicates such as $P(i)$ (select item)
+and $A(i,j)$ (assign $i$ to $j$) describe a candidate solution. The displayed
+FOL formula tests that interpretation. Searching over interpretations is
+an additional optimization step; existentially quantifying a predicate
+would be \emph{second-order}, not ordinary FOL.
+
+\textbf{Counting.} $\exists^{=k}z\in D:P(z)$ abbreviates ``exactly $k$'',
+using $k$ distinct witnesses satisfying $P$ and asserting that every
+$P$-element equals one of them. For $k=0$, it means $\forall z\in D:\neg P(z)$.
+Likewise, $\exists^{\le k}$ forbids $k+1$ distinct witnesses, and
+$\exists^{\ge k}$ requires $k$ distinct witnesses. All these are finite
+FOL expansions for a fixed input integer $k$.
+
+\textbf{Capacity.} For nonnegative weights $w_i$ and bound $B$, write
+\[
+ \operatorname{Cap}_{D,w,B}(P):=
+ \bigwedge_{\substack{A\subseteq D\\\sum_{i\in A}w_i>B}}
+       \left(\bigvee_{i\in A}\neg P(i)\right).
+\]
+It forbids selecting every member of any overweight set, and is equivalent
+to $\sum_{i\in D}w_i\mathbf1_{P(i)}\le B$. In $\operatorname{Cap}(A(\cdot,j))$,
+the dot is the quantified object and $j$ is fixed.
+The conjunction over subsets is a \emph{finite input-indexed schema},
+not a first-order variable ranging over arbitrary sets. Expanding it can
+be exponential even when the resulting ILP has just one capacity inequality.
+
+\textbf{Connectivity and trees.} Let $Z(v)$ select vertices and $X(e)$
+select edges. Write $E(S)$ for edges internal to $S$, $\delta(S)$ for edges
+with exactly one endpoint in $S$, and $\delta(v)=\delta(\{v\})$.
+Require selected edges to have selected endpoints:
+\[
+ \operatorname{Ends}(Z,X):=
+ \bigwedge_{uv\in E}\bigl(X(uv)\Rightarrow Z(u)\land Z(v)\bigr).
+\]
+For each fixed $\varnothing\ne S\subsetneq V$, connectivity requires
+\[
+ \begin{aligned}
+ &(\exists u\in S:Z(u))\land(\exists v\notin S:Z(v))\\
+ &\hspace{12mm}\Rightarrow\bigvee_{e\in\delta(S)}X(e).
+ \end{aligned}
+\]
+Call the conjunction of these formulas $\operatorname{Conn}(Z,X)$.
+For the input graph's simple cycles $\mathcal C(G)$, define
+\[
+ \operatorname{Acyc}(X):=
+ \bigwedge_{C\in\mathcal C(G)}\bigvee_{e\in E(C)}\neg X(e).
+\]
+Then $\operatorname{Tree}(Z,X)$ means Ends, Conn, Acyc, and
+$\exists v:Z(v)$. Here too, the cut/cycle lists are fixed finite schemas;
+these abbreviations do not claim that general reachability has a uniform
+ordinary-FOL definition.
+
+\paragraph{Reusable exact tree ILP.}\label{form:tree-template}
+With $x_e,y_v\in\{0,1\}$, let $\mathcal T(x,y)$ denote
+\[
+\begin{aligned}
+ x_{uv}&\le y_u,\quad x_{uv}\le y_v &&(uv\in E),\\
+ \sum_{e\in E(S)}x_e&\le |S|-1 &&(S\subseteq V,\ |S|\ge2),\\
+ \sum_{e\in E}x_e&=\sum_{v\in V}y_v-1,\qquad
+ \sum_{v\in V}y_v\ge1.
+\end{aligned}
+\]
+The subset inequalities make the selected graph a forest; a forest on
+$q$ selected vertices has $q-c$ edges for $c$ components. The edge count
+therefore forces $c=1$. This is exact, including singleton trees, but has
+exponentially many subset constraints. Merely imposing $q-1$ edges is
+insufficient: a cycle plus an isolated selected vertex can satisfy that count.
+
+\subsubsection{Metric TSP}\label{form:tsp}
+\textbf{Variant.} A complete undirected graph on $n\ge3$ cities, with
+symmetric costs satisfying $c_{uw}\le c_{uv}+c_{vw}$. Select a minimum-cost
+Hamiltonian cycle. Let $X(uv)$ mean that the tour uses edge $uv$.
+
+\textbf{FOL.} With $Z(v)$ always true,
+\[
+ \bigl(\forall v:\exists^{=2}u\ne v:X(uv)\bigr)
+ \land\operatorname{Conn}(Z,X).
+\]
+\textbf{ILP.} Binary $x_e$; minimize $\sum_e c_ex_e$, subject to
+\[
+\begin{aligned}
+ \sum_{e\in\delta(v)}x_e&=2 &&(v\in V),\\
+ \sum_{e\in\delta(S)}x_e&\ge2 &&(\varnothing\ne S\subsetneq V).
+\end{aligned}
+\]
+Degree 2 gives a collection of cycles; the cut constraints force a single
+tour. Triangle inequality supports the approximation algorithms, while
+the same integer formulation also models nonmetric TSP.
+
+\subsubsection{Single-machine scheduling}\label{form:single}
+\textbf{Variant.} Jobs $J$, positive integer processing times $p_i$, weights
+$w_i\ge0$, release time 0, no preemption or setup times. Minimize total
+weighted completion time $\sum_iw_iC_i$. Put $H=\sum_i p_i$.
+
+\textbf{FOL.} A candidate gives integer start times $S_i$ in the finite
+time domain $\{0,\ldots,H\}$. Using the fixed arithmetic relations,
+\[
+\begin{aligned}
+ &\forall i:\quad 0\le S_i,\quad S_i+p_i\le H,\\
+ &\forall i\ne j:\quad
+ (S_i+p_i\le S_j)\lor(S_j+p_j\le S_i).
+\end{aligned}
+\]
+\textbf{ILP.} For each $i<j$, binary $z_{ij}=1$ means $i$ precedes $j$.
+Minimize $\sum_iw_i(S_i+p_i)$, subject to
+\[
+\begin{aligned}
+ S_i+p_i&\le S_j+H(1-z_{ij}) &&(i<j),\\
+ S_j+p_j&\le S_i+Hz_{ij} &&(i<j),\\
+ 0\le S_i&\le H-p_i,\quad S_i\in\mathbb Z &&(i\in J).
+\end{aligned}
+\]
+The bound $H$ makes the unused ordering inequality redundant. Positive
+processing times exclude cyclic precedences. An optimal schedule can have
+no idle time, so this horizon and integer start times lose no optimal
+solution. A pure makespan objective on this one-machine, all-jobs-available
+variant would always have optimum $H$.
+
+\subsubsection{Parallel-machine scheduling}\label{form:parallel}
+\textbf{Variant.} $m$ identical machines, all jobs available at time 0,
+positive integer $p_i$, no preemption, precedences, or setup times.
+Minimize makespan $T$. Let $A(i,h)$ assign job $i$ to machine $h$.
+
+\textbf{FOL.} With integer $0\le S_i$ and $S_i+p_i\le T\le H$,
+\[
+\begin{aligned}
+ &\forall i:\exists!h:A(i,h),\\
+ &\forall i\ne j,\,h:\quad A(i,h)\land A(j,h)\\
+ &\hspace{8mm}\Rightarrow
+ (S_i+p_i\le S_j)\lor(S_j+p_j\le S_i).
+\end{aligned}
+\]
+\textbf{ILP.} Binary $x_{ih}$ and integer $0\le T\le H$:
+\[
+\begin{aligned}
+ \min\quad &T,\\
+ \sum_{h=1}^m x_{ih}&=1 &&(i\in J),\\
+ \sum_{i\in J}p_ix_{ih}&\le T &&(h=1,\ldots,m).
+\end{aligned}
+\]
+Start-time variables are unnecessary in this ILP: run each machine's assigned
+jobs consecutively in any order. Its completion time equals its load.
+For unrelated machines replace $p_i$ by $p_{ih}$ and choose a valid horizon;
+release times or precedences require additional scheduling constraints.
+
+\subsubsection{Bin packing}\label{form:bin}
+\textbf{Variant.} Pack $n$ items of sizes $0\le a_i\le B$ into as few
+capacity-$B$ bins as possible; at most $n$ bins are needed. $A(i,b)$ means
+assignment and $U(b)$ means bin $b$ is used.
+
+\textbf{FOL.}
+\[
+\begin{aligned}
+ &\forall i:\exists!b:A(i,b),\\
+ &\forall i,b:\quad A(i,b)\Rightarrow U(b),\\
+ &\forall b:\quad\operatorname{Cap}_{J,a,B}(A(\cdot,b)).
+\end{aligned}
+\]
+\textbf{ILP.} Binary $x_{ib},y_b$; minimize $\sum_{b=1}^n y_b$:
+\[
+\begin{aligned}
+ \sum_{b=1}^n x_{ib}&=1 &&(i\in J),\\
+ x_{ib}&\le y_b &&(i\in J,\ b=1,\ldots,n),\\
+ \sum_i a_ix_{ib}&\le By_b &&(b=1,\ldots,n).
+\end{aligned}
+\]
+The linking constraint also handles zero-size items correctly. Optional
+symmetry breaking $y_b\ge y_{b+1}$ orders the used bins without changing OPT.
+
+\subsubsection{Set packing}\label{form:setpack}
+\textbf{Variant.} Given subsets $S_j\subseteq U$ and profits $w_j$, select
+a pairwise disjoint subfamily of maximum total profit. Use $P(j)$ for selection.
+
+\textbf{FOL.}
+\[
+ \forall j\ne k:\quad
+ (P(j)\land P(k))\Rightarrow S_j\cap S_k=\varnothing.
+\]
+Here disjointness is a fixed input relation, equivalently
+$\neg\exists u:(u\in S_j\land u\in S_k)$.
+
+\textbf{ILP.} Binary $x_j$:
+\[
+ \max\sum_j w_jx_j,\qquad
+ \sum_{j:u\in S_j}x_j\le1\quad(u\in U).
+\]
+Every element can belong to at most one chosen set. Taking $w_j=1$ gives
+maximum-cardinality set packing.
+
+\subsubsection{Prize-collecting Steiner tree}\label{form:pcst}
+\textbf{Variant.} Given an undirected graph, edge costs $c_e\ge0$, and
+penalties $\pi_v\ge0$, select a nonempty tree; pay $\pi_v$ for each omitted
+vertex. Nonterminals can have penalty 0. Use $Z(v)$ and $X(e)$ for selected
+vertices and edges.
+
+\textbf{FOL.} $\operatorname{Tree}(Z,X)$; for a rooted variant also require
+$Z(r)$. Mandatory terminals satisfy $Z(v)$ regardless of their penalty.
+
+\textbf{ILP.} Binary $x_e,y_v$, with the full tree system
+$\mathcal T(x,y)$ from page~\pageref{form:tree-template}:
+\[
+ \min\quad\sum_{e\in E}c_ex_e+\sum_{v\in V}\pi_v(1-y_v).
+\]
+Add $y_r=1$ only when a root is prescribed. Internal Steiner vertices count
+as selected vertices even when their penalty is zero. Connectivity is
+essential: otherwise isolated selected vertices avoid penalties for free.
+If the variant requires collected prize at least $Q$, additionally impose
+$\sum_v\pi_vy_v\ge Q$; that is an extra quota assumption.
+
+\subsubsection{Balanced cut}\label{form:cut}
+\textbf{Variant.} Minimum-weight bisection of an undirected graph: choose
+one side of size $q=\lfloor |V|/2\rfloor$. Let $P(v)$ select that side and
+$D(uv)$ indicate a crossing edge.
+
+\textbf{FOL.}
+\[
+\begin{aligned}
+ &\exists^{=q}v:P(v),\\
+ &\forall uv\in E:\quad D(uv)\Leftrightarrow(P(u)\mathbin\oplus P(v)).
+\end{aligned}
+\]
+\textbf{ILP.} Binary $x_v,d_{uv}$; minimize $\sum_{uv\in E}c_{uv}d_{uv}$:
+\[
+\begin{aligned}
+ \sum_v x_v&=q,\\
+ d_{uv}&\ge x_u-x_v,\quad d_{uv}\ge x_v-x_u,\\
+ d_{uv}&\le x_u+x_v,\quad d_{uv}\le2-x_u-x_v
+                         &&(uv\in E).
+\end{aligned}
+\]
+The four inequalities enforce XOR at every feasible binary point.
+For a balance interval $L\le |S|\le U$, replace the equality by
+$L\le\sum_vx_v\le U$ and use the corresponding counting bounds in FOL.
+
+\subsubsection{\texorpdfstring{$k$}{k}-minimum spanning tree}\label{form:kmst}
+\textbf{Variant.} Minimum-cost tree spanning exactly $k$ selected vertices
+of $G$, where $1\le k\le |V|$. Vertices not in the tree are omitted.
+
+\textbf{FOL.}
+\[
+ \operatorname{Tree}(Z,X)\land(\exists^{=k}v:Z(v)).
+\]
+\textbf{ILP.} Binary $x_e,y_v$:
+\[
+ \min\sum_e c_ex_e,\qquad
+ \mathcal T(x,y),\qquad \sum_v y_v=k.
+\]
+In particular $\sum_ex_e=k-1$. A rooted variant adds $y_r=1$.
+Check the convention: ``$k$ nonroot vertices'' means $k+1$ total vertices.
+For nonnegative costs, an at-least-$k$ tree can be pruned to $k$ vertices
+without increasing cost (preserving a required root), so the optimum values
+agree under those assumptions.
+
+\subsubsection{Capacitated minimum spanning tree}\label{form:cmst}
+\textbf{Variant.} Root $r$, positive integer demands $q_v$ for $v\ne r$,
+$q_r=0$, and branch capacity $Q$. Every component after deleting $r$ from
+the spanning tree must have total demand at most $Q$.
+
+\textbf{FOL.} Require $\operatorname{Tree}(Z,X)$ and $\forall v:Z(v)$.
+For every chosen root edge $rb$, require
+$\operatorname{Cap}_{V\setminus\{r\},q,Q}(\operatorname{Branch}_b)$.
+Here $\operatorname{Branch}_b(v)$ means a selected-edge path from $b$ to $v$
+avoiding $r$; expand it as the finite disjunction of path lengths
+$0,\ldots,|V|-1$, with first-order quantified intermediate vertices.
+
+\textbf{ILP.} Replace edges by both arcs but omit arcs entering $r$.
+Binary $x_{uv}$ selects an arc directed away from $r$; integer $f_{uv}\ge0$
+carries demand. Put $D=\sum_{v\ne r}q_v$. Minimize
+$\sum_{uv}c_{uv}x_{uv}$, subject to
+\[
+\begin{aligned}
+ \sum_{u:uv}x_{uv}&=1 &&(v\ne r),\\
+ \sum_{u:uv}f_{uv}-\sum_{w:vw}f_{vw}&=q_v &&(v\ne r),\\
+ \sum_{w:rw}f_{rw}&=D,\\
+ 0\le f_{uv}&\le Qx_{uv} &&(uv\text{ an arc}).
+\end{aligned}
+\]
+Positive demands exclude disconnected directed cycles; one parent per
+nonroot vertex then gives a rooted tree. Each root arc carries exactly its
+branch demand. If zero demands are allowed, add connectivity/acyclicity
+constraints explicitly. Unit demands give the branch-size version.
+
+\subsubsection{Feedback vertex set}\label{form:fvs}
+\textbf{Variant.} Delete a minimum-cost vertex set so the remaining
+undirected graph is acyclic. Let $D(v)$ indicate deletion and $w_v$ its cost.
+
+\textbf{FOL.}
+\[
+ \bigwedge_{C\in\mathcal C(G)}\bigvee_{v\in V(C)}D(v).
+\]
+Every input cycle must contain a deleted vertex.
+
+\textbf{ILP.} Binary $d_v$:
+\[
+ \min\sum_vw_vd_v,\qquad
+ \sum_{v\in V(C)}d_v\ge1\quad(C\in\mathcal C(G)).
+\]
+These cycle inequalities can be exponential in number. For the directed
+variant use directed cycles. Feedback vertex set differs from vertex cover:
+a tree has feedback vertex set size 0, even though its edges may need a
+nonempty vertex cover.
+
+\subsubsection{Shortest superstring}\label{form:string}
+\textbf{Variant.} Given nonempty strings $s_i$ over alphabet $\Sigma$, find
+a shortest word containing each as a contiguous substring. Let
+$\ell_i=|s_i|$ and $H=\sum_i\ell_i$; concatenation proves this length bound.
+
+\textbf{FOL.} A candidate has length $L\in\{0,\ldots,H\}$ and a character
+function $a$ on its positions. Require
+\[
+\begin{aligned}
+ \forall i\;\exists t:\quad
+ &1\le t,\quad t+\ell_i-1\le L,\\
+ &\forall k\in\{1,\ldots,\ell_i\}:\quad a(t+k-1)=s_i[k].
+\end{aligned}
+\]
+Minimize $L$. The position and alphabet domains are finite; arithmetic and
+input characters are fixed relations/functions.
+
+\textbf{ILP (direct position model).} Binary $u_p$ activates position $p$;
+$z_{p,a}$ puts character $a$ there; $o_{it}$ chooses an occurrence of $s_i$
+starting at $t$. For $p=1,\ldots,H$, minimize $\sum_pu_p$ with
+\[
+\begin{aligned}
+ \sum_{a\in\Sigma}z_{p,a}&=u_p &&(p=1,\ldots,H),\\
+ u_p&\ge u_{p+1} &&(p<H),\\
+ \sum_{t=1}^{H-\ell_i+1}o_{it}&\ge1 &&(\text{each }i),\\
+ o_{it}&\le z_{t+k-1,s_i[k]} &&(\text{each valid }i,t,k).
+\end{aligned}
+\]
+Here $1\le t\le H-\ell_i+1$ and $1\le k\le\ell_i$ in the last line.
+The active positions form one prefix; exactly one character occupies each.
+Every chosen occurrence must match all its characters. Conversely, every
+superstring of length at most $H$ gives these variables. Contained strings
+and duplicate strings are allowed by this model.
+
+\subsubsection{3-dimensional matching}\label{form:3dm}
+\textbf{Variant.} Disjoint coordinate sets $A,B,C$ and allowed triples
+$\mathcal R\subseteq A\times B\times C$. Choose a maximum-weight collection
+sharing no coordinate; $P(t)$ selects triple $t$.
+
+\textbf{FOL.}
+\[
+ \forall u\in A\cup B\cup C:\quad
+ \exists^{\le1}t\in\mathcal R:\bigl(P(t)\land u\in t\bigr).
+\]
+Membership $u\in t$ means that $u$ is one of the triple's coordinates.
+
+\textbf{ILP.} Binary $x_t$:
+\[
+ \max\sum_{t\in\mathcal R}w_tx_t,\qquad
+ \sum_{t\in\mathcal R:u\in t}x_t\le1\quad(u\in A\cup B\cup C).
+\]
+Set $w_t=1$ for maximum cardinality. In the \emph{perfect} version,
+$|A|=|B|=|C|$ and every coordinate must be used: change $\le1$ to $=1$
+in both the counting formula and ILP and solve feasibility.
+
+\subsubsection{Fair matching with group quotas}\label{form:fair}
+\textbf{Variant.} Bipartite $G=(L\cup R,E)$, matching profits $w_e$, and
+fixed groups $E_g\subseteq E$ with integer quotas $\ell_g,u_g$.
+For a group of left vertices $L_g$, use $E_g=\{uv\in E:u\in L_g\}$;
+then the group count equals the number of its matched vertices.
+
+\textbf{FOL.} With $M(e)$ denoting selection,
+\[
+\begin{aligned}
+ &\forall v:\exists^{\le1}e\in\delta(v):M(e),\\
+ &\forall g:\quad
+ (\exists^{\ge\ell_g}e\in E_g:M(e))\land
+ (\exists^{\le u_g}e\in E_g:M(e)).
+\end{aligned}
+\]
+\textbf{ILP.} Binary $x_e$:
+\[
+\begin{aligned}
+ \max\quad &\sum_{e\in E}w_ex_e,\\
+ \sum_{e\in\delta(v)}x_e&\le1 &&(v\in L\cup R),\\
+ \ell_g\le\sum_{e\in E_g}x_e&\le u_g &&(\text{each group }g).
+\end{aligned}
+\]
+Groups may overlap; quotas may make the model infeasible. Set $w_e=1$ for
+maximum cardinality. Proportional quotas can instead use
+$\alpha_g\sum_ex_e\le\sum_{e\in E_g}x_e\le\beta_g\sum_ex_e$,
+which is still linear for fixed rational $\alpha_g,\beta_g$.
+Extra quotas do not automatically preserve the ordinary bipartite matching
+LP's integrality.
+
+\subsubsection{Capacitated facility location}\label{form:facility}
+\textbf{Variant.} Clients $I$ have demands $d_i>0$; facilities $J$ have
+capacities $Q_j$ and opening costs $f_j$. Each client uses exactly one open
+facility. Let $c_{ij}$ be the \emph{total} cost of serving client $i$ at $j$.
+
+\textbf{FOL.} Assignment $A(i,j)$ and opening $O(j)$ satisfy
+\[
+\begin{aligned}
+ &\forall i:\exists!j:A(i,j),\\
+ &\forall i,j:\quad A(i,j)\Rightarrow O(j),\\
+ &\forall j:\quad\operatorname{Cap}_{I,d,Q_j}(A(\cdot,j)).
+\end{aligned}
+\]
+\textbf{ILP (unsplittable demand).} Binary $x_{ij},y_j$:
+\[
+\begin{aligned}
+ \min\quad &\sum_jf_jy_j+\sum_{i,j}c_{ij}x_{ij},\\
+ \sum_jx_{ij}&=1 &&(i\in I),\\
+ x_{ij}&\le y_j &&(i\in I,\ j\in J),\\
+ \sum_i d_ix_{ij}&\le Q_jy_j &&(j\in J).
+\end{aligned}
+\]
+If shipping costs are \emph{per unit}, use $d_ic_{ij}$ in the objective.
+For splittable demand, use shipment variables $a_{ij}\ge0$ with
+$\sum_ja_{ij}=d_i$, $\sum_ia_{ij}\le Q_jy_j$, and $a_{ij}\le d_iy_j$;
+continuous shipments give a MILP rather than a pure ILP.
+
+\subsubsection{Maximum independent set}\label{form:independent}
+\textbf{Variant.} Select a maximum-weight set of pairwise nonadjacent
+vertices; use weights 1 for maximum cardinality.
+
+\textbf{FOL.}
+\[
+ \forall u,v:\quad uv\in E\Rightarrow\neg(P(u)\land P(v)).
+\]
+\textbf{ILP.} Binary $x_v$:
+\[
+ \max\sum_vw_vx_v,\qquad x_u+x_v\le1\quad(uv\in E).
+\]
+The complement is a vertex cover, but approximation factors do not
+transfer simply by complementing an approximate solution.
+
+\subsubsection{Capacitated knapsack}\label{form:knapsack}
+\textbf{Variant.} One knapsack of capacity $B$, indivisible items with
+sizes $a_i\ge0$ and profits $v_i\ge0$, each available once.
+
+\textbf{FOL.} $\operatorname{Cap}_{J,a,B}(P)$ for the selected-item predicate
+$P(i)$. Maximize the sum of selected profits.
+
+\textbf{ILP.}
+\[
+ \max\sum_i v_ix_i,\qquad
+ \sum_i a_ix_i\le B,\qquad x_i\in\{0,1\}.
+\]
+For bounded multiplicities replace the domain by
+$x_i\in\{0,1,\ldots,b_i\}$; the FOL version can select individual copies.
+With unlimited copies use $x_i\in\mathbb Z_{\ge0}$ and check for
+zero-size, positive-profit items, which make the objective unbounded.
+
+\subsubsection{Higher-dimensional knapsack}\label{form:multiknapsack}
+\textbf{Variant.} Each selected item simultaneously consumes $a_{ri}\ge0$
+units of each resource $r=1,\ldots,d$, with capacity $B_r$. Each item is
+available once; its profit is $v_i$.
+
+\textbf{FOL.}
+\[
+ \bigwedge_{r=1}^d\operatorname{Cap}_{J,a_r,B_r}(P).
+\]
+\textbf{ILP.}
+\[
+ \max\sum_i v_ix_i,\qquad
+ \sum_i a_{ri}x_i\le B_r\quad(r=1,\ldots,d),
+ \qquad x_i\in\{0,1\}.
+\]
+There is one capacity constraint per resource and one shared selection
+variable per item. This models multiple resource budgets, not geometric
+placement of rectangles or boxes. For several separate knapsacks with
+assignment choices, introduce $x_{ib}$ and require $\sum_bx_{ib}\le1$.
+
+\paragraph{Model-checking reminders.}
+Keep domains, quantifier ranges, objective direction, and the precise
+variant with each formulation. Cut/cycle schemas may be exponential.
+Connectivity, acyclicity, and capacity are separate obligations; degree or
+edge-count constraints alone rarely establish all three. Dropping all
+integrality restrictions gives a relaxation, not automatically an exact
+polynomial-time algorithm for the original problem.
+
+\paragraph{Further formulation references.}
+The formulations above are written out for the stated variants. Useful
+primary references are the SCIP modelling book's
+\href{https://scipbook.readthedocs.io/en/latest/routing.html}{TSP formulations},
+\href{https://github.com/joaopedroso/scipbook/blob/master/docs/bpp.rst}{bin-packing model},
+and \href{https://scipbook.readthedocs.io/en/latest/flp.html}{facility-location models};
+the \href{https://dimacs11.zib.de/downloads.html}{DIMACS prize-collecting Steiner definitions};
+the \href{https://optimization-online.org/wp-content/uploads/2006/05/1404.pdf}{CMST branch-capacity definition};
+and \href{https://arxiv.org/abs/2301.03862}{proportionally fair matching}.
+

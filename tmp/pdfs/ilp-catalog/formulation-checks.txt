@@ -1,0 +1,4 @@
+Tree template: all 1024 selected-vertex/edge combinations on four vertices agree with graph-theoretic trees.
+Capacitated MST: flow feasibility agrees with rooted branch capacities for all 27 parent choices, two demand vectors, and four capacities.
+Single-machine scheduling: bounded integer start-time model matches exhaustive job orders (optimum 18).
+Shortest-superstring occurrence model: overlapping sample encodes 'abab' at optimal length 4.
